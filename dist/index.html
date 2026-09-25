@@ -61,6 +61,15 @@
       h3 { margin:51px 0 12px; font:600 26px/1.07 "Noto Serif Display",serif; letter-spacing:-.04em; }
       .domain p { position:relative; z-index:1; margin:0; color:#5a676a; font-size:.95rem; }
       .domain small { display:block; margin-top:21px; color:var(--jade); font:500 10px/1.4 "DM Mono",monospace; text-transform:uppercase; letter-spacing:.1em; }
+      .samples { display:grid; grid-template-columns:repeat(2,1fr); gap:14px; }
+      .sample { min-height:255px; padding:24px; border:1px solid var(--line); background:rgba(255,255,255,.3); position:relative; overflow:hidden; }
+      .sample::after { content:attr(data-index); position:absolute; right:18px; top:13px; color:rgba(31,82,85,.09); font:600 76px/1 "Noto Serif Display",serif; }
+      .sample-tag { position:relative; z-index:1; display:block; color:var(--verm); font:500 10px/1.35 "DM Mono",monospace; letter-spacing:.1em; text-transform:uppercase; }
+      .sample h3 { position:relative; z-index:1; margin:35px 0 11px; max-width:470px; font-size:27px; }
+      .sample p { position:relative; z-index:1; max-width:520px; margin:0; color:#536164; }
+      .sample-note { position:relative; z-index:1; display:block; margin-top:19px; color:var(--jade); font:500 9px/1.45 "DM Mono",monospace; letter-spacing:.07em; text-transform:uppercase; }
+      .sample-path { position:relative; z-index:1; display:flex; flex-wrap:wrap; gap:7px; margin-top:19px; }
+      .sample-path span { border:1px solid var(--line); padding:5px 7px; background:var(--paper); color:#465458; font:500 9px/1 "DM Mono",monospace; text-transform:uppercase; letter-spacing:.06em; }
       .structure { display:grid; grid-template-columns:1.1fr .9fr; gap:22px; }
       .diagram { min-height:345px; padding:25px; background:var(--ink); color:var(--paper); position:relative; overflow:hidden; }
       .diagram .eyebrow { color:#d9b068; }
@@ -75,6 +84,13 @@
       .method-list { list-style:none; padding:0; margin:28px 0 0; border-top:1px solid var(--line); }
       .method-list li { padding:13px 0; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; gap:14px; font-size:.93rem; }
       .method-list span { color:var(--verm); font:500 10px/1.5 "DM Mono",monospace; text-transform:uppercase; letter-spacing:.08em; }
+      .protocol { margin-top:22px; padding:26px; border:1px solid var(--line); background:rgba(31,82,85,.045); }
+      .protocol-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:0; margin-top:24px; border:1px solid var(--line); }
+      .protocol-step { min-height:142px; padding:17px; border-right:1px solid var(--line); background:rgba(255,255,255,.3); }
+      .protocol-step:last-child { border-right:0; }
+      .protocol-step b { display:block; color:var(--verm); font:500 10px/1 "DM Mono",monospace; letter-spacing:.1em; }
+      .protocol-step h4 { margin:17px 0 7px; font:600 18px/1.05 "Noto Serif Display",serif; letter-spacing:-.03em; }
+      .protocol-step p { margin:0; color:#5a676a; font-size:.84rem; line-height:1.4; }
       .access { background:var(--jade); color:#f8f4e9; padding:71px 0; }
       .access .eyebrow { color:#dfb36e; }.access h2 { max-width:760px; margin-bottom:20px; }.access p { max-width:620px; color:#dbe8e4; font-size:1.12rem; }
       .access-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:37px; }
@@ -83,8 +99,8 @@
       footer { padding:28px 0 35px; background:#172528; color:#cdd7d4; }
       .foot { display:flex; justify-content:space-between; gap:20px; align-items:start; font:400 10px/1.6 "DM Mono",monospace; text-transform:uppercase; letter-spacing:.05em; }.foot p { margin:0; max-width:620px; }
       .foot b { color:#e4b36b; font-weight:500; }
-      @media (max-width:850px) { .hero { padding-top:63px; min-height:auto; }.hero-grid,.structure,.section-heading { grid-template-columns:1fr; gap:34px; }.hero-note { max-width:460px; }.domain-grid { grid-template-columns:repeat(2,1fr); }.section { padding:68px 0; }.section-heading { margin-bottom:29px; }.section-heading h2 { margin-top:5px; } }
-      @media (max-width:580px) { .shell { width:min(100% - 30px,1180px); }.nav { height:69px; }.brand { font-size:18px; }.seal { width:33px;height:33px; } nav a:not(.nav-access) { display:none; }.hero { padding:53px 0 49px; } h1 { font-size:3.2rem; }.stats { margin-top:3px; }.stat { min-height:118px;padding:17px; }.stat-num { font-size:43px; }.domain-grid,.access-grid { grid-template-columns:1fr; }.domain { min-height:220px; }.domain h3 { margin-top:38px; }.flow { grid-template-columns:repeat(2,1fr); row-gap:27px; }.flow::before { display:none; }.foot { flex-direction:column; }.hero-actions { gap:9px; }.button { padding:12px 13px; } }
+      @media (max-width:850px) { .hero { padding-top:63px; min-height:auto; }.hero-grid,.structure,.section-heading { grid-template-columns:1fr; gap:34px; }.hero-note { max-width:460px; }.domain-grid,.samples { grid-template-columns:repeat(2,1fr); }.protocol-grid { grid-template-columns:repeat(3,1fr); }.protocol-step:nth-child(3) { border-right:0; }.protocol-step:nth-child(-n+3) { border-bottom:1px solid var(--line); }.section { padding:68px 0; }.section-heading { margin-bottom:29px; }.section-heading h2 { margin-top:5px; } }
+      @media (max-width:580px) { .shell { width:min(100% - 30px,1180px); }.nav { height:69px; }.brand { font-size:18px; }.seal { width:33px;height:33px; } nav a:not(.nav-access) { display:none; }.hero { padding:53px 0 49px; } h1 { font-size:3.2rem; }.stats { margin-top:3px; }.stat { min-height:118px;padding:17px; }.stat-num { font-size:43px; }.domain-grid,.samples,.access-grid,.protocol-grid { grid-template-columns:1fr; }.domain { min-height:220px; }.domain h3 { margin-top:38px; }.sample { min-height:230px; }.protocol-step,.protocol-step:nth-child(3) { border-right:0; border-bottom:1px solid var(--line); }.protocol-step:last-child { border-bottom:0; }.flow { grid-template-columns:repeat(2,1fr); row-gap:27px; }.flow::before { display:none; }.foot { flex-direction:column; }.hero-actions { gap:9px; }.button { padding:12px 13px; } }
     </style>
   </head>
   <body>
@@ -92,7 +108,7 @@
     <header>
       <div class="shell nav">
         <a class="brand" href="#top" aria-label="CoMemBench home"><span class="seal">CM</span><span>CoMemBench</span></a>
-        <nav aria-label="Main navigation"><a href="#benchmark">Benchmark</a><a href="#structure">Method</a><a href="#access">Access</a><a class="nav-access" href="#access">Get updates ↗</a></nav>
+        <nav aria-label="Main navigation"><a href="#benchmark">Benchmark</a><a href="#samples">Examples</a><a href="#structure">Method</a><a href="#access">Access</a><a class="nav-access" href="#access">Get updates ↗</a></nav>
       </div>
     </header>
     <main id="top">
@@ -118,11 +134,21 @@
           <article class="domain" data-mark="M"><div class="domain-num">04 / 04</div><h3>Mathematical &amp;<br />Structured Reasoning</h3><p>Structured reasoning tasks that make intermediate context and coordinated verification visible.</p><small>200 certified families</small></article>
         </div>
       </div></section>
+      <section class="section" id="samples"><div class="shell">
+        <div class="section-heading"><div><div class="eyebrow">Task atlas</div><h2>What a task<br />looks like.</h2></div><p>Each task family specifies a workflow and its verification boundary. The scenarios below are <strong>illustrative task shapes</strong>, created for this website—not released benchmark instances.</p></div>
+        <div class="samples">
+          <article class="sample" data-index="01"><span class="sample-tag">Stateful Tool Use</span><h3>Coordinate a changing plan across connected tools.</h3><p>Reconcile a shared schedule, a structured record, and a participant-facing update while preserving only the context the next operator needs.</p><div class="sample-path"><span>state</span><span>handoff</span><span>tool action</span><span>receipt</span></div><small class="sample-note">Illustrative task shape · not a released instance</small></article>
+          <article class="sample" data-index="02"><span class="sample-tag">Repository Code Change</span><h3>Turn an issue report into a verified, minimal patch.</h3><p>Trace a reported behavior through a pinned repository, modify the narrowest relevant path, and leave a test-backed explanation for the reviewer.</p><div class="sample-path"><span>issue context</span><span>code path</span><span>patch</span><span>test</span></div><small class="sample-note">Illustrative task shape · not a released instance</small></article>
+          <article class="sample" data-index="03"><span class="sample-tag">Offline Information Retrieval</span><h3>Resolve a question from a fixed evidence corpus.</h3><p>Search a bounded collection, compare competing passages, and pass forward a source-linked answer that another agent can audit without web access.</p><div class="sample-path"><span>corpus</span><span>evidence</span><span>citation</span><span>audit</span></div><small class="sample-note">Illustrative task shape · not a released instance</small></article>
+          <article class="sample" data-index="04"><span class="sample-tag">Mathematical &amp; Structured Reasoning</span><h3>Complete dependent reasoning with machine-checkable evidence.</h3><p>Work through a pinned formal environment where intermediate facts are useful only when their scope, dependencies, and proof status remain intact.</p><div class="sample-path"><span>dependency graph</span><span>proof state</span><span>handoff</span><span>check</span></div><small class="sample-note">Illustrative task shape · not a released instance</small></article>
+        </div>
+      </div></section>
       <section class="section" id="structure"><div class="shell"><div class="section-heading"><div><div class="eyebrow">Method</div><h2>Memory is not a shared scratchpad.</h2></div><p>CoMemBench treats workflow topology as an evaluation surface. It distinguishes <strong>what is stored, who can retrieve it, and whether the workflow can use it responsibly</strong>.</p></div>
         <div class="structure"><div class="diagram"><div class="eyebrow">A topology-aware view</div><div class="flow"><div class="node"><div class="node-dot">01</div><p>Task<br />context</p></div><div class="node"><div class="node-dot">02</div><p>Typed<br />handoff</p></div><div class="node"><div class="node-dot">03</div><p>Scoped<br />memory</p></div><div class="node"><div class="node-dot">04</div><p>Verified<br />outcome</p></div></div></div>
         <article class="method"><div class="eyebrow">What the release records</div><h3>Evidence before interpretation.</h3><p>The benchmark release is constructed around task families and certified domain coverage—not a single aggregate score presented without provenance.</p><ul class="method-list"><li>Task-family coverage <span>800 / 800</span></li><li>Domain balance <span>200 each</span></li><li>Release validation <span>passed</span></li></ul></article></div>
+        <div class="protocol"><div class="eyebrow">Evaluation anatomy</div><div class="protocol-grid"><article class="protocol-step"><b>01</b><h4>Task family</h4><p>A bounded goal and a declared workflow context.</p></article><article class="protocol-step"><b>02</b><h4>Topology</h4><p>Nodes, handoffs, and access boundaries define the collaboration surface.</p></article><article class="protocol-step"><b>03</b><h4>Execution</h4><p>Agents operate in the scoped environment and leave task evidence.</p></article><article class="protocol-step"><b>04</b><h4>Verification</h4><p>Native checks assess the produced artifact, state, or proof.</p></article><article class="protocol-step"><b>05</b><h4>Receipt</h4><p>Coverage and validation records preserve the release provenance.</p></article></div></div>
       </div></section>
-      <section class="access" id="access"><div class="shell"><div class="eyebrow">Public release</div><h2>Open evaluation, responsible access.</h2><p>Website, documentation, and evaluation code will be public. Dataset access will use a gated request flow so every release can remain attributable and versioned.</p><div class="access-grid"><article class="access-card"><b>Dataset</b><h3>Access request</h3><p>Gated dataset access is being prepared. The release page will include the application and use terms.</p></article><article class="access-card"><b>Evaluation</b><h3>Code &amp; documentation</h3><p>The public repository and reproducibility instructions will be linked here after the organization is established.</p></article></div></div></section>
+      <section class="access" id="access"><div class="shell"><div class="eyebrow">Public release</div><h2>Open evaluation, responsible access.</h2><p>Website, documentation, and evaluation code will be public. Dataset access will use a gated request flow so every release can remain attributable and versioned.</p><div class="access-grid"><article class="access-card"><b>Dataset</b><h3>Access request</h3><p>800 certified families are recorded in the v18 ledger. Public data access and use terms are under release review.</p></article><article class="access-card"><b>Evaluation</b><h3>Code &amp; documentation</h3><p>Reproducibility instructions, evaluator details, and a public repository link will be added with the paper release.</p></article></div></div></section>
     </main>
     <footer><div class="shell foot"><p><b>CoMemBench</b> — Benchmarking Collaborative Memory Boundaries across Multi-Agent Workflow Topologies.</p><p>Website prototype · Counts derived from the certified v18 release ledger.</p></div></footer>
   </body>
