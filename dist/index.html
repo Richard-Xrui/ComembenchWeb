@@ -441,7 +441,7 @@ tailwind.config = {
     <!-- timeline: converging lanes, fits in one view (no h-scroll) -->
     <div class="reveal mt-10">
       <div id="chrono-scroll" class="w-full">
-        <div id="chrono-inner" class="relative mx-auto" style="width:1230px;height:720px;">
+        <div id="chrono-inner" class="relative mx-auto" style="width:1230px;height:748px;">
           <svg id="chrono-svg" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;"></svg>
           <div id="chrono-cards"></div>
         </div>
@@ -1377,10 +1377,10 @@ function buildChrono() {
   svg.innerHTML = "";
   cardsBox.innerHTML = "";
 
-  // fixed canvas 1230x720 — no horizontal scroll on desktop
-  const W = 1230, H = 720;
-  const labelW = 138;
-  const yearW = 168;
+  // fixed canvas 1230x748 — no horizontal scroll on desktop
+  const W = 1230, H = 748;
+  const labelW = 118;
+  const yearW = 172;
   const yearX0 = labelW + yearW / 2;
   const railX0 = labelW - 10;
   const railX1 = labelW + yearW * YEARS.length;
@@ -1393,7 +1393,7 @@ function buildChrono() {
   const nL = laneKeys.length;
 
   // lane geometry: rail near top of lane, cards hang below (2x2 packing)
-  const CW = 76, CH = 40, CG = 6;
+  const CW = 82, CH = 46, CG = 6;
   const blockH = CH * 2 + CG;          // 86px for a 2-row cell
   const laneH = 16 + blockH + 10;      // 112px
   const laneGap = 12;
@@ -1471,8 +1471,8 @@ function buildChrono() {
           "display:flex;flex-direction:column;justify-content:center;" +
           "opacity:0;transform:translateY(10px);";
         card.innerHTML =
-          '<div class="font-display font-semibold text-ink leading-tight" style="font-size:9.5px;overflow:hidden;">' + name + '</div>' +
-          '<div class="font-mono uppercase tracking-wider leading-none mt-0.5" style="font-size:7.5px;color:' + meta.color + ';overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">' + tag + '</div>';
+          '<div class="font-display font-semibold text-ink leading-tight" style="font-size:10.5px;overflow:hidden;">' + name + '</div>' +
+          '<div class="font-mono uppercase tracking-wider leading-none mt-1" style="font-size:8px;color:' + meta.color + ';overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">' + tag + '</div>';
         cardsBox.appendChild(card);
         setTimeout(() => {
           card.style.transition = "opacity .45s ease, transform .45s ease";
@@ -1483,20 +1483,20 @@ function buildChrono() {
     });
   });
 
-  // ---- ours node at the convergence point ----
+  // ---- ours node at the convergence point (visually balanced with the work cards) ----
   const ours = document.createElement("div");
   ours.className = "absolute";
-  ours.style.left = (convX - 4) + "px";
-  ours.style.top = (convYmid - 82) + "px";
-  ours.style.width = "186px";
+  ours.style.left = (convX - 2) + "px";
+  ours.style.top = (convYmid - 48) + "px";
+  ours.style.width = "152px";
   ours.innerHTML =
-    '<div class="rounded-banner p-4" style="background:linear-gradient(135deg,#FFF6ED,#FAF7F3);border:2px solid #FB8147;box-shadow:0 14px 40px rgba(251,129,71,0.22);">' +
-      '<div class="flex items-center gap-1.5 mb-1.5">' +
+    '<div class="rounded-banner p-3.5" style="background:linear-gradient(135deg,#FFF6ED,#FAF7F3);border:2px solid #FB8147;box-shadow:0 12px 32px rgba(251,129,71,0.20);">' +
+      '<div class="flex items-center gap-1.5 mb-1">' +
         '<span class="w-2 h-2 rounded-full" style="background:#FB8147"></span>' +
-        '<span class="chip" style="font-size:9px;padding:1px 6px;">ours</span>' +
+        '<span class="chip" style="font-size:8.5px;padding:1px 5px;">ours</span>' +
       '</div>' +
-      '<div class="font-display text-[15px] font-bold text-ink mb-1 leading-snug">CoMemBench</div>' +
-      '<div class="text-[10px] text-dim leading-relaxed">Task-conditioned memory boundaries on executable dependency workflows &mdash; typed, version-aware handoffs with matched clean&ndash;polluted pairs.</div>' +
+      '<div class="font-display text-[13px] font-bold text-ink leading-snug">CoMemBench</div>' +
+      '<div class="text-[9.5px] text-dim leading-snug mt-1">Task-conditioned memory boundaries</div>' +
     '</div>';
   cardsBox.appendChild(ours);
 }
