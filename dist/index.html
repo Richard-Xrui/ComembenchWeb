@@ -108,7 +108,9 @@ tailwind.config = {
   details.expander summary::-webkit-details-marker { display: none; }
   details.expander[open] { border-color: #FB8147; }
 
-  .goal-box {
+  .sketch-box { background:#FAF7F3; border:1px solid #E5E0D8; border-radius:16px; padding:16px; width:880px; min-height:320px; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+.sketch-box svg { width:100%; height:auto; max-height:460px; }
+.goal-box {
     font-family: "JetBrains Mono", monospace; font-size: 12px; line-height: 1.65;
     background: #FFFFFF; border: 1px solid #F0EBE5;
     border-left: 3px solid #FB8147; border-radius: 10px; padding: 14px 16px; color: #383A42;
@@ -504,10 +506,10 @@ tailwind.config = {
           <div class="example-icon shrink-0">01</div>
           <div>
             <div class="font-mono text-orange text-xs mb-1.5 uppercase tracking-wider">Stateful Tool Use</div>
-            <h3 class="font-display text-2xl font-semibold">AI-driven investment research report</h3>
+            <h3 class="font-display text-2xl font-semibold">Evidence-based workplace nutrition program</h3>
             <div class="mt-3 flex flex-wrap gap-2">
-              <span class="chip">v15_family_0018_57541cbaddf2</span>
-              <span class="chip">11 nodes &middot; 23 edges</span>
+              <span class="chip">v15_family_0001_b9f32b72e8fd</span>
+              <span class="chip">19 nodes &middot; 60 edges</span>
               <span class="chip">composite topology</span>
               <span class="chip">Toolathlon</span>
             </div>
@@ -518,71 +520,37 @@ tailwind.config = {
         <div class="lg:col-span-3">
           <div class="font-mono text-[11px] text-dim uppercase tracking-wider mb-2">Global goal (excerpt)</div>
           <div class="goal-box">
-You are a quantitative analyst preparing an AI-driven investment research report that combines academic research insights with live market data. Your workspace contains three files you should start by reading: research_brief.md describes the investment thesis and key research questions, portfolio_holdings.csv lists the current portfolio positions with symbols and target weights, and risk_limits.json defines maximum position sizes and sector concentration limits.<br><br>
-Search the research paper archive for papers related to "large language models finance" and also for "machine learning stock prediction". Read the abstracts of the papers you find and filter out any that are not relevant to AI applications in finance or investing.<br><br>
-Query the financial data service for current stock information on the three core holdings in the portfolio: GOOGL, AMZN, and JPM. Also retrieve recent price history and financial statement data for these three symbols so you can assess their fundamentals.<br><br>
-Write and run a Python script called compute_portfolio_metrics.py that computes portfolio-level metrics, then produce AI_Investment.xlsx and Research_Report.docx, and notify stakeholders.
+You are a corporate wellness coordinator tasked with designing an evidence-based workplace nutrition program. Your goal is to combine practical recipe data with published nutritional science research to create a scientifically grounded meal program for employees.<br><br>
+Start by reading the program_requirements.md file in your workspace, which describes the wellness program goals, target population size, and budget constraints. Also read the dietary_restrictions.csv file that lists common employee die
           </div>
           <div class="mt-5 font-mono text-[11px] text-dim uppercase tracking-wider">Agent roles</div>
           <div class="mt-2">
-            <span class="role-pill">retrieval_agent &times;6</span>
-            <span class="role-pill">artifact_agent</span>
-            <span class="role-pill">tool_agent</span>
+            <span class="role-pill">retrieval_agent &times;10</span>
+            <span class="role-pill">analysis_agent &times;2</span>
+            <span class="role-pill">artifact_agent &times;2</span>
+            <span class="role-pill">implementation_agent &times;3</span>
             <span class="role-pill">workflow_verifier</span>
           </div>
           <div class="mt-4 font-mono text-[11px] text-dim uppercase tracking-wider">Artifact types on handoff edges</div>
           <div class="mt-2">
-            <span class="role-pill">tabular_artifact</span>
             <span class="role-pill">source_evidence</span>
             <span class="role-pill">code_artifact</span>
+            <span class="role-pill">execution_receipt</span>
+            <span class="role-pill">form_receipt</span>
+            <span class="role-pill">tabular_artifact</span>
             <span class="role-pill">document_artifact</span>
-            <span class="role-pill">notification_receipt</span>
           </div>
         </div>
         <div class="lg:col-span-2">
-          <div class="font-mono text-[11px] text-dim uppercase tracking-wider mb-2">Workflow sketch</div>
-          <svg viewBox="0 0 320 250" class="w-full rounded-xl border border-warmborder" style="background:rgba(0,0,0,0.28)">
-            <defs>
-              <marker id="a1" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
-                <path d="M0,0 L7,3 L0,6 Z" fill="#FB8147"/>
-              </marker>
-            </defs>
-            <rect x="12" y="12" width="88" height="36" rx="6" fill="rgba(251,129,71,0.12)" stroke="#FB8147" stroke-opacity=".5"/>
-            <text x="56" y="28" text-anchor="middle" font-size="9" fill="#C25A22">workspace files</text>
-            <text x="56" y="40" text-anchor="middle" font-size="8" fill="#646A73">brief &middot; holdings &middot; limits</text>
-            <rect x="116" y="12" width="90" height="36" rx="6" fill="rgba(251,129,71,0.12)" stroke="#FB8147" stroke-opacity=".5"/>
-            <text x="161" y="28" text-anchor="middle" font-size="9" fill="#C25A22">paper search</text>
-            <text x="161" y="40" text-anchor="middle" font-size="8" fill="#646A73">abstracts &rarr; filter</text>
-            <rect x="222" y="12" width="86" height="36" rx="6" fill="rgba(251,129,71,0.12)" stroke="#FB8147" stroke-opacity=".5"/>
-            <text x="265" y="28" text-anchor="middle" font-size="9" fill="#C25A22">market data</text>
-            <text x="265" y="40" text-anchor="middle" font-size="8" fill="#646A73">quotes &middot; statements</text>
-            <rect x="60" y="90" width="120" height="36" rx="6" fill="rgba(231,111,81,0.12)" stroke="#E76F51" stroke-opacity=".55"/>
-            <text x="120" y="106" text-anchor="middle" font-size="9" fill="#B45309">compute_portfolio_metrics</text>
-            <text x="120" y="118" text-anchor="middle" font-size="8" fill="#646A73">python &rarr; analysis.json</text>
-            <rect x="200" y="90" width="100" height="36" rx="6" fill="rgba(251,129,71,0.12)" stroke="#FB8147" stroke-opacity=".5"/>
-            <text x="250" y="106" text-anchor="middle" font-size="9" fill="#C25A22">research&rarr;stocks</text>
-            <text x="250" y="118" text-anchor="middle" font-size="8" fill="#646A73">mapping.json</text>
-            <rect x="30" y="160" width="110" height="36" rx="6" fill="rgba(251,129,71,0.12)" stroke="#FB8147" stroke-opacity=".5"/>
-            <text x="85" y="176" text-anchor="middle" font-size="9" fill="#C25A22">AI_Investment.xlsx</text>
-            <text x="85" y="188" text-anchor="middle" font-size="8" fill="#646A73">tabular_artifact</text>
-            <rect x="160" y="160" width="130" height="36" rx="6" fill="rgba(251,129,71,0.12)" stroke="#FB8147" stroke-opacity=".5"/>
-            <text x="225" y="176" text-anchor="middle" font-size="9" fill="#C25A22">Research_Report.docx</text>
-            <text x="225" y="188" text-anchor="middle" font-size="8" fill="#646A73">document_artifact</text>
-            <rect x="95" y="212" width="130" height="28" rx="6" fill="rgba(253,168,58,0.14)" stroke="#FDA83A" stroke-opacity=".55"/>
-            <text x="160" y="230" text-anchor="middle" font-size="9" fill="#B45309">notify + verifier</text>
-            <line x1="56" y1="48" x2="100" y2="90" stroke="#FB8147" stroke-width="1.2" stroke-opacity=".55" marker-end="url(#a1)"/>
-            <line x1="161" y1="48" x2="130" y2="90" stroke="#FB8147" stroke-width="1.2" stroke-opacity=".55" marker-end="url(#a1)"/>
-            <line x1="265" y1="48" x2="240" y2="90" stroke="#FB8147" stroke-width="1.2" stroke-opacity=".55" marker-end="url(#a1)"/>
-            <line x1="120" y1="126" x2="85" y2="160" stroke="#FB8147" stroke-width="1.2" stroke-opacity=".55" marker-end="url(#a1)"/>
-            <line x1="250" y1="126" x2="225" y2="160" stroke="#FB8147" stroke-width="1.2" stroke-opacity=".55" marker-end="url(#a1)"/>
-            <line x1="85" y1="196" x2="145" y2="212" stroke="#FB8147" stroke-width="1.2" stroke-opacity=".55" marker-end="url(#a1)"/>
-            <line x1="225" y1="196" x2="175" y2="212" stroke="#FB8147" stroke-width="1.2" stroke-opacity=".55" marker-end="url(#a1)"/>
-          </svg>
-          <div class="mt-3 text-xs text-dim leading-relaxed">
-            Source: <span class="font-mono text-honey">toolathlon_gym/.../terminal-arxiv-yf-excel-word-notion-email</span><br/>
-            Motifs: <span class="font-mono text-orange">split_join &middot; reuse &middot; overlap &middot; chain</span>
+          <div class="font-mono text-[11px] text-dim uppercase tracking-wider">Notes</div>
+          <div class="mt-2 text-sm text-dim leading-relaxed">
+The deepest chain in the release: a 16-stage pipeline that starts from three parallel sources, writes and executes three Python programs, then iterates a live spreadsheet across four handoffs before a Word proposal and a validation script. Nine <span class="font-mono text-orange">revision</span> edges let a failed validation send the workflow back into the workbook trail.
           </div>
         </div>
+      </div>
+      <div class="mt-7">
+        <div class="font-mono text-[11px] text-dim uppercase tracking-wider mb-2">Workflow topology</div>
+        <div class="sketch-box" data-sketch="sk1"></div>
       </div>
     </details>
 
@@ -593,11 +561,11 @@ Write and run a Python script called compute_portfolio_metrics.py that computes 
           <div class="example-icon shrink-0">02</div>
           <div>
             <div class="font-mono text-orange text-xs mb-1.5 uppercase tracking-wider">Repository Code Change</div>
-            <h3 class="font-display text-2xl font-semibold">Nominal scale rendering in seaborn</h3>
+            <h3 class="font-display text-2xl font-semibold">Sphinx literalinclude indent repair</h3>
             <div class="mt-3 flex flex-wrap gap-2">
-              <span class="chip">v15_family_0204_914616c2021c</span>
-              <span class="chip">11 nodes &middot; 17 edges</span>
-              <span class="chip">mwaskom/seaborn-3069</span>
+              <span class="chip">v15_family_0211_750658a4e4ee</span>
+              <span class="chip">16 nodes &middot; 30 edges</span>
+              <span class="chip">sphinx-doc__sphinx-10323</span>
               <span class="chip">SWE-bench Verified</span>
             </div>
           </div>
@@ -607,18 +575,19 @@ Write and run a Python script called compute_portfolio_metrics.py that computes 
         <div class="lg:col-span-3">
           <div class="font-mono text-[11px] text-dim uppercase tracking-wider mb-2">Global goal (excerpt)</div>
           <div class="goal-box">
-Resolve the following real issue in repository mwaskom/seaborn at base commit 54cab15b&hellip;. Work in the fixed repository environment. Reproduce the reported behavior, localize its cause, implement the smallest correct patch, run relevant regression tests, and return a release decision.<br><br>
-Nominal scale should be drawn the same way as categorical scales. Three distinctive things happen on the categorical axis in seaborn's categorical plots: (1) the scale is drawn to &plusmn;0.5 from the first and last tick, rather than using the normal margin logic; (2) a grid is not shown, even when it otherwise would be with the corresponding numeric scale; (3) the tick labels are drawn at the integer positions, not at the floating-point tick locations&hellip;
+Resolve the following real issue in repository sphinx-doc/sphinx at base commit 31eba1a76dd485dc633cae48227b46879eda5df4. Work in the fixed repository environment. Reproduce the reported behavior, localize its cause, implement the smallest correct patch, run relevant regression tests, and return a release decision.<br><br>
+Use of literalinclude prepend results in incorrect indent formatting for code eamples ### Describe the bug<br><br>
+Cannot determine a mechanism to use literalinclude directive with `prepe
           </div>
           <div class="mt-5 font-mono text-[11px] text-dim uppercase tracking-wider">Agent roles</div>
           <div class="mt-2">
             <span class="role-pill">issue_analyst</span>
-            <span class="role-pill">reproduction_agent</span>
-            <span class="role-pill">repository_analyst &times;2</span>
+            <span class="role-pill">reproduction_agent &times;3</span>
+            <span class="role-pill">repository_analyst &times;3</span>
             <span class="role-pill">regression_agent &times;2</span>
             <span class="role-pill">patch_designer</span>
             <span class="role-pill">implementation_agent</span>
-            <span class="role-pill">test_agent</span>
+            <span class="role-pill">test_agent &times;3</span>
             <span class="role-pill">release_agent</span>
             <span class="role-pill">workflow_verifier</span>
           </div>
@@ -627,45 +596,23 @@ Nominal scale should be drawn the same way as categorical scales. Three distinct
             <span class="role-pill">issue_requirements</span>
             <span class="role-pill">reproduction_receipt</span>
             <span class="role-pill">localization_receipt</span>
+            <span class="role-pill">baseline_receipt</span>
             <span class="role-pill">patch_plan</span>
             <span class="role-pill">patch_candidate</span>
             <span class="role-pill">test_receipt</span>
+            <span class="role-pill">release_bundle</span>
           </div>
         </div>
         <div class="lg:col-span-2">
-          <div class="font-mono text-[11px] text-dim uppercase tracking-wider mb-2">Workflow sketch</div>
-          <svg viewBox="0 0 320 230" class="w-full rounded-xl border border-warmborder" style="background:rgba(0,0,0,0.28)">
-            <defs>
-              <marker id="a2" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
-                <path d="M0,0 L7,3 L0,6 Z" fill="#FDA83A"/>
-              </marker>
-            </defs>
-            <rect x="100" y="10" width="120" height="30" rx="6" fill="rgba(253,168,58,0.14)" stroke="#FDA83A" stroke-opacity=".55"/>
-            <text x="160" y="29" text-anchor="middle" font-size="9" fill="#B45309">issue_analyst</text>
-            <rect x="20" y="60" width="110" height="30" rx="6" fill="rgba(251,129,71,0.12)" stroke="#FB8147" stroke-opacity=".5"/>
-            <text x="75" y="79" text-anchor="middle" font-size="9" fill="#C25A22">reproduction</text>
-            <rect x="150" y="60" width="110" height="30" rx="6" fill="rgba(251,129,71,0.12)" stroke="#FB8147" stroke-opacity=".5"/>
-            <text x="205" y="79" text-anchor="middle" font-size="9" fill="#C25A22">localize &times;2</text>
-            <rect x="100" y="110" width="120" height="30" rx="6" fill="rgba(251,129,71,0.12)" stroke="#FB8147" stroke-opacity=".5"/>
-            <text x="160" y="129" text-anchor="middle" font-size="9" fill="#C25A22">regression &times;2</text>
-            <rect x="100" y="152" width="120" height="30" rx="6" fill="rgba(231,111,81,0.12)" stroke="#E76F51" stroke-opacity=".55"/>
-            <text x="160" y="171" text-anchor="middle" font-size="9" fill="#B45309">patch &rarr; implement</text>
-            <rect x="30" y="196" width="100" height="26" rx="6" fill="rgba(253,168,58,0.14)" stroke="#FDA83A" stroke-opacity=".55"/>
-            <text x="80" y="213" text-anchor="middle" font-size="9" fill="#B45309">test_agent</text>
-            <rect x="150" y="196" width="110" height="26" rx="6" fill="rgba(253,168,58,0.14)" stroke="#FDA83A" stroke-opacity=".55"/>
-            <text x="205" y="213" text-anchor="middle" font-size="9" fill="#B45309">release + verifier</text>
-            <line x1="160" y1="40" x2="75" y2="60" stroke="#FDA83A" stroke-width="1.2" stroke-opacity=".5" marker-end="url(#a2)"/>
-            <line x1="160" y1="40" x2="205" y2="60" stroke="#FDA83A" stroke-width="1.2" stroke-opacity=".5" marker-end="url(#a2)"/>
-            <line x1="75" y1="90" x2="150" y2="110" stroke="#FB8147" stroke-width="1.2" stroke-opacity=".5" marker-end="url(#a2)"/>
-            <line x1="205" y1="90" x2="180" y2="110" stroke="#FB8147" stroke-width="1.2" stroke-opacity=".5" marker-end="url(#a2)"/>
-            <line x1="160" y1="140" x2="160" y2="152" stroke="#FB8147" stroke-width="1.2" stroke-opacity=".5" marker-end="url(#a2)"/>
-            <line x1="140" y1="182" x2="80" y2="196" stroke="#FB8147" stroke-width="1.2" stroke-opacity=".5" marker-end="url(#a2)"/>
-            <line x1="180" y1="182" x2="205" y2="196" stroke="#FB8147" stroke-width="1.2" stroke-opacity=".5" marker-end="url(#a2)"/>
-          </svg>
-          <div class="mt-3 text-xs text-dim leading-relaxed">
-            Commit-pinned handoffs: a stale localization cannot satisfy the patch node.
+          <div class="font-mono text-[11px] text-dim uppercase tracking-wider">Notes</div>
+          <div class="mt-2 text-sm text-dim leading-relaxed">
+A wide split-join in the middle: three independent reproductions, three independent localizations, and a pre-change baseline all feed one patch plan. Four verification receipts (three focused tests plus a regression rerun) gate the release bundle before the trusted SWE-Bench container accepts it.
           </div>
         </div>
+      </div>
+      <div class="mt-7">
+        <div class="font-mono text-[11px] text-dim uppercase tracking-wider mb-2">Workflow topology</div>
+        <div class="sketch-box" data-sketch="sk2"></div>
       </div>
     </details>
 
@@ -676,11 +623,11 @@ Nominal scale should be drawn the same way as categorical scales. Three distinct
           <div class="example-icon shrink-0">03</div>
           <div>
             <div class="font-mono text-orange text-xs mb-1.5 uppercase tracking-wider">Offline Information Retrieval</div>
-            <h3 class="font-display text-2xl font-semibold">Multi-clue entity reconciliation</h3>
+            <h3 class="font-display text-2xl font-semibold">Twelve-partition evidence reconciliation</h3>
             <div class="mt-3 flex flex-wrap gap-2">
-              <span class="chip">v15_family_0424_cd64a8a6bd66</span>
-              <span class="chip">11 nodes &middot; 23 edges</span>
-              <span class="chip">browsecomp_plus/test/46</span>
+              <span class="chip">v15_family_0413_cef4321720b5</span>
+              <span class="chip">17 nodes &middot; 41 edges</span>
+              <span class="chip">browsecomp_plus/test/22</span>
               <span class="chip">bounded_revision_loop</span>
             </div>
           </div>
@@ -691,66 +638,36 @@ Nominal scale should be drawn the same way as categorical scales. Three distinct
           <div class="font-mono text-[11px] text-dim uppercase tracking-wider mb-2">Global goal (excerpt)</div>
           <div class="goal-box">
 Answer this real information-seeking question from the released fixed candidate corpus. Use exact supporting passages with document identities, reconcile all clues to one candidate, and return the requested attribute with an auditable provenance receipt.<br><br>
-What is the full name of a person known for investing in technology businesses? This individual holds a Bachelor of Science degree in Computer Science from a university that was established in the late 19th century and began teaching two years after its founding. This person wrote a blog post titled "Muzungu" about their three-week trip to Rwanda&hellip;
+There is a sport in the world where teams from a certain continent have dominated the biggest yearly international competition in the sport until 2022, excluding one event. The first of these official biggest yearly international competitions f
           </div>
           <div class="mt-5 font-mono text-[11px] text-dim uppercase tracking-wider">Agent roles</div>
           <div class="mt-2">
-            <span class="role-pill">evidence_agent &times;6</span>
+            <span class="role-pill">evidence_agent &times;12</span>
             <span class="role-pill">entity_resolution_agent</span>
             <span class="role-pill">answer_agent</span>
             <span class="role-pill">provenance_auditor</span>
             <span class="role-pill">result_synthesizer</span>
             <span class="role-pill">workflow_verifier</span>
           </div>
-          <div class="mt-4 font-mono text-[11px] text-dim uppercase tracking-wider">Revision contract</div>
-          <div class="mt-2 text-sm text-dim">
-            Six evidence partitions <span class="font-mono text-orange">P01&ndash;P06</span> feed entity resolution and a provenance auditor.
-            Up to <span class="text-ink">6 candidate revision edges</span> let a failed receipt send the workflow back one step under a bounded loop.
+          <div class="mt-4 font-mono text-[11px] text-dim uppercase tracking-wider">Artifact types on handoff edges</div>
+          <div class="mt-2">
+            <span class="role-pill">source_evidence</span>
+            <span class="role-pill">resolved_candidate</span>
+            <span class="role-pill">answer_candidate</span>
+            <span class="role-pill">provenance_receipt</span>
+            <span class="role-pill">retrieval_result_bundle</span>
           </div>
         </div>
         <div class="lg:col-span-2">
-          <div class="font-mono text-[11px] text-dim uppercase tracking-wider mb-2">Workflow sketch</div>
-          <svg viewBox="0 0 320 230" class="w-full rounded-xl border border-warmborder" style="background:rgba(0,0,0,0.28)">
-            <defs>
-              <marker id="a3" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
-                <path d="M0,0 L7,3 L0,6 Z" fill="#FB8147"/>
-              </marker>
-            </defs>
-            <rect x="8" y="10" width="48" height="26" rx="5" fill="rgba(251,129,71,0.12)" stroke="#FB8147" stroke-opacity=".5"/>
-            <text x="32" y="27" text-anchor="middle" font-size="9" fill="#C25A22">P01</text>
-            <rect x="62" y="10" width="48" height="26" rx="5" fill="rgba(251,129,71,0.12)" stroke="#FB8147" stroke-opacity=".5"/>
-            <text x="86" y="27" text-anchor="middle" font-size="9" fill="#C25A22">P02</text>
-            <rect x="116" y="10" width="48" height="26" rx="5" fill="rgba(251,129,71,0.12)" stroke="#FB8147" stroke-opacity=".5"/>
-            <text x="140" y="27" text-anchor="middle" font-size="9" fill="#C25A22">P03</text>
-            <rect x="170" y="10" width="48" height="26" rx="5" fill="rgba(251,129,71,0.12)" stroke="#FB8147" stroke-opacity=".5"/>
-            <text x="194" y="27" text-anchor="middle" font-size="9" fill="#C25A22">P04</text>
-            <rect x="224" y="10" width="48" height="26" rx="5" fill="rgba(251,129,71,0.12)" stroke="#FB8147" stroke-opacity=".5"/>
-            <text x="248" y="27" text-anchor="middle" font-size="9" fill="#C25A22">P05</text>
-            <rect x="278" y="10" width="34" height="26" rx="5" fill="rgba(251,129,71,0.12)" stroke="#FB8147" stroke-opacity=".5"/>
-            <text x="295" y="27" text-anchor="middle" font-size="9" fill="#C25A22">P06</text>
-            <rect x="70" y="80" width="180" height="32" rx="6" fill="rgba(253,168,58,0.14)" stroke="#FDA83A" stroke-opacity=".55"/>
-            <text x="160" y="100" text-anchor="middle" font-size="9" fill="#B45309">entity_resolution</text>
-            <rect x="40" y="140" width="110" height="28" rx="6" fill="rgba(251,129,71,0.12)" stroke="#FB8147" stroke-opacity=".5"/>
-            <text x="95" y="158" text-anchor="middle" font-size="9" fill="#C25A22">provenance_auditor</text>
-            <rect x="170" y="140" width="110" height="28" rx="6" fill="rgba(251,129,71,0.12)" stroke="#FB8147" stroke-opacity=".5"/>
-            <text x="225" y="158" text-anchor="middle" font-size="9" fill="#C25A22">answer_agent</text>
-            <rect x="90" y="192" width="140" height="26" rx="6" fill="rgba(253,168,58,0.14)" stroke="#FDA83A" stroke-opacity=".55"/>
-            <text x="160" y="209" text-anchor="middle" font-size="9" fill="#B45309">result_synthesizer</text>
-            <line x1="32" y1="36" x2="120" y2="80" stroke="#FB8147" stroke-width="1" stroke-opacity=".45" marker-end="url(#a3)"/>
-            <line x1="86" y1="36" x2="135" y2="80" stroke="#FB8147" stroke-width="1" stroke-opacity=".45" marker-end="url(#a3)"/>
-            <line x1="140" y1="36" x2="150" y2="80" stroke="#FB8147" stroke-width="1" stroke-opacity=".45" marker-end="url(#a3)"/>
-            <line x1="194" y1="36" x2="170" y2="80" stroke="#FB8147" stroke-width="1" stroke-opacity=".45" marker-end="url(#a3)"/>
-            <line x1="248" y1="36" x2="190" y2="80" stroke="#FB8147" stroke-width="1" stroke-opacity=".45" marker-end="url(#a3)"/>
-            <line x1="295" y1="36" x2="210" y2="80" stroke="#FB8147" stroke-width="1" stroke-opacity=".45" marker-end="url(#a3)"/>
-            <line x1="120" y1="112" x2="95" y2="140" stroke="#FDA83A" stroke-width="1.2" stroke-opacity=".5" marker-end="url(#a3)"/>
-            <line x1="200" y1="112" x2="225" y2="140" stroke="#FDA83A" stroke-width="1.2" stroke-opacity=".5" marker-end="url(#a3)"/>
-            <line x1="95" y1="168" x2="140" y2="192" stroke="#FB8147" stroke-width="1.2" stroke-opacity=".5" marker-end="url(#a3)"/>
-            <line x1="225" y1="168" x2="180" y2="192" stroke="#FB8147" stroke-width="1.2" stroke-opacity=".5" marker-end="url(#a3)"/>
-          </svg>
-          <div class="mt-3 text-xs text-dim leading-relaxed">
-            Isolation-relevant: evidence partitions are family-local; pollution inserts inapplicable content across boundaries.
+          <div class="font-mono text-[11px] text-dim uppercase tracking-wider">Notes</div>
+          <div class="mt-2 text-sm text-dim leading-relaxed">
+The widest fan-out in the release: twelve fixed-corpus partitions are searched in parallel and every one of them must contribute a verified quotation before entity resolution can commit to a single candidate. Answer and provenance run as an auditable pair, and twelve revision edges let a failed audit push the workflow back into the partition layer.
           </div>
         </div>
+      </div>
+      <div class="mt-7">
+        <div class="font-mono text-[11px] text-dim uppercase tracking-wider mb-2">Workflow topology</div>
+        <div class="sketch-box" data-sketch="sk3"></div>
       </div>
     </details>
 
@@ -761,11 +678,11 @@ What is the full name of a person known for investing in technology businesses? 
           <div class="example-icon shrink-0">04</div>
           <div>
             <div class="font-mono text-orange text-xs mb-1.5 uppercase tracking-wider">Mathematical &amp; Structured Reasoning</div>
-            <h3 class="font-display text-2xl font-semibold">HepLean proof-dependency workflow</h3>
+            <h3 class="font-display text-2xl font-semibold">HepLean ElevenPlane proof-dependency workflow</h3>
             <div class="mt-3 flex flex-wrap gap-2">
-              <span class="chip">v15_family_0631_c64a79c49422</span>
-              <span class="chip">11 nodes &middot; 11 edges</span>
-              <span class="chip">math-hep-0031</span>
+              <span class="chip">v15_family_0682_989ef425b8d7</span>
+              <span class="chip">16 nodes &middot; 40 edges</span>
+              <span class="chip">math-hep-0082</span>
               <span class="chip">Lean 4 &middot; HepLean-v4.7</span>
             </div>
           </div>
@@ -775,50 +692,29 @@ What is the full name of a person known for investing in technology businesses? 
         <div class="lg:col-span-3">
           <div class="font-mono text-[11px] text-dim uppercase tracking-wider mb-2">Global goal (excerpt)</div>
           <div class="goal-box">
-Maintain the fixed Lean project HepLean-v4.7 at commit 7448822a&hellip; with toolchain leanprover/lean4:v4.7.0. Treat the declarations below as one real proof-dependency workflow. Independent declarations may be assigned to separate reasoning agents. A downstream agent may receive only a successfully compiled ProofReceipt whose theorem ID, statement hash, repository commit and toolchain match its declared incoming edge. Do not change signatures and do not use sorry, admit or new axioms. Return every ProofReceipt and one unified Lean release receipt.<br><br>
-Obligation 1 (stage 1): At HepLean\SpaceTime\LorentzGroup&hellip;
+Maintain the fixed Lean project HepLean-v4.7 at commit 7448822afced644bd61f0bdcf4dc438f455f9890 with toolchain leanprover/lean4:v4.7.0. Treat the 15 declarations below as one real proof-dependency workflow. Independent declarations may be assigned to separate reasoning agents. A downstream agent may receive only a successfully compiled ProofReceipt whose theorem ID, statement hash, repository commit and toolchain match its declared incoming edge. Do not change signatures and do not use sorry, ad
           </div>
-          <div class="mt-5 font-mono text-[11px] text-dim uppercase tracking-wider">Gating rule</div>
-          <div class="mt-2 text-sm text-dim">
-            <span class="text-ink">ProofReceipt-gated edges.</span> Every handoff is checked against theorem ID, statement hash,
-            repository commit, and toolchain &mdash; version-aware memory in its strictest form.
-          </div>
-          <div class="mt-4 font-mono text-[11px] text-dim uppercase tracking-wider">Constraints</div>
+          <div class="mt-5 font-mono text-[11px] text-dim uppercase tracking-wider">Agent roles</div>
           <div class="mt-2">
-            <span class="role-pill">no signature change</span>
-            <span class="role-pill">no sorry / admit</span>
-            <span class="role-pill">no new axioms</span>
-            <span class="role-pill">unified release receipt</span>
+            <span class="role-pill">reasoning_agent &times;15</span>
+            <span class="role-pill">workflow_verifier</span>
+          </div>
+          <div class="mt-4 font-mono text-[11px] text-dim uppercase tracking-wider">Artifact types on handoff edges</div>
+          <div class="mt-2">
+            <span class="role-pill">proof_receipt</span>
+            <span class="role-pill">verification_receipt</span>
           </div>
         </div>
         <div class="lg:col-span-2">
-          <div class="font-mono text-[11px] text-dim uppercase tracking-wider mb-2">Workflow sketch</div>
-          <svg viewBox="0 0 320 210" class="w-full rounded-xl border border-warmborder" style="background:rgba(0,0,0,0.28)">
-            <defs>
-              <marker id="a4" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
-                <path d="M0,0 L7,3 L0,6 Z" fill="#FDA83A"/>
-              </marker>
-            </defs>
-            <rect x="20" y="14" width="120" height="30" rx="6" fill="rgba(251,129,71,0.12)" stroke="#FB8147" stroke-opacity=".5"/>
-            <text x="80" y="33" text-anchor="middle" font-size="9" fill="#C25A22">theorem A (stage 1)</text>
-            <rect x="180" y="14" width="120" height="30" rx="6" fill="rgba(251,129,71,0.12)" stroke="#FB8147" stroke-opacity=".5"/>
-            <text x="240" y="33" text-anchor="middle" font-size="9" fill="#C25A22">theorem B (stage 1)</text>
-            <rect x="100" y="80" width="120" height="30" rx="6" fill="rgba(253,168,58,0.14)" stroke="#FDA83A" stroke-opacity=".55"/>
-            <text x="160" y="99" text-anchor="middle" font-size="9" fill="#B45309">theorem C (stage 2)</text>
-            <rect x="100" y="136" width="120" height="30" rx="6" fill="rgba(231,111,81,0.12)" stroke="#E76F51" stroke-opacity=".55"/>
-            <text x="160" y="155" text-anchor="middle" font-size="9" fill="#B45309">theorem D (stage 3)</text>
-            <rect x="90" y="180" width="140" height="24" rx="6" fill="rgba(253,168,58,0.14)" stroke="#FDA83A" stroke-opacity=".55"/>
-            <text x="160" y="196" text-anchor="middle" font-size="9" fill="#B45309">unified Lean release</text>
-            <line x1="80" y1="44" x2="130" y2="80" stroke="#FDA83A" stroke-width="1.3" stroke-opacity=".55" marker-end="url(#a4)"/>
-            <line x1="240" y1="44" x2="190" y2="80" stroke="#FDA83A" stroke-width="1.3" stroke-opacity=".55" marker-end="url(#a4)"/>
-            <line x1="160" y1="110" x2="160" y2="136" stroke="#FDA83A" stroke-width="1.3" stroke-opacity=".55" marker-end="url(#a4)"/>
-            <line x1="160" y1="166" x2="160" y2="180" stroke="#FDA83A" stroke-width="1.3" stroke-opacity=".55" marker-end="url(#a4)"/>
-          </svg>
-          <div class="mt-3 text-xs text-dim leading-relaxed">
-            Source: <span class="font-mono text-honey">HepLean-v4.7 @ 7448822a&hellip;</span><br/>
-            Toolchain: <span class="font-mono text-orange">leanprover/lean4:v4.7.0</span>
+          <div class="font-mono text-[11px] text-dim uppercase tracking-wider">Notes</div>
+          <div class="mt-2 text-sm text-dim leading-relaxed">
+Ten independent <span class="font-mono text-orange">isSolution_f*</span> obligations fan in to <span class="font-mono text-orange">sum_part</span>, then <span class="font-mono text-orange">grav</span>, and a further pair feeds <span class="font-mono text-orange">f_zero</span>. Every handoff is a ProofReceipt gated on theorem ID, statement hash, repository commit and toolchain &mdash; version-aware memory in its strictest form.
           </div>
         </div>
+      </div>
+      <div class="mt-7">
+        <div class="font-mono text-[11px] text-dim uppercase tracking-wider mb-2">Workflow topology</div>
+        <div class="sketch-box" data-sketch="sk4"></div>
       </div>
     </details>
   </div>
@@ -1498,6 +1394,212 @@ function buildChrono() {
     '</div>';
   cardsBox.appendChild(ours);
 }
+
+
+// ---------- workflow sketches (layered DAG) ----------
+const SKETCHES = {"sk1":{"nodes":[{"id":"n01","label":"program brief","layer":0,"accent":"src","sub":"source_evidence"},{"id":"n03","label":"recipes DB","layer":0,"accent":"src","sub":"source_evidence"},{"id":"n06","label":"nutrition research","layer":0,"accent":"src","sub":"source_evidence"},{"id":"n02","label":"requirements.md","layer":1,"accent":"src","sub":"tabular_artifact"},{"id":"n04","label":"categorize_recipes.py","layer":2,"accent":"code","sub":"code_artifact"},{"id":"n05","label":"run categorize","layer":3,"accent":"exec","sub":"execution_receipt"},{"id":"n07","label":"analyze_research.py","layer":4,"accent":"code","sub":"code_artifact"},{"id":"n08","label":"run analysis","layer":5,"accent":"exec","sub":"execution_receipt"},{"id":"n09","label":"build_menus.py","layer":5,"accent":"code","sub":"code_artifact"},{"id":"n10","label":"run build_menus","layer":6,"accent":"exec","sub":"execution_receipt"},{"id":"n11","label":"preferences form","layer":7,"accent":"art","sub":"form_receipt"},{"id":"n12","label":"analysis.xlsx","layer":8,"accent":"art","sub":"tabular_artifact"},{"id":"n13","label":"update workbook","layer":9,"accent":"art","sub":"tabular_artifact"},{"id":"n14","label":"update workbook","layer":10,"accent":"art","sub":"tabular_artifact"},{"id":"n15","label":"refine menus","layer":11,"accent":"art","sub":"tabular_artifact"},{"id":"n16","label":"finalize workbook","layer":12,"accent":"art","sub":"tabular_artifact"},{"id":"n17","label":"proposal.docx","layer":13,"accent":"art","sub":"document_artifact"},{"id":"n18","label":"validate_menus.py","layer":14,"accent":"code","sub":"code_artifact"},{"id":"n19","label":"workflow verifier","layer":15,"accent":"verify","sub":"verification_receipt"}],"edges":[{"f":"n01","t":"n02","kind":"flow"},{"f":"n01","t":"n04","kind":"flow"},{"f":"n03","t":"n04","kind":"flow"},{"f":"n02","t":"n04","kind":"flow"},{"f":"n04","t":"n05","kind":"flow"},{"f":"n05","t":"n07","kind":"flow"},{"f":"n06","t":"n07","kind":"flow"},{"f":"n07","t":"n08","kind":"flow"},{"f":"n07","t":"n09","kind":"flow"},{"f":"n08","t":"n10","kind":"flow"},{"f":"n09","t":"n10","kind":"flow"},{"f":"n10","t":"n11","kind":"flow"},{"f":"n10","t":"n12","kind":"flow"},{"f":"n11","t":"n13","kind":"flow"},{"f":"n12","t":"n13","kind":"flow"},{"f":"n13","t":"n14","kind":"flow"},{"f":"n14","t":"n15","kind":"flow"},{"f":"n15","t":"n16","kind":"flow"},{"f":"n16","t":"n17","kind":"flow"},{"f":"n17","t":"n18","kind":"flow"},{"f":"n18","t":"n19","kind":"flow"},{"f":"n19","t":"n12","kind":"rev"},{"f":"n19","t":"n14","kind":"rev"},{"f":"n19","t":"n15","kind":"rev"},{"f":"n19","t":"n16","kind":"rev"}]},"sk2":{"nodes":[{"id":"n01","label":"issue analyst","layer":0,"accent":"src","sub":"issue_requirements"},{"id":"n02","label":"reproduce 1","layer":1,"accent":"exec","sub":"reproduction_receipt"},{"id":"n03","label":"reproduce 2","layer":1,"accent":"exec","sub":"reproduction_receipt"},{"id":"n04","label":"reproduce 3","layer":1,"accent":"exec","sub":"reproduction_receipt"},{"id":"n05","label":"localize 1","layer":1,"accent":"src","sub":"localization_receipt"},{"id":"n06","label":"localize 2","layer":1,"accent":"src","sub":"localization_receipt"},{"id":"n07","label":"localize 3","layer":1,"accent":"src","sub":"localization_receipt"},{"id":"n08","label":"baseline","layer":1,"accent":"exec","sub":"baseline_receipt"},{"id":"n09","label":"patch plan","layer":2,"accent":"code","sub":"patch_plan"},{"id":"n10","label":"implement patch","layer":3,"accent":"code","sub":"patch_candidate"},{"id":"n11","label":"test 1","layer":4,"accent":"verify","sub":"test_receipt"},{"id":"n12","label":"test 2","layer":4,"accent":"verify","sub":"test_receipt"},{"id":"n13","label":"test 3","layer":4,"accent":"verify","sub":"test_receipt"},{"id":"n14","label":"regression rerun","layer":4,"accent":"verify","sub":"test_receipt"},{"id":"n15","label":"release bundle","layer":5,"accent":"art","sub":"release_bundle"},{"id":"n16","label":"workflow verifier","layer":6,"accent":"verify","sub":"verification_receipt"}],"edges":[{"f":"n01","t":"n02","kind":"flow"},{"f":"n01","t":"n03","kind":"flow"},{"f":"n01","t":"n04","kind":"flow"},{"f":"n01","t":"n05","kind":"flow"},{"f":"n01","t":"n06","kind":"flow"},{"f":"n01","t":"n07","kind":"flow"},{"f":"n01","t":"n08","kind":"flow"},{"f":"n02","t":"n09","kind":"flow"},{"f":"n03","t":"n09","kind":"flow"},{"f":"n04","t":"n09","kind":"flow"},{"f":"n05","t":"n09","kind":"flow"},{"f":"n06","t":"n09","kind":"flow"},{"f":"n07","t":"n09","kind":"flow"},{"f":"n08","t":"n09","kind":"flow"},{"f":"n09","t":"n10","kind":"flow"},{"f":"n10","t":"n11","kind":"flow"},{"f":"n10","t":"n12","kind":"flow"},{"f":"n10","t":"n13","kind":"flow"},{"f":"n10","t":"n14","kind":"flow"},{"f":"n11","t":"n15","kind":"flow"},{"f":"n12","t":"n15","kind":"flow"},{"f":"n13","t":"n15","kind":"flow"},{"f":"n14","t":"n15","kind":"flow"},{"f":"n15","t":"n16","kind":"flow"},{"f":"n16","t":"n10","kind":"rev"}]},"sk3":{"nodes":[{"id":"n01","label":"P01","layer":0,"accent":"src","sub":"source_evidence"},{"id":"n02","label":"P02","layer":0,"accent":"src","sub":"source_evidence"},{"id":"n03","label":"P03","layer":0,"accent":"src","sub":"source_evidence"},{"id":"n04","label":"P04","layer":0,"accent":"src","sub":"source_evidence"},{"id":"n05","label":"P05","layer":0,"accent":"src","sub":"source_evidence"},{"id":"n06","label":"P06","layer":0,"accent":"src","sub":"source_evidence"},{"id":"n07","label":"P07","layer":0,"accent":"src","sub":"source_evidence"},{"id":"n08","label":"P08","layer":0,"accent":"src","sub":"source_evidence"},{"id":"n09","label":"P09","layer":0,"accent":"src","sub":"source_evidence"},{"id":"n10","label":"P10","layer":0,"accent":"src","sub":"source_evidence"},{"id":"n11","label":"P11","layer":0,"accent":"src","sub":"source_evidence"},{"id":"n12","label":"P12","layer":0,"accent":"src","sub":"source_evidence"},{"id":"n13","label":"entity resolution","layer":1,"accent":"art","sub":"resolved_candidate"},{"id":"n14","label":"answer agent","layer":2,"accent":"art","sub":"answer_candidate"},{"id":"n15","label":"provenance auditor","layer":2,"accent":"verify","sub":"provenance_receipt"},{"id":"n16","label":"result synthesizer","layer":3,"accent":"art","sub":"retrieval_result_bundle"},{"id":"n17","label":"workflow verifier","layer":4,"accent":"verify","sub":"verification_receipt"}],"edges":[{"f":"n01","t":"n13","kind":"flow"},{"f":"n02","t":"n13","kind":"flow"},{"f":"n03","t":"n13","kind":"flow"},{"f":"n04","t":"n13","kind":"flow"},{"f":"n05","t":"n13","kind":"flow"},{"f":"n06","t":"n13","kind":"flow"},{"f":"n07","t":"n13","kind":"flow"},{"f":"n08","t":"n13","kind":"flow"},{"f":"n09","t":"n13","kind":"flow"},{"f":"n10","t":"n13","kind":"flow"},{"f":"n11","t":"n13","kind":"flow"},{"f":"n12","t":"n13","kind":"flow"},{"f":"n13","t":"n14","kind":"flow"},{"f":"n13","t":"n15","kind":"flow"},{"f":"n14","t":"n16","kind":"flow"},{"f":"n15","t":"n16","kind":"flow"},{"f":"n16","t":"n17","kind":"flow"},{"f":"n17","t":"n13","kind":"rev"},{"f":"n17","t":"n14","kind":"rev"},{"f":"n17","t":"n15","kind":"rev"},{"f":"n16","t":"n13","kind":"rev"}]},"sk4":{"nodes":[{"id":"n01","label":"f0","layer":0,"accent":"proof","sub":"proof_receipt"},{"id":"n02","label":"f1","layer":0,"accent":"proof","sub":"proof_receipt"},{"id":"n03","label":"f2","layer":0,"accent":"proof","sub":"proof_receipt"},{"id":"n04","label":"f3","layer":0,"accent":"proof","sub":"proof_receipt"},{"id":"n05","label":"f4","layer":0,"accent":"proof","sub":"proof_receipt"},{"id":"n06","label":"f5","layer":0,"accent":"proof","sub":"proof_receipt"},{"id":"n07","label":"f6","layer":0,"accent":"proof","sub":"proof_receipt"},{"id":"n08","label":"f7","layer":0,"accent":"proof","sub":"proof_receipt"},{"id":"n09","label":"f8","layer":0,"accent":"proof","sub":"proof_receipt"},{"id":"n10","label":"f9","layer":0,"accent":"proof","sub":"proof_receipt"},{"id":"n11","label":"sum_part","layer":1,"accent":"proof","sub":"proof_receipt"},{"id":"n12","label":"grav","layer":2,"accent":"proof","sub":"proof_receipt"},{"id":"n13","label":"f10","layer":3,"accent":"proof","sub":"proof_receipt"},{"id":"n14","label":"only_if_zero","layer":3,"accent":"proof","sub":"proof_receipt"},{"id":"n15","label":"f_zero","layer":4,"accent":"proof","sub":"proof_receipt"},{"id":"n16","label":"Lean release","layer":5,"accent":"verify","sub":"verification_receipt"}],"edges":[{"f":"n01","t":"n11","kind":"flow"},{"f":"n02","t":"n11","kind":"flow"},{"f":"n03","t":"n11","kind":"flow"},{"f":"n04","t":"n11","kind":"flow"},{"f":"n05","t":"n11","kind":"flow"},{"f":"n06","t":"n11","kind":"flow"},{"f":"n07","t":"n11","kind":"flow"},{"f":"n08","t":"n11","kind":"flow"},{"f":"n09","t":"n11","kind":"flow"},{"f":"n10","t":"n11","kind":"flow"},{"f":"n11","t":"n12","kind":"flow"},{"f":"n12","t":"n13","kind":"flow"},{"f":"n12","t":"n14","kind":"flow"},{"f":"n13","t":"n15","kind":"flow"},{"f":"n14","t":"n15","kind":"flow"},{"f":"n15","t":"n16","kind":"flow"},{"f":"n16","t":"n11","kind":"rev"},{"f":"n16","t":"n13","kind":"rev"},{"f":"n15","t":"n12","kind":"rev"}]}};
+
+function buildSketch(box) {
+  const key = box.getAttribute("data-sketch");
+  const spec = SKETCHES[key];
+  if (!spec) return;
+  const nodes = spec.nodes, edges = spec.edges;
+
+  const layerMap = {};
+  nodes.forEach(n => { (layerMap[n.layer] = layerMap[n.layer] || []).push(n); });
+  const layerKeys = Object.keys(layerMap).map(Number).sort((a, b) => a - b);
+  const counts = layerKeys.map(k => layerMap[k].length);
+  const maxW = Math.max.apply(null, counts);
+  const nL = layerKeys.length;
+  // deep chain -> horizontal (possibly serpentine); wide fan-out -> vertical rows
+  const vertical = maxW > nL;
+
+  const ACCENT = {
+    src: "#FB8147", code: "#D97706", exec: "#E76F51",
+    art: "#B45309", verify: "#2A9D8F", proof: "#457B9D"
+  };
+  const NH = 30, VGAP = 10, HGAP = 10, GX = 26, GY = 22, PAD = 18;
+
+  const labelW = n => Math.max(50, Math.min(132, n.label.length * 6.4 + 16));
+  const pos = {};
+  let W, H;
+
+  if (vertical) {
+    // layers are rows; wide layers pack into a small grid
+    const grids = layerKeys.map(k => {
+      const arr = layerMap[k];
+      const cols = Math.max(1, Math.min(arr.length, Math.ceil(Math.sqrt(arr.length * 1.8))));
+      const rows = Math.ceil(arr.length / cols);
+      const cw = Math.max.apply(null, arr.map(labelW));
+      return {
+        cols: cols, rows: rows, cw: cw,
+        w: cols * cw + (cols - 1) * VGAP,
+        h: rows * NH + (rows - 1) * HGAP
+      };
+    });
+    W = Math.max.apply(null, grids.map(g => g.w)) + PAD * 2;
+    let y = PAD;
+    layerKeys.forEach((k, li) => {
+      const arr = layerMap[k];
+      const gr = grids[li];
+      const x0 = (W - gr.w) / 2;
+      arr.forEach((n, idx) => {
+        const c = idx % gr.cols, r = Math.floor(idx / gr.cols);
+        pos[n.id] = {
+          x: x0 + c * (gr.cw + VGAP),
+          y: y + r * (NH + HGAP),
+          w: gr.cw, h: NH
+        };
+      });
+      y += gr.h + GY;
+    });
+    H = y - GY + PAD;
+  } else {
+    // layers are columns; wrap into serpentine rows when deep
+    const colW = layerKeys.map(k => Math.max.apply(null, layerMap[k].map(labelW)));
+    const colH = layerKeys.map(k => layerMap[k].length * NH + (layerMap[k].length - 1) * HGAP);
+    const maxColW = Math.max.apply(null, colW);
+    // columns per row: keep total width under ~1080
+    const colStep = maxColW + GX;
+    let colsPerRow = Math.max(3, Math.min(nL, Math.floor(1040 / colStep)));
+    if (colsPerRow >= nL) colsPerRow = nL;
+    const nRows = Math.ceil(nL / colsPerRow);
+    const rowHeights = [];
+    for (let r = 0; r < nRows; r++) {
+      let h = 0;
+      for (let c = 0; c < colsPerRow; c++) {
+        const li = r * colsPerRow + c;
+        if (li < nL) h = Math.max(h, colH[li]);
+      }
+      rowHeights.push(h);
+    }
+    W = PAD * 2 + colsPerRow * colStep - GX;
+    let y = PAD;
+    const rowY = [];
+    for (let r = 0; r < nRows; r++) { rowY.push(y); y += rowHeights[r] + GY + 18; }
+    H = y - (GY + 18) + PAD;
+
+    for (let li = 0; li < nL; li++) {
+      const r = Math.floor(li / colsPerRow);
+      let c = li % colsPerRow;
+      const snake = (r % 2 === 1);
+      if (snake) c = colsPerRow - 1 - c;
+      const arr = layerMap[layerKeys[li]];
+      const x = PAD + c * colStep;
+      let ny = rowY[r] + (rowHeights[r] - colH[li]) / 2;
+      arr.forEach(n => {
+        pos[n.id] = { x: x, y: ny, w: colW[li], h: NH };
+        ny += NH + HGAP;
+      });
+    }
+  }
+
+  const NS = "http://www.w3.org/2000/svg";
+  const el = (t, attrs) => {
+    const e = document.createElementNS(NS, t);
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    return e;
+  };
+
+  const mid = "sk-" + key + "-m";
+  const svg = el("svg", {
+    viewBox: "0 0 " + W + " " + H,
+    preserveAspectRatio: "xMidYMid meet",
+    style: "width:100%;height:auto;max-height:460px;display:block;"
+  });
+  const defs = el("defs", {});
+  const marker = el("marker", {
+    id: mid, markerWidth: 7, markerHeight: 7, refX: 6, refY: 2.4, orient: "auto"
+  });
+  marker.appendChild(el("path", { d: "M0,0 L6,2.4 L0,4.8 Z", fill: "#C25A22" }));
+  defs.appendChild(marker);
+  svg.appendChild(defs);
+  svg.appendChild(el("rect", {
+    x: 0, y: 0, width: W, height: H, rx: 14,
+    fill: "#FAF7F3", stroke: "#E5E0D8", "stroke-width": 1
+  }));
+
+  edges.forEach(e => {
+    const a = pos[e.f], b = pos[e.t];
+    if (!a || !b) return;
+    const rev = e.kind === "rev";
+    let d;
+    if (vertical) {
+      const sx = a.x + a.w / 2, sy = a.y + a.h;
+      const tx = b.x + b.w / 2, ty = b.y;
+      const dy = Math.max(8, (ty - sy) * 0.42);
+      if (rev) {
+        const loop = Math.max(20, Math.abs(sx - tx) * 0.35 + 16);
+        d = "M" + sx + " " + sy + " C" + (sx + loop) + " " + (sy + 10) + ", " +
+            (tx + loop) + " " + (ty - 10) + ", " + tx + " " + ty;
+      } else {
+        d = "M" + sx + " " + sy + " C" + sx + " " + (sy + dy) + ", " + tx + " " + (ty - dy) + ", " + tx + " " + ty;
+      }
+    } else {
+      const sx = a.x + a.w, sy = a.y + a.h / 2;
+      const tx = b.x, ty = b.y + b.h / 2;
+      const dx = Math.max(8, (tx - sx) * 0.42);
+      const dyv = ty - sy;
+      if (rev) {
+        const loop = Math.max(18, Math.abs(dyv) * 0.35 + 14);
+        d = "M" + sx + " " + sy + " C" + (sx + 14) + " " + (sy + loop) + ", " +
+            (tx - 14) + " " + (ty + loop) + ", " + tx + " " + ty;
+      } else if (Math.abs(dyv) < 2) {
+        d = "M" + sx + " " + sy + " C" + (sx + dx) + " " + sy + ", " + (tx - dx) + " " + ty + ", " + tx + " " + ty;
+      } else {
+        // serpentine / cross-row: route around
+        const bend = dyv > 0 ? 1 : -1;
+        d = "M" + sx + " " + sy + " C" + (sx + dx) + " " + sy + ", " +
+            (tx - dx) + " " + ty + ", " + tx + " " + ty;
+      }
+    }
+    svg.appendChild(el("path", {
+      d: d, fill: "none",
+      stroke: rev ? "#E76F51" : "#FB8147",
+      "stroke-width": rev ? 1.05 : 1.35,
+      "stroke-opacity": rev ? 0.40 : 0.55,
+      "stroke-dasharray": rev ? "4 3" : "",
+      "marker-end": "url(#" + mid + ")"
+    }));
+  });
+
+  nodes.forEach(n => {
+    const p = pos[n.id];
+    const color = ACCENT[n.accent] || "#FB8147";
+    const g = el("g", {});
+    g.appendChild(el("rect", {
+      x: p.x, y: p.y, width: p.w, height: p.h, rx: 8,
+      fill: "#FFFFFF", stroke: "#E5E0D8", "stroke-width": 1
+    }));
+    g.appendChild(el("rect", {
+      x: p.x, y: p.y, width: 3.5, height: p.h, rx: 2, fill: color
+    }));
+    const t = el("text", {
+      x: p.x + p.w / 2 + 1, y: p.y + (n.sub ? 12.5 : 19),
+      "text-anchor": "middle",
+      "font-family": "Inter, sans-serif",
+      "font-size": 10.5, "font-weight": 600, fill: "#1F2329"
+    });
+    t.textContent = n.label;
+    g.appendChild(t);
+    if (n.sub) {
+      const s2 = el("text", {
+        x: p.x + p.w / 2 + 1, y: p.y + 24,
+        "text-anchor": "middle",
+        "font-family": "JetBrains Mono, monospace",
+        "font-size": 7, fill: "#646A73"
+      });
+      s2.textContent = n.sub;
+      g.appendChild(s2);
+    }
+    svg.appendChild(g);
+  });
+
+  box.innerHTML = "";
+  box.appendChild(svg);
+}
+
+document.querySelectorAll(".sketch-box").forEach(buildSketch);
 
 // ---------- reveal on scroll ----------
 const io = new IntersectionObserver((entries) => {
