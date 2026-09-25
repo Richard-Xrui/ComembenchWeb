@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="CoMemBench evaluates collaborative memory boundaries across multi-agent workflow topologies." />
+    <title>CoMemBench — Collaborative Memory, Measured</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Noto+Serif+Display:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet" />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='8' fill='%23a53a2b'/%3E%3Cpath d='M15 19h34M15 45h34M22 14v36M42 14v36' stroke='%23f7f1e5' stroke-width='3'/%3E%3Ccircle cx='32' cy='32' r='6' fill='%231f5255'/%3E%3C/svg%3E" />
+    <style>
+      :root { --paper:#f8f4e9; --paper-deep:#eee5d3; --ink:#1b292d; --muted:#657277; --verm:#a53a2b; --verm-dark:#742b24; --jade:#1f5255; --jade-soft:#d9e8e2; --line:#cfc5af; --gold:#c18f42; }
+      * { box-sizing:border-box; }
+      html { scroll-behavior:smooth; }
+      body { margin:0; color:var(--ink); background:var(--paper); font-family:"Source Serif 4", Georgia, serif; font-size:17px; line-height:1.55; }
+      body::before { content:""; position:fixed; inset:0; pointer-events:none; opacity:.32; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 220 220' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.13'/%3E%3C/svg%3E"); z-index:10; mix-blend-mode:multiply; }
+      a { color:inherit; text-decoration:none; }
+      .shell { width:min(1180px, calc(100% - 48px)); margin:0 auto; }
+      .eyebrow { display:flex; align-items:center; gap:10px; font:500 11px/1.2 "DM Mono", monospace; text-transform:uppercase; letter-spacing:.14em; color:var(--verm); }
+      .eyebrow::before { content:""; width:25px; height:1px; background:currentColor; }
+      .topline { height:5px; background:linear-gradient(90deg,var(--verm) 0 21%, var(--gold) 21% 41%, var(--jade) 41% 67%, var(--ink) 67%); }
+      header { border-bottom:1px solid var(--line); position:relative; z-index:12; }
+      .nav { height:78px; display:flex; align-items:center; justify-content:space-between; gap:24px; }
+      .brand { display:flex; align-items:center; gap:12px; font:600 20px/1 "Noto Serif Display",serif; letter-spacing:-.035em; }
+      .seal { width:38px; height:38px; display:grid; place-items:center; color:#fff8ed; background:var(--verm); font:500 13px/1 "DM Mono",monospace; letter-spacing:-.12em; box-shadow:3px 3px 0 var(--verm-dark); }
+      nav { display:flex; align-items:center; gap:27px; font:500 13px/1 "DM Mono",monospace; color:#405055; }
+      nav a { transition:color .2s ease; } nav a:hover { color:var(--verm); }
+      .nav-access { border:1px solid var(--verm); color:var(--verm); padding:10px 13px; }
+      .hero { min-height:620px; padding:88px 0 68px; position:relative; overflow:hidden; }
+      .hero::after { content:""; position:absolute; width:560px; height:560px; right:-145px; top:-165px; border-radius:50%; border:1px solid rgba(31,82,85,.18); box-shadow:0 0 0 42px rgba(31,82,85,.045), 0 0 0 84px rgba(165,58,43,.035); }
+      .hero-grid { display:grid; grid-template-columns:1.18fr .82fr; gap:56px; align-items:end; position:relative; z-index:1; }
+      h1 { margin:17px 0 22px; max-width:810px; font:600 clamp(3.35rem,7vw,6.55rem)/.96 "Noto Serif Display",serif; letter-spacing:-.065em; }
+      h1 em { color:var(--verm); font-style:normal; }
+      .lede { max-width:630px; margin:0; font-size:clamp(1.08rem,1.8vw,1.28rem); line-height:1.58; color:#465458; }
+      strong { color:var(--ink); font-weight:600; }
+      .hero-actions { display:flex; gap:12px; margin-top:31px; flex-wrap:wrap; }
+      .button { display:inline-flex; align-items:center; gap:12px; padding:13px 16px; border:1px solid var(--ink); font:500 12px/1 "DM Mono",monospace; text-transform:uppercase; letter-spacing:.075em; transition:transform .18s ease, background .18s ease; }
+      .button:hover { transform:translate(-2px,-2px); box-shadow:3px 3px 0 var(--verm); }
+      .button.primary { background:var(--ink); color:var(--paper); }
+      .button.secondary { color:var(--jade); border-color:var(--jade); }
+      .hero-note { border-left:1px solid var(--gold); padding:11px 0 11px 18px; color:#637074; font-size:.95rem; }
+      .hero-note b { display:block; color:var(--ink); font:500 12px/1.3 "DM Mono",monospace; text-transform:uppercase; letter-spacing:.1em; margin-bottom:8px; }
+      .stamp { margin-top:42px; display:flex; align-items:center; gap:17px; color:var(--verm); }
+      .stamp-mark { width:72px; height:72px; border:2px solid var(--verm); display:grid; place-items:center; font:600 29px/1 "Noto Serif Display",serif; letter-spacing:-.11em; transform:rotate(-5deg); }
+      .stamp p { margin:0; max-width:260px; font:500 11px/1.55 "DM Mono",monospace; text-transform:uppercase; letter-spacing:.05em; }
+      .stats { display:grid; grid-template-columns:repeat(2,1fr); border-top:1px solid var(--ink); border-left:1px solid var(--ink); }
+      .stat { min-height:139px; padding:19px 20px; border-right:1px solid var(--ink); border-bottom:1px solid var(--ink); background:rgba(255,255,255,.18); }
+      .stat:nth-child(1), .stat:nth-child(4) { background:rgba(31,82,85,.055); }
+      .stat-num { display:block; font:600 50px/.95 "Noto Serif Display",serif; letter-spacing:-.06em; color:var(--verm); }
+      .stat-label { display:block; margin-top:9px; font:500 10px/1.45 "DM Mono",monospace; text-transform:uppercase; letter-spacing:.1em; color:#506064; }
+      .section { padding:92px 0; border-top:1px solid var(--line); }
+      .section-heading { display:grid; grid-template-columns:260px 1fr; gap:36px; margin-bottom:37px; }
+      h2 { margin:10px 0 0; font:600 clamp(2.35rem,4.5vw,4rem)/1 "Noto Serif Display",serif; letter-spacing:-.055em; }
+      .section-heading > p { max-width:680px; margin:7px 0 0; font-size:1.12rem; color:#536164; }
+      .domain-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
+      .domain { min-height:290px; padding:23px; border:1px solid var(--line); background:rgba(255,255,255,.25); position:relative; overflow:hidden; transition:transform .2s ease,border-color .2s ease; }
+      .domain:hover { transform:translateY(-5px); border-color:var(--jade); }
+      .domain::after { content:attr(data-mark); position:absolute; right:-13px; bottom:-38px; color:rgba(165,58,43,.1); font:600 132px/1 "Noto Serif Display",serif; }
+      .domain-num { font:500 11px/1 "DM Mono",monospace; color:var(--verm); letter-spacing:.13em; }
+      h3 { margin:51px 0 12px; font:600 26px/1.07 "Noto Serif Display",serif; letter-spacing:-.04em; }
+      .domain p { position:relative; z-index:1; margin:0; color:#5a676a; font-size:.95rem; }
+      .domain small { display:block; margin-top:21px; color:var(--jade); font:500 10px/1.4 "DM Mono",monospace; text-transform:uppercase; letter-spacing:.1em; }
+      .structure { display:grid; grid-template-columns:1.1fr .9fr; gap:22px; }
+      .diagram { min-height:345px; padding:25px; background:var(--ink); color:var(--paper); position:relative; overflow:hidden; }
+      .diagram .eyebrow { color:#d9b068; }
+      .flow { position:relative; margin-top:50px; display:grid; grid-template-columns:repeat(4,1fr); gap:7px; }
+      .flow::before { content:""; position:absolute; top:38px; left:9%; width:76%; border-top:1px dashed rgba(247,244,233,.55); }
+      .node { position:relative; z-index:1; }
+      .node-dot { display:grid; place-items:center; width:77px; height:77px; border:1px solid rgba(247,244,233,.65); background:var(--ink); color:#efd8a6; font:500 13px/1 "DM Mono",monospace; }
+      .node p { margin:13px 0 0; font:500 10px/1.45 "DM Mono",monospace; text-transform:uppercase; letter-spacing:.07em; color:#cad3d1; }
+      .method { border:1px solid var(--line); padding:27px; background:rgba(255,255,255,.32); }
+      .method h3 { margin:16px 0 16px; font-size:31px; }
+      .method p { color:#566367; margin:0; }
+      .method-list { list-style:none; padding:0; margin:28px 0 0; border-top:1px solid var(--line); }
+      .method-list li { padding:13px 0; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; gap:14px; font-size:.93rem; }
+      .method-list span { color:var(--verm); font:500 10px/1.5 "DM Mono",monospace; text-transform:uppercase; letter-spacing:.08em; }
+      .access { background:var(--jade); color:#f8f4e9; padding:71px 0; }
+      .access .eyebrow { color:#dfb36e; }.access h2 { max-width:760px; margin-bottom:20px; }.access p { max-width:620px; color:#dbe8e4; font-size:1.12rem; }
+      .access-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:37px; }
+      .access-card { border:1px solid rgba(248,244,233,.4); padding:23px; min-height:140px; }
+      .access-card b { display:block; font:500 10px/1 "DM Mono",monospace; letter-spacing:.12em; color:#e2b873; }.access-card h3 { margin:16px 0 8px; color:#fffaf0; font-size:25px; }.access-card p { margin:0; font-size:.94rem; color:#d7e4df; }
+      footer { padding:28px 0 35px; background:#172528; color:#cdd7d4; }
+      .foot { display:flex; justify-content:space-between; gap:20px; align-items:start; font:400 10px/1.6 "DM Mono",monospace; text-transform:uppercase; letter-spacing:.05em; }.foot p { margin:0; max-width:620px; }
+      .foot b { color:#e4b36b; font-weight:500; }
+      @media (max-width:850px) { .hero { padding-top:63px; min-height:auto; }.hero-grid,.structure,.section-heading { grid-template-columns:1fr; gap:34px; }.hero-note { max-width:460px; }.domain-grid { grid-template-columns:repeat(2,1fr); }.section { padding:68px 0; }.section-heading { margin-bottom:29px; }.section-heading h2 { margin-top:5px; } }
+      @media (max-width:580px) { .shell { width:min(100% - 30px,1180px); }.nav { height:69px; }.brand { font-size:18px; }.seal { width:33px;height:33px; } nav a:not(.nav-access) { display:none; }.hero { padding:53px 0 49px; } h1 { font-size:3.2rem; }.stats { margin-top:3px; }.stat { min-height:118px;padding:17px; }.stat-num { font-size:43px; }.domain-grid,.access-grid { grid-template-columns:1fr; }.domain { min-height:220px; }.domain h3 { margin-top:38px; }.flow { grid-template-columns:repeat(2,1fr); row-gap:27px; }.flow::before { display:none; }.foot { flex-direction:column; }.hero-actions { gap:9px; }.button { padding:12px 13px; } }
+    </style>
+  </head>
+  <body>
+    <div class="topline"></div>
+    <header>
+      <div class="shell nav">
+        <a class="brand" href="#top" aria-label="CoMemBench home"><span class="seal">CM</span><span>CoMemBench</span></a>
+        <nav aria-label="Main navigation"><a href="#benchmark">Benchmark</a><a href="#structure">Method</a><a href="#access">Access</a><a class="nav-access" href="#access">Get updates ↗</a></nav>
+      </div>
+    </header>
+    <main id="top">
+      <section class="hero"><div class="shell hero-grid">
+        <div>
+          <div class="eyebrow">A benchmark for multi-agent systems</div>
+          <h1>Collaborative memory,<br /><em>measured at its boundaries.</em></h1>
+          <p class="lede">CoMemBench evaluates how memory moves, persists, and fails across <strong>multi-agent workflow topologies</strong>—where the handoff is as important as the answer.</p>
+          <div class="hero-actions"><a class="button primary" href="#benchmark">Explore the benchmark <span>↓</span></a><a class="button secondary" href="#access">Data access <span>→</span></a></div>
+          <div class="stamp"><div class="stamp-mark">CM</div><p>Evidence-first evaluation for collaborative systems.</p></div>
+        </div>
+        <aside aria-label="Benchmark summary">
+          <div class="hero-note"><b>Release note</b>Public website materials are derived only from the certified v18 release ledger. Results and datasets are published through separate review paths.</div>
+          <div class="stats"><div class="stat"><span class="stat-num">800</span><span class="stat-label">Certified task families</span></div><div class="stat"><span class="stat-num">4</span><span class="stat-label">Evaluation domains</span></div><div class="stat"><span class="stat-num">200</span><span class="stat-label">Families per domain</span></div><div class="stat"><span class="stat-num">v18</span><span class="stat-label">Certified release ledger</span></div></div>
+        </aside>
+      </div></section>
+      <section class="section" id="benchmark"><div class="shell">
+        <div class="section-heading"><div><div class="eyebrow">Benchmark</div><h2>Four domains.<br />One boundary.</h2></div><p>Each domain stresses the same question from a different angle: can a collaborative system preserve the <strong>right information, for the right agent, at the right point in a workflow</strong>?</p></div>
+        <div class="domain-grid">
+          <article class="domain" data-mark="S"><div class="domain-num">01 / 04</div><h3>Stateful<br />Tool Use</h3><p>Tasks that require agents to operate within changing application state and preserve useful context across handoffs.</p><small>200 certified families</small></article>
+          <article class="domain" data-mark="C"><div class="domain-num">02 / 04</div><h3>Repository<br />Code Change</h3><p>Software tasks that connect issue context, source-grounded work, dependency structure, and verification.</p><small>200 certified families</small></article>
+          <article class="domain" data-mark="R"><div class="domain-num">03 / 04</div><h3>Offline Information<br />Retrieval</h3><p>Information-seeking workflows designed to test what should be retained, scoped, and passed forward.</p><small>200 certified families</small></article>
+          <article class="domain" data-mark="M"><div class="domain-num">04 / 04</div><h3>Mathematical &amp;<br />Structured Reasoning</h3><p>Structured reasoning tasks that make intermediate context and coordinated verification visible.</p><small>200 certified families</small></article>
+        </div>
+      </div></section>
+      <section class="section" id="structure"><div class="shell"><div class="section-heading"><div><div class="eyebrow">Method</div><h2>Memory is not a shared scratchpad.</h2></div><p>CoMemBench treats workflow topology as an evaluation surface. It distinguishes <strong>what is stored, who can retrieve it, and whether the workflow can use it responsibly</strong>.</p></div>
+        <div class="structure"><div class="diagram"><div class="eyebrow">A topology-aware view</div><div class="flow"><div class="node"><div class="node-dot">01</div><p>Task<br />context</p></div><div class="node"><div class="node-dot">02</div><p>Typed<br />handoff</p></div><div class="node"><div class="node-dot">03</div><p>Scoped<br />memory</p></div><div class="node"><div class="node-dot">04</div><p>Verified<br />outcome</p></div></div></div>
+        <article class="method"><div class="eyebrow">What the release records</div><h3>Evidence before interpretation.</h3><p>The benchmark release is constructed around task families and certified domain coverage—not a single aggregate score presented without provenance.</p><ul class="method-list"><li>Task-family coverage <span>800 / 800</span></li><li>Domain balance <span>200 each</span></li><li>Release validation <span>passed</span></li></ul></article></div>
+      </div></section>
+      <section class="access" id="access"><div class="shell"><div class="eyebrow">Public release</div><h2>Open evaluation, responsible access.</h2><p>Website, documentation, and evaluation code will be public. Dataset access will use a gated request flow so every release can remain attributable and versioned.</p><div class="access-grid"><article class="access-card"><b>Dataset</b><h3>Access request</h3><p>Gated dataset access is being prepared. The release page will include the application and use terms.</p></article><article class="access-card"><b>Evaluation</b><h3>Code &amp; documentation</h3><p>The public repository and reproducibility instructions will be linked here after the organization is established.</p></article></div></div></section>
+    </main>
+    <footer><div class="shell foot"><p><b>CoMemBench</b> — Benchmarking Collaborative Memory Boundaries across Multi-Agent Workflow Topologies.</p><p>Website prototype · Counts derived from the certified v18 release ledger.</p></div></footer>
+  </body>
+</html>
