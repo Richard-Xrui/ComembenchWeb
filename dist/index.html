@@ -1390,91 +1390,71 @@ function buildSketch(box) {
   const layerMap = {};
   nodes.forEach(n => { (layerMap[n.layer] = layerMap[n.layer] || []).push(n); });
   const layerKeys = Object.keys(layerMap).map(Number).sort((a, b) => a - b);
-  const counts = layerKeys.map(k => layerMap[k].length);
-  const maxW = Math.max.apply(null, counts);
   const nL = layerKeys.length;
-  // deep chain -> horizontal (possibly serpentine); wide fan-out -> vertical rows
-  const vertical = maxW > nL;
 
   const ACCENT = {
     src: "#FB8147", code: "#D97706", exec: "#E76F51",
     art: "#B45309", verify: "#2A9D8F", proof: "#457B9D"
   };
-  const NH = 30, VGAP = 10, HGAP = 10, GX = 26, GY = 22, PAD = 18;
+  const NH = 30, HGAP = 11, GX = 40, PAD = 32;
 
-  const labelW = n => Math.max(50, Math.min(132, n.label.length * 6.4 + 16));
-  const pos = {};
-  let W, H;
+  // width must cover the sub label too, or text spills into the neighbour
+  const labelW = n => {
+    const w1 = n.label.length * 6.5 + 18;
+    const w2 = n.sub ? n.sub.length * 4.3 + 16 : 0;
+    return Math.max(54, Math.min(158, Math.max(w1, w2)));
+  };
 
-  if (vertical) {
-    // layers are rows; wide layers pack into a small grid
-    const grids = layerKeys.map(k => {
-      const arr = layerMap[k];
-      const cols = Math.max(1, Math.min(arr.length, Math.ceil(Math.sqrt(arr.length * 1.8))));
-      const rows = Math.ceil(arr.length / cols);
-      const cw = Math.max.apply(null, arr.map(labelW));
-      return {
-        cols: cols, rows: rows, cw: cw,
-        w: cols * cw + (cols - 1) * VGAP,
-        h: rows * NH + (rows - 1) * HGAP
-      };
-    });
-    W = Math.max.apply(null, grids.map(g => g.w)) + PAD * 2;
-    let y = PAD;
-    layerKeys.forEach((k, li) => {
-      const arr = layerMap[k];
-      const gr = grids[li];
-      const x0 = (W - gr.w) / 2;
-      arr.forEach((n, idx) => {
-        const c = idx % gr.cols, r = Math.floor(idx / gr.cols);
-        pos[n.id] = {
-          x: x0 + c * (gr.cw + VGAP),
-          y: y + r * (NH + HGAP),
-          w: gr.cw, h: NH
-        };
-      });
-      y += gr.h + GY;
-    });
-    H = y - GY + PAD;
-  } else {
-    // layers are columns; wrap into serpentine rows when deep
-    const colW = layerKeys.map(k => Math.max.apply(null, layerMap[k].map(labelW)));
-    const colH = layerKeys.map(k => layerMap[k].length * NH + (layerMap[k].length - 1) * HGAP);
-    const maxColW = Math.max.apply(null, colW);
-    // columns per row: keep total width under ~1080
-    const colStep = maxColW + GX;
-    let colsPerRow = Math.max(3, Math.min(nL, Math.floor(1040 / colStep)));
-    if (colsPerRow >= nL) colsPerRow = nL;
-    const nRows = Math.ceil(nL / colsPerRow);
-    const rowHeights = [];
-    for (let r = 0; r < nRows; r++) {
-      let h = 0;
-      for (let c = 0; c < colsPerRow; c++) {
-        const li = r * colsPerRow + c;
-        if (li < nL) h = Math.max(h, colH[li]);
-      }
-      rowHeights.push(h);
+  // layers are columns, serpentine-wrapped when the graph is deep
+  const colW = layerKeys.map(k => Math.max.apply(null, layerMap[k].map(labelW)));
+  const colH = layerKeys.map(k => layerMap[k].length * NH + (layerMap[k].length - 1) * HGAP);
+  const maxColW = Math.max.apply(null, colW);
+  const colStep = maxColW + GX;
+  let colsPerRow = Math.max(2, Math.min(nL, Math.floor(832 / colStep)));
+  if (colsPerRow >= nL) colsPerRow = nL;
+  const nRows = Math.ceil(nL / colsPerRow);
+  const rowHeights = [];
+  for (let r = 0; r < nRows; r++) {
+    let h = 0;
+    for (let c = 0; c < colsPerRow; c++) {
+      const li = r * colsPerRow + c;
+      if (li < nL) h = Math.max(h, colH[li]);
     }
-    W = PAD * 2 + colsPerRow * colStep - GX;
-    let y = PAD;
-    const rowY = [];
-    for (let r = 0; r < nRows; r++) { rowY.push(y); y += rowHeights[r] + GY + 18; }
-    H = y - (GY + 18) + PAD;
-
-    for (let li = 0; li < nL; li++) {
-      const r = Math.floor(li / colsPerRow);
-      let c = li % colsPerRow;
-      const snake = (r % 2 === 1);
-      if (snake) c = colsPerRow - 1 - c;
-      const arr = layerMap[layerKeys[li]];
-      const x = PAD + c * colStep;
-      let ny = rowY[r] + (rowHeights[r] - colH[li]) / 2;
-      arr.forEach(n => {
-        pos[n.id] = { x: x, y: ny, w: colW[li], h: NH };
-        ny += NH + HGAP;
-      });
-    }
+    rowHeights.push(h);
   }
+  const rowGap = 30;
+  let W = PAD * 2 + colsPerRow * colStep - GX;
+  let y = PAD;
+  const rowY = [];
+  for (let r = 0; r < nRows; r++) { rowY.push(y); y += rowHeights[r] + rowGap; }
+  let H = y - rowGap + PAD;
+
+  const pos = {};
+  for (let li = 0; li < nL; li++) {
+    const r = Math.floor(li / colsPerRow);
+    let c = li % colsPerRow;
+    if (r % 2 === 1) c = colsPerRow - 1 - c;
+    const arr = layerMap[layerKeys[li]];
+    const x = PAD + c * colStep;
+    let ny = rowY[r] + (rowHeights[r] - colH[li]) / 2;
+    arr.forEach((n, ni) => {
+      pos[n.id] = {
+        x: x, y: ny, w: colW[li], h: NH, r: r,
+        colTop: ni === 0, colBot: ni === arr.length - 1,
+        cx: x + colW[li] / 2, cy: ny + NH / 2
+      };
+      ny += NH + HGAP;
+    });
+  }
+
+  // cluster bbox — revision edges bow outside this block
+  let x1 = 1e9, y1 = 1e9, x2 = -1e9, y2 = -1e9;
+  nodes.forEach(n => {
+    const p = pos[n.id];
+    x1 = Math.min(x1, p.x); y1 = Math.min(y1, p.y);
+    x2 = Math.max(x2, p.x + p.w); y2 = Math.max(y2, p.y + p.h);
+  });
+  const ccx = (x1 + x2) / 2, ccy = (y1 + y2) / 2;
 
   const NS = "http://www.w3.org/2000/svg";
   const el = (t, attrs) => {
@@ -1487,7 +1467,7 @@ function buildSketch(box) {
   const svg = el("svg", {
     viewBox: "0 0 " + W + " " + H,
     preserveAspectRatio: "xMidYMid meet",
-    style: "width:100%;height:auto;max-height:460px;display:block;"
+    style: "width:100%;height:auto;max-height:520px;display:block;"
   });
   const defs = el("defs", {});
   [["f", "#E8590C"], ["r", "#C2410C"]].forEach(function (mc) {
@@ -1503,6 +1483,125 @@ function buildSketch(box) {
     fill: "#FAF7F3", stroke: "#E5E0D8", "stroke-width": 1
   }));
 
+  // ---- edges UNDER nodes ----
+  // Routing keeps lines in the gutters and empty row channels so they stay
+  // visible; opaque node boxes sit on top as a hard guarantee that no line
+  // can ever cut a label.
+  let revTick = 0;
+  edges.forEach(e => {
+    const a = pos[e.f], b = pos[e.t];
+    if (!a || !b) return;
+    const rev = e.kind === "rev";
+    const dx = b.cx - a.cx, dy = b.cy - a.cy;
+    const GAP = 3;
+    let d;
+
+    revTick++;
+    const below = b.cy > a.cy;
+    const canEnterTB = (below && b.colTop) || (!below && b.colBot);
+    const canExitTB = (below && a.colBot) || (!below && a.colTop);
+    const adjRows = Math.abs(a.r - b.r) === 1;
+    const stacked = Math.abs(dx) < Math.max(a.w, b.w) * 0.8;
+
+    if (a.r !== b.r) {
+      if (adjRows && canEnterTB) {
+        // travel in the empty rowGap band between the two rows
+        // band BETWEEN the two rows: above the target when it is the lower one
+        const channelY = below
+          ? rowY[b.r] - rowGap * 0.5
+          : rowY[b.r] + rowHeights[b.r] + rowGap * 0.5;
+        let sx, sy, c1x;
+        if (canExitTB) {
+          sx = a.cx; sy = below ? a.y + a.h + GAP : a.y - GAP; c1x = sx;
+        } else {
+          sx = dx >= 0 ? a.x + a.w + GAP : a.x - GAP; sy = a.cy;
+          c1x = sx + (dx >= 0 ? 28 : -28);
+        }
+        const tx = b.cx, ty = below ? b.y - GAP : b.y + b.h + GAP;
+        d = "M" + sx + " " + sy + " C" + c1x + " " + channelY + ", " + tx + " " + channelY + ", " + tx + " " + ty;
+      } else {
+        // blocked or non-adjacent: go around the outside and enter the target
+        // on whichever side is actually clear of neighbours
+        const goRight = (a.cx + b.cx) / 2 >= ccx;
+        const push = 18 + revTick * 8;
+        // is the target sitting on the outer edge of the whole cluster?
+        const clearRight = (b.x + b.w) >= x2 - 1;
+        const clearLeft = b.x <= x1 + 1;
+        if (!below && b.colTop && !clearRight && !clearLeft) {
+          // only the TOP is free: arc above the whole cluster
+          const bowY = y1 - push;
+          const sx = goRight ? a.x + a.w + GAP : a.x - GAP, sy = a.cy;
+          const tx = b.cx, ty = b.y - GAP;
+          d = "M" + sx + " " + sy + " C" + sx + " " + bowY + ", " + tx + " " + bowY + ", " + tx + " " + ty;
+        } else if (below && b.colBot && !clearRight && !clearLeft) {
+          // only the BOTTOM is free: arc below the whole cluster
+          const bowY = y2 + push;
+          const sx = goRight ? a.x + a.w + GAP : a.x - GAP, sy = a.cy;
+          const tx = b.cx, ty = b.y + b.h + GAP;
+          d = "M" + sx + " " + sy + " C" + sx + " " + bowY + ", " + tx + " " + bowY + ", " + tx + " " + ty;
+        } else {
+          // an outer side is free (or nothing better): run the side margin
+          const useRight = clearRight || (!clearLeft && goRight);
+          const bowX = useRight ? x2 + 16 : x1 - 16;
+          const sx = useRight ? a.x + a.w + GAP : a.x - GAP, sy = a.cy;
+          const tx = useRight ? b.x + b.w + GAP : b.x - GAP, ty = b.cy;
+          d = "M" + sx + " " + sy + " C" + bowX + " " + sy + ", " + bowX + " " + ty + ", " + tx + " " + ty;
+        }
+      }
+    } else if (rev || Math.abs(dx) > colStep * 1.2) {
+      // same-row long skip or any back-edge: arc above/below the whole row
+      const rowMid = rowY[a.r] + rowHeights[a.r] / 2;
+      const above = (a.cy + b.cy) / 2 < rowMid;
+      const channelY = above ? rowY[a.r] - 14 : rowY[a.r] + rowHeights[a.r] + 14;
+      const sx = dx >= 0 ? a.x + a.w + GAP : a.x - GAP, sy = a.cy;
+      const tx = dx >= 0 ? b.x - GAP : b.x + b.w + GAP, ty = b.cy;
+      d = "M" + sx + " " + sy + " C" + sx + " " + channelY + ", " + tx + " " + channelY + ", " + tx + " " + ty;
+    } else if (Math.abs(dy) < NH * 1.6) {
+      // same row, short: leave on the side that actually faces the target
+      if (dx >= 0) {
+        const sx = a.x + a.w + GAP, sy = a.cy, tx = b.x - GAP, ty = b.cy;
+        d = "M" + sx + " " + sy + " C" + (sx + 16) + " " + sy + ", " + (tx - 16) + " " + ty + ", " + tx + " " + ty;
+      } else {
+        const sx = a.x - GAP, sy = a.cy, tx = b.x + b.w + GAP, ty = b.cy;
+        d = "M" + sx + " " + sy + " C" + (sx - 16) + " " + sy + ", " + (tx + 16) + " " + ty + ", " + tx + " " + ty;
+      }
+    } else if (stacked) {
+      // nearly stacked in one row: vertical hop through the HGAP
+      let sx, sy, tx, ty;
+      if (dy >= 0) {
+        sx = a.cx; sy = a.y + a.h + GAP; tx = b.cx; ty = b.y - GAP;
+      } else {
+        sx = a.cx; sy = a.y - GAP; tx = b.cx; ty = b.y + b.h + GAP;
+      }
+      d = "M" + sx + " " + sy + " C" + sx + " " + (sy + 14) + ", " + tx + " " + (ty - 14) + ", " + tx + " " + ty;
+    } else {
+      // diagonal inside one row: facing sides, gutters only
+      if (dx >= 0) {
+        const sx = a.x + a.w + GAP, sy = a.cy, tx = b.x - GAP, ty = b.cy;
+        d = "M" + sx + " " + sy + " C" + (sx + 22) + " " + sy + ", " + (tx - 22) + " " + ty + ", " + tx + " " + ty;
+      } else {
+        const sx = a.x - GAP, sy = a.cy, tx = b.x + b.w + GAP, ty = b.cy;
+        d = "M" + sx + " " + sy + " C" + (sx - 22) + " " + sy + ", " + (tx + 22) + " " + ty + ", " + tx + " " + ty;
+      }
+    }
+
+    const w = rev ? 1.9 : 2.3;
+    const col = rev ? "#C2410C" : "#E8590C";
+    svg.appendChild(el("path", {
+      d: d, fill: "none", stroke: "#FFFFFF",
+      "stroke-width": w + 2.4, "stroke-linecap": "round", "stroke-linejoin": "round",
+      "stroke-opacity": 0.95
+    }));
+    svg.appendChild(el("path", {
+      d: d, fill: "none", stroke: col,
+      "stroke-width": w, "stroke-linecap": "round", "stroke-linejoin": "round",
+      "stroke-opacity": rev ? 0.9 : 0.96,
+      "stroke-dasharray": rev ? "5 3.5" : "",
+      "marker-end": "url(#" + mid + (rev ? "r" : "f") + ")"
+    }));
+  });
+
+  // ---- nodes last: opaque boxes guarantee labels are never cut ----
   nodes.forEach(n => {
     const p = pos[n.id];
     const color = ACCENT[n.accent] || "#FB8147";
@@ -1533,55 +1632,6 @@ function buildSketch(box) {
       g.appendChild(s2);
     }
     svg.appendChild(g);
-  });
-
-  // edges drawn last: thick, high-contrast, white casing so they never sink under nodes
-  edges.forEach(e => {
-    const a = pos[e.f], b = pos[e.t];
-    if (!a || !b) return;
-    const rev = e.kind === "rev";
-    let d;
-    if (vertical) {
-      const sx = a.x + a.w / 2, sy = a.y + a.h;
-      const tx = b.x + b.w / 2, ty = b.y;
-      const dy = Math.max(8, (ty - sy) * 0.42);
-      if (rev) {
-        const loop = Math.max(20, Math.abs(sx - tx) * 0.35 + 16);
-        d = "M" + sx + " " + sy + " C" + (sx + loop) + " " + (sy + 10) + ", " +
-            (tx + loop) + " " + (ty - 10) + ", " + tx + " " + ty;
-      } else {
-        d = "M" + sx + " " + sy + " C" + sx + " " + (sy + dy) + ", " + tx + " " + (ty - dy) + ", " + tx + " " + ty;
-      }
-    } else {
-      const sx = a.x + a.w, sy = a.y + a.h / 2;
-      const tx = b.x, ty = b.y + b.h / 2;
-      const dx = Math.max(8, (tx - sx) * 0.42);
-      const dyv = ty - sy;
-      if (rev) {
-        const loop = Math.max(18, Math.abs(dyv) * 0.35 + 14);
-        d = "M" + sx + " " + sy + " C" + (sx + 14) + " " + (sy + loop) + ", " +
-            (tx - 14) + " " + (ty + loop) + ", " + tx + " " + ty;
-      } else if (Math.abs(dyv) < 2) {
-        d = "M" + sx + " " + sy + " C" + (sx + dx) + " " + sy + ", " + (tx - dx) + " " + ty + ", " + tx + " " + ty;
-      } else {
-        d = "M" + sx + " " + sy + " C" + (sx + dx) + " " + sy + ", " +
-            (tx - dx) + " " + ty + ", " + tx + " " + ty;
-      }
-    }
-    const w = rev ? 2.0 : 2.6;
-    const col = rev ? "#C2410C" : "#E8590C";
-    svg.appendChild(el("path", {
-      d: d, fill: "none", stroke: "#FFFFFF",
-      "stroke-width": w + 2.6, "stroke-linecap": "round", "stroke-linejoin": "round",
-      "stroke-opacity": 0.96
-    }));
-    svg.appendChild(el("path", {
-      d: d, fill: "none", stroke: col,
-      "stroke-width": w, "stroke-linecap": "round", "stroke-linejoin": "round",
-      "stroke-opacity": rev ? 0.88 : 0.96,
-      "stroke-dasharray": rev ? "5 3.5" : "",
-      "marker-end": "url(#" + mid + (rev ? "r" : "f") + ")"
-    }));
   });
 
   box.innerHTML = "";
