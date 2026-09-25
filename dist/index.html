@@ -1471,10 +1471,12 @@ function buildSketch(box) {
   });
   const defs = el("defs", {});
   [["f", "#E8590C"], ["r", "#C2410C"]].forEach(function (mc) {
+    // userSpaceOnUse keeps the head at a fixed 8px regardless of stroke-width
     const marker = el("marker", {
-      id: mid + mc[0], markerWidth: 10, markerHeight: 10, refX: 8, refY: 3.4, orient: "auto"
+      id: mid + mc[0], markerWidth: 9, markerHeight: 6, refX: 8, refY: 3,
+      orient: "auto", markerUnits: "userSpaceOnUse"
     });
-    marker.appendChild(el("path", { d: "M0,0 L8,3.4 L0,6.8 Z", fill: mc[1] }));
+    marker.appendChild(el("path", { d: "M0.2,0.2 L8,3 L0.2,5.8 L1.8,3 Z", fill: mc[1] }));
     defs.appendChild(marker);
   });
   svg.appendChild(defs);
@@ -1488,6 +1490,7 @@ function buildSketch(box) {
   // visible; opaque node boxes sit on top as a hard guarantee that no line
   // can ever cut a label.
   let revTick = 0;
+  const STUB = 12;
   edges.forEach(e => {
     const a = pos[e.f], b = pos[e.t];
     if (!a || !b) return;
@@ -1506,7 +1509,6 @@ function buildSketch(box) {
     if (a.r !== b.r) {
       if (adjRows && canEnterTB) {
         // travel in the empty rowGap band between the two rows
-        // band BETWEEN the two rows: above the target when it is the lower one
         const channelY = below
           ? rowY[b.r] - rowGap * 0.5
           : rowY[b.r] + rowHeights[b.r] + rowGap * 0.5;
@@ -1518,13 +1520,13 @@ function buildSketch(box) {
           c1x = sx + (dx >= 0 ? 28 : -28);
         }
         const tx = b.cx, ty = below ? b.y - GAP : b.y + b.h + GAP;
-        d = "M" + sx + " " + sy + " C" + c1x + " " + channelY + ", " + tx + " " + channelY + ", " + tx + " " + ty;
+        const ey = below ? ty - STUB : ty + STUB;
+        d = "M" + sx + " " + sy + " C" + c1x + " " + channelY + ", " + tx + " " + channelY + ", " + tx + " " + ey + " L " + tx + " " + ty;
       } else {
         // blocked or non-adjacent: go around the outside and enter the target
         // on whichever side is actually clear of neighbours
         const goRight = (a.cx + b.cx) / 2 >= ccx;
         const push = 18 + revTick * 8;
-        // is the target sitting on the outer edge of the whole cluster?
         const clearRight = (b.x + b.w) >= x2 - 1;
         const clearLeft = b.x <= x1 + 1;
         if (!below && b.colTop && !clearRight && !clearLeft) {
@@ -1532,56 +1534,59 @@ function buildSketch(box) {
           const bowY = y1 - push;
           const sx = goRight ? a.x + a.w + GAP : a.x - GAP, sy = a.cy;
           const tx = b.cx, ty = b.y - GAP;
-          d = "M" + sx + " " + sy + " C" + sx + " " + bowY + ", " + tx + " " + bowY + ", " + tx + " " + ty;
+          d = "M" + sx + " " + sy + " C" + sx + " " + bowY + ", " + tx + " " + bowY + ", " + tx + " " + (ty - STUB) + " L " + tx + " " + ty;
         } else if (below && b.colBot && !clearRight && !clearLeft) {
           // only the BOTTOM is free: arc below the whole cluster
           const bowY = y2 + push;
           const sx = goRight ? a.x + a.w + GAP : a.x - GAP, sy = a.cy;
           const tx = b.cx, ty = b.y + b.h + GAP;
-          d = "M" + sx + " " + sy + " C" + sx + " " + bowY + ", " + tx + " " + bowY + ", " + tx + " " + ty;
+          d = "M" + sx + " " + sy + " C" + sx + " " + bowY + ", " + tx + " " + bowY + ", " + tx + " " + (ty + STUB) + " L " + tx + " " + ty;
         } else {
           // an outer side is free (or nothing better): run the side margin
           const useRight = clearRight || (!clearLeft && goRight);
           const bowX = useRight ? x2 + 16 : x1 - 16;
           const sx = useRight ? a.x + a.w + GAP : a.x - GAP, sy = a.cy;
           const tx = useRight ? b.x + b.w + GAP : b.x - GAP, ty = b.cy;
-          d = "M" + sx + " " + sy + " C" + bowX + " " + sy + ", " + bowX + " " + ty + ", " + tx + " " + ty;
+          const ex = useRight ? tx + STUB : tx - STUB;
+          d = "M" + sx + " " + sy + " C" + bowX + " " + sy + ", " + bowX + " " + ty + ", " + ex + " " + ty + " L " + tx + " " + ty;
         }
       }
     } else if (rev || Math.abs(dx) > colStep * 1.2) {
-      // same-row long skip or any back-edge: arc above/below the whole row
+      // same-row long skip or any back-edge: arc above/below the whole row,
+      // then drop into the gutter beside the target and finish on a stub
       const rowMid = rowY[a.r] + rowHeights[a.r] / 2;
       const above = (a.cy + b.cy) / 2 < rowMid;
       const channelY = above ? rowY[a.r] - 14 : rowY[a.r] + rowHeights[a.r] + 14;
       const sx = dx >= 0 ? a.x + a.w + GAP : a.x - GAP, sy = a.cy;
       const tx = dx >= 0 ? b.x - GAP : b.x + b.w + GAP, ty = b.cy;
-      d = "M" + sx + " " + sy + " C" + sx + " " + channelY + ", " + tx + " " + channelY + ", " + tx + " " + ty;
+      const ex = dx >= 0 ? tx - STUB : tx + STUB;
+      d = "M" + sx + " " + sy + " C" + sx + " " + channelY + ", " + ex + " " + channelY + ", " + ex + " " + ty + " L " + tx + " " + ty;
     } else if (Math.abs(dy) < NH * 1.6) {
-      // same row, short: leave on the side that actually faces the target
+      // same row, short: leave on the side that faces the target, stub at end
       if (dx >= 0) {
         const sx = a.x + a.w + GAP, sy = a.cy, tx = b.x - GAP, ty = b.cy;
-        d = "M" + sx + " " + sy + " C" + (sx + 16) + " " + sy + ", " + (tx - 16) + " " + ty + ", " + tx + " " + ty;
+        d = "M" + sx + " " + sy + " C" + (sx + 20) + " " + sy + ", " + (tx - STUB - 16) + " " + ty + ", " + (tx - STUB) + " " + ty + " L " + tx + " " + ty;
       } else {
         const sx = a.x - GAP, sy = a.cy, tx = b.x + b.w + GAP, ty = b.cy;
-        d = "M" + sx + " " + sy + " C" + (sx - 16) + " " + sy + ", " + (tx + 16) + " " + ty + ", " + tx + " " + ty;
+        d = "M" + sx + " " + sy + " C" + (sx - 20) + " " + sy + ", " + (tx + STUB + 16) + " " + ty + ", " + (tx + STUB) + " " + ty + " L " + tx + " " + ty;
       }
     } else if (stacked) {
-      // nearly stacked in one row: vertical hop through the HGAP
-      let sx, sy, tx, ty;
+      // nearly stacked in one row: vertical hop through the HGAP, stub at end
       if (dy >= 0) {
-        sx = a.cx; sy = a.y + a.h + GAP; tx = b.cx; ty = b.y - GAP;
+        const sx = a.cx, sy = a.y + a.h + GAP, tx = b.cx, ty = b.y - GAP;
+        d = "M" + sx + " " + sy + " C" + sx + " " + (sy + 20) + ", " + tx + " " + (ty - STUB - 16) + ", " + tx + " " + (ty - STUB) + " L " + tx + " " + ty;
       } else {
-        sx = a.cx; sy = a.y - GAP; tx = b.cx; ty = b.y + b.h + GAP;
+        const sx = a.cx, sy = a.y - GAP, tx = b.cx, ty = b.y + b.h + GAP;
+        d = "M" + sx + " " + sy + " C" + sx + " " + (sy - 20) + ", " + tx + " " + (ty + STUB + 16) + ", " + tx + " " + (ty + STUB) + " L " + tx + " " + ty;
       }
-      d = "M" + sx + " " + sy + " C" + sx + " " + (sy + 14) + ", " + tx + " " + (ty - 14) + ", " + tx + " " + ty;
     } else {
-      // diagonal inside one row: facing sides, gutters only
+      // diagonal inside one row: facing sides, stub at end
       if (dx >= 0) {
         const sx = a.x + a.w + GAP, sy = a.cy, tx = b.x - GAP, ty = b.cy;
-        d = "M" + sx + " " + sy + " C" + (sx + 22) + " " + sy + ", " + (tx - 22) + " " + ty + ", " + tx + " " + ty;
+        d = "M" + sx + " " + sy + " C" + (sx + 28) + " " + sy + ", " + (tx - STUB - 24) + " " + ty + ", " + (tx - STUB) + " " + ty + " L " + tx + " " + ty;
       } else {
         const sx = a.x - GAP, sy = a.cy, tx = b.x + b.w + GAP, ty = b.cy;
-        d = "M" + sx + " " + sy + " C" + (sx - 22) + " " + sy + ", " + (tx + 22) + " " + ty + ", " + tx + " " + ty;
+        d = "M" + sx + " " + sy + " C" + (sx - 28) + " " + sy + ", " + (tx + STUB + 24) + " " + ty + ", " + (tx + STUB) + " " + ty + " L " + tx + " " + ty;
       }
     }
 
@@ -1589,12 +1594,12 @@ function buildSketch(box) {
     const col = rev ? "#C2410C" : "#E8590C";
     svg.appendChild(el("path", {
       d: d, fill: "none", stroke: "#FFFFFF",
-      "stroke-width": w + 2.4, "stroke-linecap": "round", "stroke-linejoin": "round",
+      "stroke-width": w + 2.2, "stroke-linecap": "butt", "stroke-linejoin": "round",
       "stroke-opacity": 0.95
     }));
     svg.appendChild(el("path", {
       d: d, fill: "none", stroke: col,
-      "stroke-width": w, "stroke-linecap": "round", "stroke-linejoin": "round",
+      "stroke-width": w, "stroke-linecap": "butt", "stroke-linejoin": "round",
       "stroke-opacity": rev ? 0.9 : 0.96,
       "stroke-dasharray": rev ? "5 3.5" : "",
       "marker-end": "url(#" + mid + (rev ? "r" : "f") + ")"
