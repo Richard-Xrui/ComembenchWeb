@@ -1,155 +1,1569 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="CoMemBench evaluates collaborative memory boundaries across multi-agent workflow topologies." />
-    <title>CoMemBench — Collaborative Memory, Measured</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Noto+Serif+Display:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet" />
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='8' fill='%23a53a2b'/%3E%3Cpath d='M15 19h34M15 45h34M22 14v36M42 14v36' stroke='%23f7f1e5' stroke-width='3'/%3E%3Ccircle cx='32' cy='32' r='6' fill='%231f5255'/%3E%3C/svg%3E" />
-    <style>
-      :root { --paper:#f8f4e9; --paper-deep:#eee5d3; --ink:#1b292d; --muted:#657277; --verm:#a53a2b; --verm-dark:#742b24; --jade:#1f5255; --jade-soft:#d9e8e2; --line:#cfc5af; --gold:#c18f42; }
-      * { box-sizing:border-box; }
-      html { scroll-behavior:smooth; }
-      body { margin:0; color:var(--ink); background:var(--paper); font-family:"Source Serif 4", Georgia, serif; font-size:17px; line-height:1.55; }
-      body::before { content:""; position:fixed; inset:0; pointer-events:none; opacity:.32; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 220 220' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.13'/%3E%3C/svg%3E"); z-index:10; mix-blend-mode:multiply; }
-      a { color:inherit; text-decoration:none; }
-      .shell { width:min(1180px, calc(100% - 48px)); margin:0 auto; }
-      .eyebrow { display:flex; align-items:center; gap:10px; font:500 11px/1.2 "DM Mono", monospace; text-transform:uppercase; letter-spacing:.14em; color:var(--verm); }
-      .eyebrow::before { content:""; width:25px; height:1px; background:currentColor; }
-      .topline { height:5px; background:linear-gradient(90deg,var(--verm) 0 21%, var(--gold) 21% 41%, var(--jade) 41% 67%, var(--ink) 67%); }
-      header { border-bottom:1px solid var(--line); position:relative; z-index:12; }
-      .nav { height:78px; display:flex; align-items:center; justify-content:space-between; gap:24px; }
-      .brand { display:flex; align-items:center; gap:12px; font:600 20px/1 "Noto Serif Display",serif; letter-spacing:-.035em; }
-      .seal { width:38px; height:38px; display:grid; place-items:center; color:#fff8ed; background:var(--verm); font:500 13px/1 "DM Mono",monospace; letter-spacing:-.12em; box-shadow:3px 3px 0 var(--verm-dark); }
-      nav { display:flex; align-items:center; gap:27px; font:500 13px/1 "DM Mono",monospace; color:#405055; }
-      nav a { transition:color .2s ease; } nav a:hover { color:var(--verm); }
-      .nav-access { border:1px solid var(--verm); color:var(--verm); padding:10px 13px; }
-      .hero { min-height:620px; padding:88px 0 68px; position:relative; overflow:hidden; }
-      .hero::after { content:""; position:absolute; width:560px; height:560px; right:-145px; top:-165px; border-radius:50%; border:1px solid rgba(31,82,85,.18); box-shadow:0 0 0 42px rgba(31,82,85,.045), 0 0 0 84px rgba(165,58,43,.035); }
-      .hero-grid { display:grid; grid-template-columns:1.18fr .82fr; gap:56px; align-items:end; position:relative; z-index:1; }
-      h1 { margin:17px 0 22px; max-width:810px; font:600 clamp(3.35rem,7vw,6.55rem)/.96 "Noto Serif Display",serif; letter-spacing:-.065em; }
-      h1 em { color:var(--verm); font-style:normal; }
-      .lede { max-width:630px; margin:0; font-size:clamp(1.08rem,1.8vw,1.28rem); line-height:1.58; color:#465458; }
-      strong { color:var(--ink); font-weight:600; }
-      .hero-actions { display:flex; gap:12px; margin-top:31px; flex-wrap:wrap; }
-      .button { display:inline-flex; align-items:center; gap:12px; padding:13px 16px; border:1px solid var(--ink); font:500 12px/1 "DM Mono",monospace; text-transform:uppercase; letter-spacing:.075em; transition:transform .18s ease, background .18s ease; }
-      .button:hover { transform:translate(-2px,-2px); box-shadow:3px 3px 0 var(--verm); }
-      .button.primary { background:var(--ink); color:var(--paper); }
-      .button.secondary { color:var(--jade); border-color:var(--jade); }
-      .hero-note { border-left:1px solid var(--gold); padding:11px 0 11px 18px; color:#637074; font-size:.95rem; }
-      .hero-note b { display:block; color:var(--ink); font:500 12px/1.3 "DM Mono",monospace; text-transform:uppercase; letter-spacing:.1em; margin-bottom:8px; }
-      .stamp { margin-top:42px; display:flex; align-items:center; gap:17px; color:var(--verm); }
-      .stamp-mark { width:72px; height:72px; border:2px solid var(--verm); display:grid; place-items:center; font:600 29px/1 "Noto Serif Display",serif; letter-spacing:-.11em; transform:rotate(-5deg); }
-      .stamp p { margin:0; max-width:260px; font:500 11px/1.55 "DM Mono",monospace; text-transform:uppercase; letter-spacing:.05em; }
-      .stats { display:grid; grid-template-columns:repeat(2,1fr); border-top:1px solid var(--ink); border-left:1px solid var(--ink); }
-      .stat { min-height:139px; padding:19px 20px; border-right:1px solid var(--ink); border-bottom:1px solid var(--ink); background:rgba(255,255,255,.18); }
-      .stat:nth-child(1), .stat:nth-child(4) { background:rgba(31,82,85,.055); }
-      .stat-num { display:block; font:600 50px/.95 "Noto Serif Display",serif; letter-spacing:-.06em; color:var(--verm); }
-      .stat-label { display:block; margin-top:9px; font:500 10px/1.45 "DM Mono",monospace; text-transform:uppercase; letter-spacing:.1em; color:#506064; }
-      .section { padding:92px 0; border-top:1px solid var(--line); }
-      .section-heading { display:grid; grid-template-columns:260px 1fr; gap:36px; margin-bottom:37px; }
-      h2 { margin:10px 0 0; font:600 clamp(2.35rem,4.5vw,4rem)/1 "Noto Serif Display",serif; letter-spacing:-.055em; }
-      .section-heading > p { max-width:680px; margin:7px 0 0; font-size:1.12rem; color:#536164; }
-      .domain-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
-      .domain { min-height:290px; padding:23px; border:1px solid var(--line); background:rgba(255,255,255,.25); position:relative; overflow:hidden; transition:transform .2s ease,border-color .2s ease; }
-      .domain:hover { transform:translateY(-5px); border-color:var(--jade); }
-      .domain::after { content:attr(data-mark); position:absolute; right:-13px; bottom:-38px; color:rgba(165,58,43,.1); font:600 132px/1 "Noto Serif Display",serif; }
-      .domain-num { font:500 11px/1 "DM Mono",monospace; color:var(--verm); letter-spacing:.13em; }
-      h3 { margin:51px 0 12px; font:600 26px/1.07 "Noto Serif Display",serif; letter-spacing:-.04em; }
-      .domain p { position:relative; z-index:1; margin:0; color:#5a676a; font-size:.95rem; }
-      .domain small { display:block; margin-top:21px; color:var(--jade); font:500 10px/1.4 "DM Mono",monospace; text-transform:uppercase; letter-spacing:.1em; }
-      .samples { display:grid; grid-template-columns:repeat(2,1fr); gap:14px; }
-      .sample { min-height:255px; padding:24px; border:1px solid var(--line); background:rgba(255,255,255,.3); position:relative; overflow:hidden; }
-      .sample::after { content:attr(data-index); position:absolute; right:18px; top:13px; color:rgba(31,82,85,.09); font:600 76px/1 "Noto Serif Display",serif; }
-      .sample-tag { position:relative; z-index:1; display:block; color:var(--verm); font:500 10px/1.35 "DM Mono",monospace; letter-spacing:.1em; text-transform:uppercase; }
-      .sample h3 { position:relative; z-index:1; margin:35px 0 11px; max-width:470px; font-size:27px; }
-      .sample p { position:relative; z-index:1; max-width:520px; margin:0; color:#536164; }
-      .sample-note { position:relative; z-index:1; display:block; margin-top:19px; color:var(--jade); font:500 9px/1.45 "DM Mono",monospace; letter-spacing:.07em; text-transform:uppercase; }
-      .sample-path { position:relative; z-index:1; display:flex; flex-wrap:wrap; gap:7px; margin-top:19px; }
-      .sample-path span { border:1px solid var(--line); padding:5px 7px; background:var(--paper); color:#465458; font:500 9px/1 "DM Mono",monospace; text-transform:uppercase; letter-spacing:.06em; }
-      .structure { display:grid; grid-template-columns:1.1fr .9fr; gap:22px; }
-      .diagram { min-height:345px; padding:25px; background:var(--ink); color:var(--paper); position:relative; overflow:hidden; }
-      .diagram .eyebrow { color:#d9b068; }
-      .flow { position:relative; margin-top:50px; display:grid; grid-template-columns:repeat(4,1fr); gap:7px; }
-      .flow::before { content:""; position:absolute; top:38px; left:9%; width:76%; border-top:1px dashed rgba(247,244,233,.55); }
-      .node { position:relative; z-index:1; }
-      .node-dot { display:grid; place-items:center; width:77px; height:77px; border:1px solid rgba(247,244,233,.65); background:var(--ink); color:#efd8a6; font:500 13px/1 "DM Mono",monospace; }
-      .node p { margin:13px 0 0; font:500 10px/1.45 "DM Mono",monospace; text-transform:uppercase; letter-spacing:.07em; color:#cad3d1; }
-      .method { border:1px solid var(--line); padding:27px; background:rgba(255,255,255,.32); }
-      .method h3 { margin:16px 0 16px; font-size:31px; }
-      .method p { color:#566367; margin:0; }
-      .method-list { list-style:none; padding:0; margin:28px 0 0; border-top:1px solid var(--line); }
-      .method-list li { padding:13px 0; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; gap:14px; font-size:.93rem; }
-      .method-list span { color:var(--verm); font:500 10px/1.5 "DM Mono",monospace; text-transform:uppercase; letter-spacing:.08em; }
-      .protocol { margin-top:22px; padding:26px; border:1px solid var(--line); background:rgba(31,82,85,.045); }
-      .protocol-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:0; margin-top:24px; border:1px solid var(--line); }
-      .protocol-step { min-height:142px; padding:17px; border-right:1px solid var(--line); background:rgba(255,255,255,.3); }
-      .protocol-step:last-child { border-right:0; }
-      .protocol-step b { display:block; color:var(--verm); font:500 10px/1 "DM Mono",monospace; letter-spacing:.1em; }
-      .protocol-step h4 { margin:17px 0 7px; font:600 18px/1.05 "Noto Serif Display",serif; letter-spacing:-.03em; }
-      .protocol-step p { margin:0; color:#5a676a; font-size:.84rem; line-height:1.4; }
-      .access { background:var(--jade); color:#f8f4e9; padding:71px 0; }
-      .access .eyebrow { color:#dfb36e; }.access h2 { max-width:760px; margin-bottom:20px; }.access p { max-width:620px; color:#dbe8e4; font-size:1.12rem; }
-      .access-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:37px; }
-      .access-card { border:1px solid rgba(248,244,233,.4); padding:23px; min-height:140px; }
-      .access-card b { display:block; font:500 10px/1 "DM Mono",monospace; letter-spacing:.12em; color:#e2b873; }.access-card h3 { margin:16px 0 8px; color:#fffaf0; font-size:25px; }.access-card p { margin:0; font-size:.94rem; color:#d7e4df; }
-      footer { padding:28px 0 35px; background:#172528; color:#cdd7d4; }
-      .foot { display:flex; justify-content:space-between; gap:20px; align-items:start; font:400 10px/1.6 "DM Mono",monospace; text-transform:uppercase; letter-spacing:.05em; }.foot p { margin:0; max-width:620px; }
-      .foot b { color:#e4b36b; font-weight:500; }
-      @media (max-width:850px) { .hero { padding-top:63px; min-height:auto; }.hero-grid,.structure,.section-heading { grid-template-columns:1fr; gap:34px; }.hero-note { max-width:460px; }.domain-grid,.samples { grid-template-columns:repeat(2,1fr); }.protocol-grid { grid-template-columns:repeat(3,1fr); }.protocol-step:nth-child(3) { border-right:0; }.protocol-step:nth-child(-n+3) { border-bottom:1px solid var(--line); }.section { padding:68px 0; }.section-heading { margin-bottom:29px; }.section-heading h2 { margin-top:5px; } }
-      @media (max-width:580px) { .shell { width:min(100% - 30px,1180px); }.nav { height:69px; }.brand { font-size:18px; }.seal { width:33px;height:33px; } nav a:not(.nav-access) { display:none; }.hero { padding:53px 0 49px; } h1 { font-size:3.2rem; }.stats { margin-top:3px; }.stat { min-height:118px;padding:17px; }.stat-num { font-size:43px; }.domain-grid,.samples,.access-grid,.protocol-grid { grid-template-columns:1fr; }.domain { min-height:220px; }.domain h3 { margin-top:38px; }.sample { min-height:230px; }.protocol-step,.protocol-step:nth-child(3) { border-right:0; border-bottom:1px solid var(--line); }.protocol-step:last-child { border-bottom:0; }.flow { grid-template-columns:repeat(2,1fr); row-gap:27px; }.flow::before { display:none; }.foot { flex-direction:column; }.hero-actions { gap:9px; }.button { padding:12px 13px; } }
-    </style>
-  </head>
-  <body>
-    <div class="topline"></div>
-    <header>
-      <div class="shell nav">
-        <a class="brand" href="#top" aria-label="CoMemBench home"><span class="seal">CM</span><span>CoMemBench</span></a>
-        <nav aria-label="Main navigation"><a href="#benchmark">Benchmark</a><a href="#samples">Examples</a><a href="#structure">Method</a><a href="#access">Access</a><a class="nav-access" href="#access">Get updates ↗</a></nav>
-      </div>
-    </header>
-    <main id="top">
-      <section class="hero"><div class="shell hero-grid">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>CoMemBench: Collaborative Memory Boundaries across Multi-Agent Workflows</title>
+<meta name="description" content="CoMemBench benchmarks whether task-relevant memory reaches the agents that need it across multi-agent workflow topologies. 800 source-grounded families, 240 isolation challenges."/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        page: "#FCFAF8",
+        card: "#FAF7F3",
+        band: "#F0EBE5",
+        hoverbg: "#F7F3EF",
+        warmborder: "#F0EBE5",
+        ink: "#1F2329",
+        ink2: "#383A42",
+        dim: "#646A73",
+        orange: "#FB8147",
+        orangebg: "#FFF6ED",
+        honey: "#FDA83A",
+      },
+      fontFamily: {
+        display: ['"LXGW WenKai TC"', "Noto Serif SC", "Georgia", "serif"],
+        sans: ["Inter", '"PingFang SC"', "system-ui", "sans-serif"],
+        mono: ['"JetBrains Mono"', "ui-monospace", "monospace"],
+      },
+      borderRadius: { banner: "24px" },
+    },
+  },
+};
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-tc-webfont/style.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Serif+SC:wght@500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+  html { scroll-behavior: smooth; }
+  body {
+    background: #FCFAF8;
+    color: #1F2329;
+    font-family: Inter, "PingFang SC", system-ui, sans-serif;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  .glass {
+    background: #FAF7F3;
+    border: 1px solid #F0EBE5;
+    box-shadow: 0 1px 2px rgba(31,35,41,0.04), 0 8px 24px rgba(31,35,41,0.04);
+  }
+  .glass-hover:hover {
+    background: #F7F3EF;
+    border-color: #FB8147;
+    box-shadow: 0 12px 32px rgba(251,129,71,0.14);
+    transform: translateY(-2px);
+  }
+  .glow-line {
+    background: linear-gradient(90deg, transparent, #FB8147, transparent);
+    height: 1px; opacity: .35;
+  }
+  .orb {
+    position: absolute; border-radius: 9999px; filter: blur(70px); opacity: 0.30; pointer-events: none;
+    animation: drift 18s ease-in-out infinite alternate;
+  }
+  @keyframes drift {
+    0%   { transform: translate(0,0) scale(1); }
+    50%  { transform: translate(30px,-22px) scale(1.08); }
+    100% { transform: translate(-20px,18px) scale(0.95); }
+  }
+  .reveal { opacity: 0; transform: translateY(18px); transition: opacity .7s ease, transform .7s ease; }
+  .reveal.in { opacity: 1; transform: none; }
+  header .reveal { opacity: 1; transform: none; }
+
+  .chip {
+    font-family: "JetBrains Mono", monospace; font-size: 11px; letter-spacing: .03em;
+    padding: 3px 9px; border-radius: 999px;
+    background: #FFF6ED; border: 1px solid #FB814744; color: #C25A22;
+  }
+  .role-pill {
+    display: inline-block; font-family: "JetBrains Mono", monospace; font-size: 11px;
+    padding: 3px 10px; margin: 3px 4px 3px 0; border-radius: 6px;
+    background: #F0EBE5; border: 1px solid #E5E0D8; color: #646A73;
+  }
+  .nav-link { position: relative; }
+  .nav-link::after {
+    content: ""; position: absolute; left: 0; bottom: -4px; height: 2px; width: 0;
+    background: #FB8147; transition: width .28s ease;
+  }
+  .nav-link:hover::after, .nav-link.active::after { width: 100%; }
+
+  .tab-btn {
+    padding: 8px 16px; border-radius: 10px; font-size: 13px; font-weight: 500;
+    border: 1px solid #E5E0D8; color: #646A73; background: #FFFFFF;
+    transition: all .22s ease; cursor: pointer;
+  }
+  .tab-btn:hover { color: #1F2329; border-color: #FB8147; background: #FFF6ED; }
+  .tab-btn.on {
+    color: #FFFFFF; border-color: transparent;
+    background: #1F2329;
+    box-shadow: 0 6px 18px rgba(31,35,41,0.18);
+  }
+
+  details.expander { border-radius: 16px; overflow: hidden; }
+  details.expander summary { cursor: pointer; list-style: none; }
+  details.expander summary::-webkit-details-marker { display: none; }
+  details.expander[open] { border-color: #FB8147; }
+
+  .goal-box {
+    font-family: "JetBrains Mono", monospace; font-size: 12px; line-height: 1.65;
+    background: #FFFFFF; border: 1px solid #F0EBE5;
+    border-left: 3px solid #FB8147; border-radius: 10px; padding: 14px 16px; color: #383A42;
+    max-height: 230px; overflow-y: auto;
+  }
+
+  .metric-card { position: relative; overflow: hidden; }
+  .metric-card::before {
+    content: ""; position: absolute; inset: 0 0 auto 0; height: 2px;
+    background: linear-gradient(90deg, #FB8147, #FDA83A, transparent);
+  }
+
+  /* chronology — multi-lane swimlanes */
+  .chrono-lane {
+    position: relative;
+    border-top: 1px dashed #E5E0D8;
+    min-height: 108px;
+  }
+  .chrono-lane::before {
+    content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 1px;
+    background: #E5E0D8;
+  }
+  .chrono-card {
+    transition: transform .3s ease, box-shadow .3s ease, border-color .3s ease;
+    cursor: pointer;
+    background: #FFFFFF; border: 1px solid #F0EBE5; border-radius: 12px;
+    padding: 10px 12px;
+  }
+  .chrono-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 32px rgba(251,129,71,0.16);
+    border-color: #FB8147;
+    z-index: 5;
+  }
+  .chrono-dot {
+    width: 9px; height: 9px; border-radius: 999px; flex: none;
+  }
+  .chrono-year-head {
+    font-family: "JetBrains Mono", monospace; font-size: 12px; letter-spacing: .12em;
+    color: #646A73;
+  }
+
+  .tbl th { font-family: "JetBrains Mono", monospace; font-size: 11px; letter-spacing: .08em; color: #646A73; }
+  .tbl td { font-variant-numeric: tabular-nums; }
+  .best { color: #FB8147; font-weight: 600; }
+
+  .grid-bg {
+    background-image:
+      linear-gradient(rgba(31,35,41,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(31,35,41,0.04) 1px, transparent 1px);
+    background-size: 44px 44px;
+    mask-image: radial-gradient(ellipse 90% 70% at 50% 20%, black 30%, transparent 75%);
+    -webkit-mask-image: radial-gradient(ellipse 90% 70% at 50% 20%, black 30%, transparent 75%);
+  }
+  .btn-primary {
+    background: #1F2329; color: #FFFFFF; font-weight: 500; border-radius: 999px;
+    box-shadow: 0 8px 22px rgba(31,35,41,0.18);
+    transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
+  }
+  .btn-primary:hover { background: #000000; transform: translateY(-2px); box-shadow: 0 14px 30px rgba(31,35,41,0.24); }
+  .btn-orange {
+    background: #FB8147; color: #FFFFFF; font-weight: 500; border-radius: 999px;
+    box-shadow: 0 8px 22px rgba(251,129,71,0.28);
+    transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
+  }
+  .btn-orange:hover { background: #F06A2B; transform: translateY(-2px); box-shadow: 0 14px 32px rgba(251,129,71,0.36); }
+  .btn-ghost {
+    border: 1px solid #E5E0D8; border-radius: 999px; color: #1F2329; background: transparent;
+    transition: border-color .2s ease, background .2s ease;
+  }
+  .btn-ghost:hover { border-color: #FB8147; background: #FFF6ED; }
+
+  .stat-num {
+    font-family: "Noto Serif SC", "LXGW WenKai TC", serif; font-weight: 600; color: #1F2329;
+  }
+  .cite-tag {
+    font-family: "JetBrains Mono", monospace; font-size: 11px; color: #C25A22;
+    border: 1px solid #FB814755; border-radius: 5px; padding: 1px 6px;
+    text-decoration: none; transition: all .18s ease;
+  }
+  .cite-tag:hover { color: #FB8147; border-color: #FB8147; background: #FFF6ED; }
+
+  .example-icon {
+    width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center;
+    background: #FFF6ED; border: 1px solid #FB814744;
+    font-family: "JetBrains Mono", monospace; font-size: 11px; color: #C25A22;
+  }
+
+  .type-cursor {
+    display: inline-block; width: 3px; height: .85em; margin-left: 4px;
+    background: #1F2329; vertical-align: baseline;
+    animation: 1s step-end infinite cursorBlink;
+  }
+  @keyframes cursorBlink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
+
+  #chrono-filter .fbtn { transition: all .2s ease; }
+</style>
+</head>
+<body>
+
+<!-- ===== NAV ===== -->
+<nav class="fixed top-0 inset-x-0 z-50">
+  <div class="mx-auto max-w-7xl px-6">
+    <div class="mt-3 rounded-2xl glass flex items-center justify-between px-5 py-3">
+      <a href="#top" class="flex items-center gap-2.5">
+        <div class="w-8 h-8 rounded-lg flex items-center justify-center font-display font-bold text-white"
+             style="background:linear-gradient(135deg,#FB8147,#FDA83A)">C</div>
         <div>
-          <div class="eyebrow">A benchmark for multi-agent systems</div>
-          <h1>Collaborative memory,<br /><em>measured at its boundaries.</em></h1>
-          <p class="lede">CoMemBench evaluates how memory moves, persists, and fails across <strong>multi-agent workflow topologies</strong>—where the handoff is as important as the answer.</p>
-          <div class="hero-actions"><a class="button primary" href="#benchmark">Explore the benchmark <span>↓</span></a><a class="button secondary" href="#access">Data access <span>→</span></a></div>
-          <div class="stamp"><div class="stamp-mark">CM</div><p>Evidence-first evaluation for collaborative systems.</p></div>
+          <div class="font-display font-semibold text-sm leading-none">CoMemBench</div>
+          <div class="font-mono text-[10px] text-dim leading-none mt-1">v17 · 800 families</div>
         </div>
-        <aside aria-label="Benchmark summary">
-          <div class="hero-note"><b>Release note</b>Public website materials are derived only from the certified v18 release ledger. Results and datasets are published through separate review paths.</div>
-          <div class="stats"><div class="stat"><span class="stat-num">800</span><span class="stat-label">Certified task families</span></div><div class="stat"><span class="stat-num">4</span><span class="stat-label">Evaluation domains</span></div><div class="stat"><span class="stat-num">200</span><span class="stat-label">Families per domain</span></div><div class="stat"><span class="stat-num">v18</span><span class="stat-label">Certified release ledger</span></div></div>
-        </aside>
-      </div></section>
-      <section class="section" id="benchmark"><div class="shell">
-        <div class="section-heading"><div><div class="eyebrow">Benchmark</div><h2>Four domains.<br />One boundary.</h2></div><p>Each domain stresses the same question from a different angle: can a collaborative system preserve the <strong>right information, for the right agent, at the right point in a workflow</strong>?</p></div>
-        <div class="domain-grid">
-          <article class="domain" data-mark="S"><div class="domain-num">01 / 04</div><h3>Stateful<br />Tool Use</h3><p>Tasks that require agents to operate within changing application state and preserve useful context across handoffs.</p><small>200 certified families</small></article>
-          <article class="domain" data-mark="C"><div class="domain-num">02 / 04</div><h3>Repository<br />Code Change</h3><p>Software tasks that connect issue context, source-grounded work, dependency structure, and verification.</p><small>200 certified families</small></article>
-          <article class="domain" data-mark="R"><div class="domain-num">03 / 04</div><h3>Offline Information<br />Retrieval</h3><p>Information-seeking workflows designed to test what should be retained, scoped, and passed forward.</p><small>200 certified families</small></article>
-          <article class="domain" data-mark="M"><div class="domain-num">04 / 04</div><h3>Mathematical &amp;<br />Structured Reasoning</h3><p>Structured reasoning tasks that make intermediate context and coordinated verification visible.</p><small>200 certified families</small></article>
+      </a>
+      <div class="hidden lg:flex items-center gap-7 text-[13px] text-dim whitespace-nowrap">
+        <a class="nav-link hover:text-ink transition" href="#overview">Overview</a>
+        <a class="nav-link hover:text-ink transition" href="#domains">Domains</a>
+        <a class="nav-link hover:text-ink transition" href="#chrono">Related Work</a>
+        <a class="nav-link hover:text-ink transition" href="#examples">Examples</a>
+        <a class="nav-link hover:text-ink transition" href="#structure">Structure</a>
+        <a class="nav-link hover:text-ink transition" href="#metrics">Metrics</a>
+        <a class="nav-link hover:text-ink transition" href="#leaderboard">Leaderboard</a>
+        <a class="nav-link hover:text-ink transition" href="#access">Access</a>
+      </div>
+      <div class="flex items-center gap-2">
+        <a href="#citation" class="btn-ghost px-4 py-2 text-xs">Cite</a>
+        <a href="#access" class="btn-primary px-4 py-2 text-xs">Get Access</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ===== HERO ===== -->
+<header id="top" class="relative min-h-[92vh] flex items-center overflow-hidden">
+  <div class="absolute inset-0 grid-bg"></div>
+  <div class="orb" style="width:460px;height:460px;background:#FB8147;top:-80px;left:-60px;"></div>
+  <div class="orb" style="width:380px;height:380px;background:#FB8147;top:20%;right:-60px;animation-delay:-6s;"></div>
+  <div class="orb" style="width:320px;height:320px;background:#FDA83A;bottom:-40px;left:30%;animation-delay:-12s;"></div>
+
+  <div class="relative z-10 mx-auto max-w-7xl px-6 pt-32 pb-20 w-full">
+    <div class="reveal">
+      <div class="inline-flex items-center gap-2 rounded-full glass px-4 py-1.5 text-xs">
+        <span class="w-1.5 h-1.5 rounded-full bg-orange animate-pulse"></span>
+        <span class="text-dim font-mono">BENCHMARK · MULTI-AGENT COLLABORATIVE MEMORY</span>
+      </div>
+    </div>
+
+    <h1 class="reveal mt-7 font-display text-5xl md:text-7xl font-bold leading-[1.05] max-w-4xl">
+      Benchmarking<br/>
+      <span class="stat-num">Collaborative Memory Boundaries</span><br/>
+      across Workflow Topologies
+    </h1>
+
+    <p class="reveal mt-7 text-lg text-dim max-w-2xl leading-relaxed">
+      Does task-relevant memory reach the agents that need it &mdash; while inapplicable content stays isolated?
+      CoMemBench turns source-grounded multi-agent workflows into matched clean&ndash;polluted memory experiments
+      with typed, version-aware artifact handoffs.
+    </p>
+
+    <div class="reveal mt-9 flex flex-wrap gap-3">
+      <a href="#leaderboard" class="btn-primary px-7 py-3.5 text-sm">View Leaderboard</a>
+      <a href="#examples" class="btn-ghost px-7 py-3.5 text-sm">Explore Examples</a>
+      <a href="#chrono" class="btn-ghost px-7 py-3.5 text-sm">Related Work Timeline</a>
+    </div>
+
+    <div class="reveal mt-14 grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div class="glass rounded-2xl p-5">
+        <div class="stat-num text-3xl md:text-4xl">800</div>
+        <div class="mt-1.5 text-xs text-dim font-mono uppercase tracking-wider">Workflow families</div>
+      </div>
+      <div class="glass rounded-2xl p-5">
+        <div class="stat-num text-3xl md:text-4xl">4</div>
+        <div class="mt-1.5 text-xs text-dim font-mono uppercase tracking-wider">Source-grounded domains</div>
+      </div>
+      <div class="glass rounded-2xl p-5">
+        <div class="stat-num text-3xl md:text-4xl">240</div>
+        <div class="mt-1.5 text-xs text-dim font-mono uppercase tracking-wider">Isolation challenges</div>
+      </div>
+      <div class="glass rounded-2xl p-5">
+        <div class="stat-num text-3xl md:text-4xl">6&ndash;19</div>
+        <div class="mt-1.5 text-xs text-dim font-mono uppercase tracking-wider">Nodes per family (median 11)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="absolute bottom-0 inset-x-0 glow-line"></div>
+</header>
+
+<!-- ===== OVERVIEW ===== -->
+<section id="overview" class="relative py-24">
+  <div class="mx-auto max-w-7xl px-6">
+    <div class="reveal max-w-3xl">
+      <div class="font-mono text-xs text-orange uppercase tracking-[.28em] mb-3">01 — Overview</div>
+      <h2 class="font-display text-4xl md:text-5xl font-bold leading-tight">Not another single-agent benchmark</h2>
+      <p class="mt-6 text-dim text-lg leading-relaxed">
+        Agents form local memory from their own tasks, observations, and execution histories.
+        In a workflow, whether that memory should cross an agent boundary is <em class="text-ink not-italic">task-conditioned</em>:
+        a downstream node either requires the artifact, or must stay isolated from it.
+        CoMemBench evaluates exactly that boundary.
+      </p>
+    </div>
+
+    <div class="mt-12 grid md:grid-cols-3 gap-6">
+      <div class="reveal glass glass-hover rounded-2xl p-7 transition-all duration-300">
+        <div class="w-11 h-11 rounded-xl flex items-center justify-center text-lg"
+             style="background:rgba(251,129,71,0.12);border:1px solid rgba(251,129,71,0.35)">①</div>
+        <h3 class="mt-5 font-display text-xl font-semibold">Task-conditioned boundaries</h3>
+        <p class="mt-3 text-dim text-sm leading-relaxed">
+          Applicability is defined by workflow dependency edges, not by speakers, roles, or privacy policies.
+          A document required by node A is a distractor for node B when no edge connects them.
+        </p>
+      </div>
+      <div class="reveal glass glass-hover rounded-2xl p-7 transition-all duration-300">
+        <div class="w-11 h-11 rounded-xl flex items-center justify-center text-lg"
+             style="background:rgba(253,168,58,0.14);border:1px solid rgba(253,168,58,0.35)">②</div>
+        <h3 class="mt-5 font-display text-xl font-semibold">Matched clean&ndash;polluted pairs</h3>
+        <p class="mt-3 text-dim text-sm leading-relaxed">
+          240 pollution instances are paired with controls. If inapplicable content changes downstream behavior,
+          the isolation challenge exposes it &mdash; without equating benchmark-visible artifacts with internal memory.
+        </p>
+      </div>
+      <div class="reveal glass glass-hover rounded-2xl p-7 transition-all duration-300">
+        <div class="w-11 h-11 rounded-xl flex items-center justify-center text-lg"
+             style="background:rgba(253,168,58,0.14);border:1px solid rgba(253,168,58,0.35)">③</div>
+        <h3 class="mt-5 font-display text-xl font-semibold">Typed, version-aware handoffs</h3>
+        <p class="mt-3 text-dim text-sm leading-relaxed">
+          Artifacts carry types and versions (repository commits, Lean toolchains, corpus revisions).
+          Verifiers check that what crossed a boundary is what the receiving node declared it needed.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== DOMAINS ===== -->
+<section id="domains" class="relative py-24 border-t border-warmborder">
+  <div class="mx-auto max-w-7xl px-6">
+    <div class="reveal">
+      <div class="font-mono text-xs text-orange uppercase tracking-[.28em] mb-3">02 — Domains</div>
+      <h2 class="font-display text-4xl md:text-5xl font-bold">Four domains, 200 families each</h2>
+      <p class="mt-5 text-dim max-w-3xl text-lg">
+        Every family is a directed workflow of typed artifact handoffs, grounded in a real source benchmark
+        and executed with domain-native verification.
+      </p>
+    </div>
+
+    <div class="mt-12 grid md:grid-cols-2 gap-6">
+      <div class="reveal glass glass-hover rounded-2xl p-7 transition-all duration-300">
+        <div class="flex items-center justify-between">
+          <div class="example-icon">TB</div>
+          <span class="chip">Toolathlon / Toolathlon-GYM</span>
         </div>
-      </div></section>
-      <section class="section" id="samples"><div class="shell">
-        <div class="section-heading"><div><div class="eyebrow">Task atlas</div><h2>What a task<br />looks like.</h2></div><p>Each task family specifies a workflow and its verification boundary. The scenarios below are <strong>illustrative task shapes</strong>, created for this website—not released benchmark instances.</p></div>
-        <div class="samples">
-          <article class="sample" data-index="01"><span class="sample-tag">Stateful Tool Use</span><h3>Coordinate a changing plan across connected tools.</h3><p>Reconcile a shared schedule, a structured record, and a participant-facing update while preserving only the context the next operator needs.</p><div class="sample-path"><span>state</span><span>handoff</span><span>tool action</span><span>receipt</span></div><small class="sample-note">Illustrative task shape · not a released instance</small></article>
-          <article class="sample" data-index="02"><span class="sample-tag">Repository Code Change</span><h3>Turn an issue report into a verified, minimal patch.</h3><p>Trace a reported behavior through a pinned repository, modify the narrowest relevant path, and leave a test-backed explanation for the reviewer.</p><div class="sample-path"><span>issue context</span><span>code path</span><span>patch</span><span>test</span></div><small class="sample-note">Illustrative task shape · not a released instance</small></article>
-          <article class="sample" data-index="03"><span class="sample-tag">Offline Information Retrieval</span><h3>Resolve a question from a fixed evidence corpus.</h3><p>Search a bounded collection, compare competing passages, and pass forward a source-linked answer that another agent can audit without web access.</p><div class="sample-path"><span>corpus</span><span>evidence</span><span>citation</span><span>audit</span></div><small class="sample-note">Illustrative task shape · not a released instance</small></article>
-          <article class="sample" data-index="04"><span class="sample-tag">Mathematical &amp; Structured Reasoning</span><h3>Complete dependent reasoning with machine-checkable evidence.</h3><p>Work through a pinned formal environment where intermediate facts are useful only when their scope, dependencies, and proof status remain intact.</p><div class="sample-path"><span>dependency graph</span><span>proof state</span><span>handoff</span><span>check</span></div><small class="sample-note">Illustrative task shape · not a released instance</small></article>
+        <h3 class="mt-5 font-display text-2xl font-semibold">Stateful Tool Use</h3>
+        <p class="mt-3 text-dim text-sm leading-relaxed">
+          Long-horizon application workflows with live tools &mdash; search, finance APIs, office documents, messaging.
+          Memory includes tool state, intermediate artifacts, and receipts that later nodes depend on.
+        </p>
+        <div class="mt-5 flex flex-wrap gap-2">
+          <span class="chip">200 families</span><span class="chip">terminal + API tools</span><span class="chip">receipt-gated</span>
         </div>
-      </div></section>
-      <section class="section" id="structure"><div class="shell"><div class="section-heading"><div><div class="eyebrow">Method</div><h2>Memory is not a shared scratchpad.</h2></div><p>CoMemBench treats workflow topology as an evaluation surface. It distinguishes <strong>what is stored, who can retrieve it, and whether the workflow can use it responsibly</strong>.</p></div>
-        <div class="structure"><div class="diagram"><div class="eyebrow">A topology-aware view</div><div class="flow"><div class="node"><div class="node-dot">01</div><p>Task<br />context</p></div><div class="node"><div class="node-dot">02</div><p>Typed<br />handoff</p></div><div class="node"><div class="node-dot">03</div><p>Scoped<br />memory</p></div><div class="node"><div class="node-dot">04</div><p>Verified<br />outcome</p></div></div></div>
-        <article class="method"><div class="eyebrow">What the release records</div><h3>Evidence before interpretation.</h3><p>The benchmark release is constructed around task families and certified domain coverage—not a single aggregate score presented without provenance.</p><ul class="method-list"><li>Task-family coverage <span>800 / 800</span></li><li>Domain balance <span>200 each</span></li><li>Release validation <span>passed</span></li></ul></article></div>
-        <div class="protocol"><div class="eyebrow">Evaluation anatomy</div><div class="protocol-grid"><article class="protocol-step"><b>01</b><h4>Task family</h4><p>A bounded goal and a declared workflow context.</p></article><article class="protocol-step"><b>02</b><h4>Topology</h4><p>Nodes, handoffs, and access boundaries define the collaboration surface.</p></article><article class="protocol-step"><b>03</b><h4>Execution</h4><p>Agents operate in the scoped environment and leave task evidence.</p></article><article class="protocol-step"><b>04</b><h4>Verification</h4><p>Native checks assess the produced artifact, state, or proof.</p></article><article class="protocol-step"><b>05</b><h4>Receipt</h4><p>Coverage and validation records preserve the release provenance.</p></article></div></div>
-      </div></section>
-      <section class="access" id="access"><div class="shell"><div class="eyebrow">Public release</div><h2>Open evaluation, responsible access.</h2><p>Website, documentation, and evaluation code will be public. Dataset access will use a gated request flow so every release can remain attributable and versioned.</p><div class="access-grid"><article class="access-card"><b>Dataset</b><h3>Access request</h3><p>800 certified families are recorded in the v18 ledger. Public data access and use terms are under release review.</p></article><article class="access-card"><b>Evaluation</b><h3>Code &amp; documentation</h3><p>Reproducibility instructions, evaluator details, and a public repository link will be added with the paper release.</p></article></div></div></section>
-    </main>
-    <footer><div class="shell foot"><p><b>CoMemBench</b> — Benchmarking Collaborative Memory Boundaries across Multi-Agent Workflow Topologies.</p><p>Website prototype · Counts derived from the certified v18 release ledger.</p></div></footer>
-  </body>
+      </div>
+
+      <div class="reveal glass glass-hover rounded-2xl p-7 transition-all duration-300">
+        <div class="flex items-center justify-between">
+          <div class="example-icon">SW</div>
+          <span class="chip">SWE-bench Verified</span>
+        </div>
+        <h3 class="mt-5 font-display text-2xl font-semibold">Repository Code Change</h3>
+        <p class="mt-3 text-dim text-sm leading-relaxed">
+          Real GitHub issues turned into multi-node workflows: reproduce &rarr; localize &rarr; patch &rarr; test &rarr; release.
+          Version-aware handoffs pin commits so a stale analysis cannot silently satisfy a downstream node.
+        </p>
+        <div class="mt-5 flex flex-wrap gap-2">
+          <span class="chip">200 families</span><span class="chip">commit-pinned</span><span class="chip">regression verified</span>
+        </div>
+      </div>
+
+      <div class="reveal glass glass-hover rounded-2xl p-7 transition-all duration-300">
+        <div class="flex items-center justify-between">
+          <div class="example-icon">IR</div>
+          <span class="chip">BrowseComp+</span>
+        </div>
+        <h3 class="mt-5 font-display text-2xl font-semibold">Offline Information Retrieval</h3>
+        <p class="mt-3 text-dim text-sm leading-relaxed">
+          Hard multi-clue questions over a fixed candidate corpus. Agents gather evidence partitions, reconcile
+          entities, and return answers with auditable provenance receipts &mdash; often under bounded revision loops.
+        </p>
+        <div class="mt-5 flex flex-wrap gap-2">
+          <span class="chip">200 families</span><span class="chip">fixed corpus</span><span class="chip">provenance receipts</span>
+        </div>
+      </div>
+
+      <div class="reveal glass glass-hover rounded-2xl p-7 transition-all duration-300">
+        <div class="flex items-center justify-between">
+          <div class="example-icon">L4</div>
+          <span class="chip">Lean 4 / HepLean</span>
+        </div>
+        <h3 class="mt-5 font-display text-2xl font-semibold">Mathematical &amp; Structured Reasoning</h3>
+        <p class="mt-3 text-dim text-sm leading-relaxed">
+          Real proof-dependency graphs from HepLean. A downstream agent may only receive a successfully compiled
+          ProofReceipt whose theorem ID, statement hash, commit, and toolchain match its declared incoming edge.
+        </p>
+        <div class="mt-5 flex flex-wrap gap-2">
+          <span class="chip">200 families</span><span class="chip">ProofReceipt-gated</span><span class="chip">no sorry / axioms</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CHRONOLOGY / RELATED WORK ===== -->
+<section id="chrono" class="relative py-24 border-t border-warmborder overflow-hidden">
+  <div class="absolute inset-0 grid-bg opacity-60"></div>
+  <div class="mx-auto max-w-7xl px-6 relative">
+    <div class="reveal">
+      <div class="font-mono text-xs text-orange uppercase tracking-[.28em] mb-3">03 — Related Work</div>
+      <h2 class="font-display text-4xl md:text-5xl font-bold">A chronology of memory &amp; multi-agent benchmarks</h2>
+      <p class="mt-5 text-dim max-w-3xl text-lg leading-relaxed">
+        From static evidence use toward governed multi-party memory &mdash; and from interaction topologies
+        toward executable task dependencies. CoMemBench sits at the intersection:
+        <span class="text-ink">task-conditioned memory boundaries on executable dependency workflows</span>.
+        Click any card to open the paper.
+      </p>
+    </div>
+
+    <!-- track filter -->
+    <div id="chrono-filter" class="reveal mt-8 flex flex-wrap gap-2 items-center">
+      <span class="font-mono text-[11px] text-dim uppercase tracking-wider mr-2">Tracks:</span>
+      <!-- filled by JS -->
+    </div>
+
+    <!-- timeline: converging lanes -->
+    <div class="reveal mt-10">
+      <div id="chrono-scroll" class="overflow-x-auto pb-4">
+        <div id="chrono-inner" class="relative" style="min-width:2200px;height:880px;">
+          <svg id="chrono-svg" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;"></svg>
+          <div id="chrono-cards"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- narrative callout -->
+    <div class="reveal mt-12 grid lg:grid-cols-3 gap-5">
+      <div class="glass rounded-2xl p-6">
+        <div class="font-mono text-[11px] text-honey uppercase tracking-wider">Thread A</div>
+        <h4 class="mt-2 font-display text-lg font-semibold">Agent memory &amp; information boundaries</h4>
+        <p class="mt-2.5 text-dim text-sm leading-relaxed">
+          LongBench, RULER
+          <a class="cite-tag" href="https://openreview.net/forum?id=kIoBbc76Sy" target="_blank" rel="noopener">hsieh2024ruler</a>
+          and KILT / BEIR established static evidence use. MemoryBank, LoCoMo, LongMemEval, RealTalk, StoryBench
+          moved to persistent and interactive memory; MemoryAgentBench added selective forgetting.
+          GroupMemBench, GateMem, PAC-Bench then asked who may see what.
+        </p>
+      </div>
+      <div class="glass rounded-2xl p-6">
+        <div class="font-mono text-[11px] text-orange uppercase tracking-wider">Thread B</div>
+        <h4 class="mt-2 font-display text-lg font-semibold">Multi-agent &amp; workflow structure</h4>
+        <p class="mt-2.5 text-dim text-sm leading-relaxed">
+          AgentBench, MindAgent, LLM-Coordination study coordination; MultiAgentBench varies
+          star / chain / tree / graph <em>interaction</em> protocols
+          <a class="cite-tag" href="https://aclanthology.org/2025.acl-long.421/" target="_blank" rel="noopener">zhu2025multiagentbench</a>;
+          TaskBench and MAS-Orchestra vary <em>task</em> dependencies &mdash; chains, DAGs, depth, breadth, parallelism.
+        </p>
+      </div>
+      <div class="glass rounded-2xl p-6">
+        <div class="font-mono text-[11px] text-honey uppercase tracking-wider">Thread C</div>
+        <h4 class="mt-2 font-display text-lg font-semibold">Executable outcomes</h4>
+        <p class="mt-2.5 text-dim text-sm leading-relaxed">
+          &tau;-bench, AppWorld, Toolathlon
+          <a class="cite-tag" href="https://openreview.net/forum?id=z53s5p0qhf" target="_blank" rel="noopener">li2025toolathlon</a>
+          and Toolathlon-GYM make success checkable in real environments. PeopleJoin and SILO-BENCH add
+          distributed information. CoMemBench combines these lines with typed handoffs and matched pollution pairs.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== EXAMPLES ===== -->
+<section id="examples" class="relative py-24 border-t border-warmborder">
+  <div class="mx-auto max-w-7xl px-6">
+    <div class="reveal">
+      <div class="font-mono text-xs text-orange uppercase tracking-[.28em] mb-3">04 — Task Examples</div>
+      <h2 class="font-display text-4xl md:text-5xl font-bold">Four worked examples, one per domain</h2>
+      <p class="mt-5 text-dim max-w-3xl text-lg">
+        Verbatim excerpts from the v17 release (<span class="font-mono text-orange text-base">workflow_families.jsonl</span>).
+        The goal is what every agent in the family is ultimately working toward.
+      </p>
+    </div>
+
+    <!-- Example 1 -->
+    <details class="expander glass reveal mt-10 p-7" open>
+      <summary>
+        <div class="flex items-start gap-4">
+          <div class="example-icon shrink-0">01</div>
+          <div>
+            <div class="font-mono text-orange text-xs mb-1.5 uppercase tracking-wider">Stateful Tool Use</div>
+            <h3 class="font-display text-2xl font-semibold">AI-driven investment research report</h3>
+            <div class="mt-3 flex flex-wrap gap-2">
+              <span class="chip">v15_family_0018_57541cbaddf2</span>
+              <span class="chip">11 nodes &middot; 23 edges</span>
+              <span class="chip">composite topology</span>
+              <span class="chip">Toolathlon</span>
+            </div>
+          </div>
+        </div>
+      </summary>
+      <div class="mt-7 grid lg:grid-cols-5 gap-7">
+        <div class="lg:col-span-3">
+          <div class="font-mono text-[11px] text-dim uppercase tracking-wider mb-2">Global goal (excerpt)</div>
+          <div class="goal-box">
+You are a quantitative analyst preparing an AI-driven investment research report that combines academic research insights with live market data. Your workspace contains three files you should start by reading: research_brief.md describes the investment thesis and key research questions, portfolio_holdings.csv lists the current portfolio positions with symbols and target weights, and risk_limits.json defines maximum position sizes and sector concentration limits.<br><br>
+Search the research paper archive for papers related to "large language models finance" and also for "machine learning stock prediction". Read the abstracts of the papers you find and filter out any that are not relevant to AI applications in finance or investing.<br><br>
+Query the financial data service for current stock information on the three core holdings in the portfolio: GOOGL, AMZN, and JPM. Also retrieve recent price history and financial statement data for these three symbols so you can assess their fundamentals.<br><br>
+Write and run a Python script called compute_portfolio_metrics.py that computes portfolio-level metrics, then produce AI_Investment.xlsx and Research_Report.docx, and notify stakeholders.
+          </div>
+          <div class="mt-5 font-mono text-[11px] text-dim uppercase tracking-wider">Agent roles</div>
+          <div class="mt-2">
+            <span class="role-pill">retrieval_agent &times;6</span>
+            <span class="role-pill">artifact_agent</span>
+            <span class="role-pill">tool_agent</span>
+            <span class="role-pill">workflow_verifier</span>
+          </div>
+          <div class="mt-4 font-mono text-[11px] text-dim uppercase tracking-wider">Artifact types on handoff edges</div>
+          <div class="mt-2">
+            <span class="role-pill">tabular_artifact</span>
+            <span class="role-pill">source_evidence</span>
+            <span class="role-pill">code_artifact</span>
+            <span class="role-pill">document_artifact</span>
+            <span class="role-pill">notification_receipt</span>
+          </div>
+        </div>
+        <div class="lg:col-span-2">
+          <div class="font-mono text-[11px] text-dim uppercase tracking-wider mb-2">Workflow sketch</div>
+          <svg viewBox="0 0 320 250" class="w-full rounded-xl border border-warmborder" style="background:rgba(0,0,0,0.28)">
+            <defs>
+              <marker id="a1" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+                <path d="M0,0 L7,3 L0,6 Z" fill="#FB8147"/>
+              </marker>
+            </defs>
+            <rect x="12" y="12" width="88" height="36" rx="6" fill="rgba(251,129,71,0.12)" stroke="#FB8147" stroke-opacity=".5"/>
+            <text x="56" y="28" text-anchor="middle" font-size="9" fill="#C25A22">workspace files</text>
+            <text x="56" y="40" text-anchor="middle" font-size="8" fill="#646A73">brief &middot; holdings &middot; limits</text>
+            <rect x="116" y="12" width="90" height="36" rx="6" fill="rgba(251,129,71,0.12)" stroke="#FB8147" stroke-opacity=".5"/>
+            <text x="161" y="28" text-anchor="middle" font-size="9" fill="#C25A22">paper search</text>
+            <text x="161" y="40" text-anchor="middle" font-size="8" fill="#646A73">abstracts &rarr; filter</text>
+            <rect x="222" y="12" width="86" height="36" rx="6" fill="rgba(251,129,71,0.12)" stroke="#FB8147" stroke-opacity=".5"/>
+            <text x="265" y="28" text-anchor="middle" font-size="9" fill="#C25A22">market data</text>
+            <text x="265" y="40" text-anchor="middle" font-size="8" fill="#646A73">quotes &middot; statements</text>
+            <rect x="60" y="90" width="120" height="36" rx="6" fill="rgba(231,111,81,0.12)" stroke="#E76F51" stroke-opacity=".55"/>
+            <text x="120" y="106" text-anchor="middle" font-size="9" fill="#B45309">compute_portfolio_metrics</text>
+            <text x="120" y="118" text-anchor="middle" font-size="8" fill="#646A73">python &rarr; analysis.json</text>
+            <rect x="200" y="90" width="100" height="36" rx="6" fill="rgba(251,129,71,0.12)" stroke="#FB8147" stroke-opacity=".5"/>
+            <text x="250" y="106" text-anchor="middle" font-size="9" fill="#C25A22">research&rarr;stocks</text>
+            <text x="250" y="118" text-anchor="middle" font-size="8" fill="#646A73">mapping.json</text>
+            <rect x="30" y="160" width="110" height="36" rx="6" fill="rgba(251,129,71,0.12)" stroke="#FB8147" stroke-opacity=".5"/>
+            <text x="85" y="176" text-anchor="middle" font-size="9" fill="#C25A22">AI_Investment.xlsx</text>
+            <text x="85" y="188" text-anchor="middle" font-size="8" fill="#646A73">tabular_artifact</text>
+            <rect x="160" y="160" width="130" height="36" rx="6" fill="rgba(251,129,71,0.12)" stroke="#FB8147" stroke-opacity=".5"/>
+            <text x="225" y="176" text-anchor="middle" font-size="9" fill="#C25A22">Research_Report.docx</text>
+            <text x="225" y="188" text-anchor="middle" font-size="8" fill="#646A73">document_artifact</text>
+            <rect x="95" y="212" width="130" height="28" rx="6" fill="rgba(253,168,58,0.14)" stroke="#FDA83A" stroke-opacity=".55"/>
+            <text x="160" y="230" text-anchor="middle" font-size="9" fill="#B45309">notify + verifier</text>
+            <line x1="56" y1="48" x2="100" y2="90" stroke="#FB8147" stroke-width="1.2" stroke-opacity=".55" marker-end="url(#a1)"/>
+            <line x1="161" y1="48" x2="130" y2="90" stroke="#FB8147" stroke-width="1.2" stroke-opacity=".55" marker-end="url(#a1)"/>
+            <line x1="265" y1="48" x2="240" y2="90" stroke="#FB8147" stroke-width="1.2" stroke-opacity=".55" marker-end="url(#a1)"/>
+            <line x1="120" y1="126" x2="85" y2="160" stroke="#FB8147" stroke-width="1.2" stroke-opacity=".55" marker-end="url(#a1)"/>
+            <line x1="250" y1="126" x2="225" y2="160" stroke="#FB8147" stroke-width="1.2" stroke-opacity=".55" marker-end="url(#a1)"/>
+            <line x1="85" y1="196" x2="145" y2="212" stroke="#FB8147" stroke-width="1.2" stroke-opacity=".55" marker-end="url(#a1)"/>
+            <line x1="225" y1="196" x2="175" y2="212" stroke="#FB8147" stroke-width="1.2" stroke-opacity=".55" marker-end="url(#a1)"/>
+          </svg>
+          <div class="mt-3 text-xs text-dim leading-relaxed">
+            Source: <span class="font-mono text-honey">toolathlon_gym/.../terminal-arxiv-yf-excel-word-notion-email</span><br/>
+            Motifs: <span class="font-mono text-orange">split_join &middot; reuse &middot; overlap &middot; chain</span>
+          </div>
+        </div>
+      </div>
+    </details>
+
+    <!-- Example 2 -->
+    <details class="expander glass reveal mt-5 p-7">
+      <summary>
+        <div class="flex items-start gap-4">
+          <div class="example-icon shrink-0">02</div>
+          <div>
+            <div class="font-mono text-orange text-xs mb-1.5 uppercase tracking-wider">Repository Code Change</div>
+            <h3 class="font-display text-2xl font-semibold">Nominal scale rendering in seaborn</h3>
+            <div class="mt-3 flex flex-wrap gap-2">
+              <span class="chip">v15_family_0204_914616c2021c</span>
+              <span class="chip">11 nodes &middot; 17 edges</span>
+              <span class="chip">mwaskom/seaborn-3069</span>
+              <span class="chip">SWE-bench Verified</span>
+            </div>
+          </div>
+        </div>
+      </summary>
+      <div class="mt-7 grid lg:grid-cols-5 gap-7">
+        <div class="lg:col-span-3">
+          <div class="font-mono text-[11px] text-dim uppercase tracking-wider mb-2">Global goal (excerpt)</div>
+          <div class="goal-box">
+Resolve the following real issue in repository mwaskom/seaborn at base commit 54cab15b&hellip;. Work in the fixed repository environment. Reproduce the reported behavior, localize its cause, implement the smallest correct patch, run relevant regression tests, and return a release decision.<br><br>
+Nominal scale should be drawn the same way as categorical scales. Three distinctive things happen on the categorical axis in seaborn's categorical plots: (1) the scale is drawn to &plusmn;0.5 from the first and last tick, rather than using the normal margin logic; (2) a grid is not shown, even when it otherwise would be with the corresponding numeric scale; (3) the tick labels are drawn at the integer positions, not at the floating-point tick locations&hellip;
+          </div>
+          <div class="mt-5 font-mono text-[11px] text-dim uppercase tracking-wider">Agent roles</div>
+          <div class="mt-2">
+            <span class="role-pill">issue_analyst</span>
+            <span class="role-pill">reproduction_agent</span>
+            <span class="role-pill">repository_analyst &times;2</span>
+            <span class="role-pill">regression_agent &times;2</span>
+            <span class="role-pill">patch_designer</span>
+            <span class="role-pill">implementation_agent</span>
+            <span class="role-pill">test_agent</span>
+            <span class="role-pill">release_agent</span>
+            <span class="role-pill">workflow_verifier</span>
+          </div>
+          <div class="mt-4 font-mono text-[11px] text-dim uppercase tracking-wider">Artifact types on handoff edges</div>
+          <div class="mt-2">
+            <span class="role-pill">issue_requirements</span>
+            <span class="role-pill">reproduction_receipt</span>
+            <span class="role-pill">localization_receipt</span>
+            <span class="role-pill">patch_plan</span>
+            <span class="role-pill">patch_candidate</span>
+            <span class="role-pill">test_receipt</span>
+          </div>
+        </div>
+        <div class="lg:col-span-2">
+          <div class="font-mono text-[11px] text-dim uppercase tracking-wider mb-2">Workflow sketch</div>
+          <svg viewBox="0 0 320 230" class="w-full rounded-xl border border-warmborder" style="background:rgba(0,0,0,0.28)">
+            <defs>
+              <marker id="a2" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+                <path d="M0,0 L7,3 L0,6 Z" fill="#FDA83A"/>
+              </marker>
+            </defs>
+            <rect x="100" y="10" width="120" height="30" rx="6" fill="rgba(253,168,58,0.14)" stroke="#FDA83A" stroke-opacity=".55"/>
+            <text x="160" y="29" text-anchor="middle" font-size="9" fill="#B45309">issue_analyst</text>
+            <rect x="20" y="60" width="110" height="30" rx="6" fill="rgba(251,129,71,0.12)" stroke="#FB8147" stroke-opacity=".5"/>
+            <text x="75" y="79" text-anchor="middle" font-size="9" fill="#C25A22">reproduction</text>
+            <rect x="150" y="60" width="110" height="30" rx="6" fill="rgba(251,129,71,0.12)" stroke="#FB8147" stroke-opacity=".5"/>
+            <text x="205" y="79" text-anchor="middle" font-size="9" fill="#C25A22">localize &times;2</text>
+            <rect x="100" y="110" width="120" height="30" rx="6" fill="rgba(251,129,71,0.12)" stroke="#FB8147" stroke-opacity=".5"/>
+            <text x="160" y="129" text-anchor="middle" font-size="9" fill="#C25A22">regression &times;2</text>
+            <rect x="100" y="152" width="120" height="30" rx="6" fill="rgba(231,111,81,0.12)" stroke="#E76F51" stroke-opacity=".55"/>
+            <text x="160" y="171" text-anchor="middle" font-size="9" fill="#B45309">patch &rarr; implement</text>
+            <rect x="30" y="196" width="100" height="26" rx="6" fill="rgba(253,168,58,0.14)" stroke="#FDA83A" stroke-opacity=".55"/>
+            <text x="80" y="213" text-anchor="middle" font-size="9" fill="#B45309">test_agent</text>
+            <rect x="150" y="196" width="110" height="26" rx="6" fill="rgba(253,168,58,0.14)" stroke="#FDA83A" stroke-opacity=".55"/>
+            <text x="205" y="213" text-anchor="middle" font-size="9" fill="#B45309">release + verifier</text>
+            <line x1="160" y1="40" x2="75" y2="60" stroke="#FDA83A" stroke-width="1.2" stroke-opacity=".5" marker-end="url(#a2)"/>
+            <line x1="160" y1="40" x2="205" y2="60" stroke="#FDA83A" stroke-width="1.2" stroke-opacity=".5" marker-end="url(#a2)"/>
+            <line x1="75" y1="90" x2="150" y2="110" stroke="#FB8147" stroke-width="1.2" stroke-opacity=".5" marker-end="url(#a2)"/>
+            <line x1="205" y1="90" x2="180" y2="110" stroke="#FB8147" stroke-width="1.2" stroke-opacity=".5" marker-end="url(#a2)"/>
+            <line x1="160" y1="140" x2="160" y2="152" stroke="#FB8147" stroke-width="1.2" stroke-opacity=".5" marker-end="url(#a2)"/>
+            <line x1="140" y1="182" x2="80" y2="196" stroke="#FB8147" stroke-width="1.2" stroke-opacity=".5" marker-end="url(#a2)"/>
+            <line x1="180" y1="182" x2="205" y2="196" stroke="#FB8147" stroke-width="1.2" stroke-opacity=".5" marker-end="url(#a2)"/>
+          </svg>
+          <div class="mt-3 text-xs text-dim leading-relaxed">
+            Commit-pinned handoffs: a stale localization cannot satisfy the patch node.
+          </div>
+        </div>
+      </div>
+    </details>
+
+    <!-- Example 3 -->
+    <details class="expander glass reveal mt-5 p-7">
+      <summary>
+        <div class="flex items-start gap-4">
+          <div class="example-icon shrink-0">03</div>
+          <div>
+            <div class="font-mono text-orange text-xs mb-1.5 uppercase tracking-wider">Offline Information Retrieval</div>
+            <h3 class="font-display text-2xl font-semibold">Multi-clue entity reconciliation</h3>
+            <div class="mt-3 flex flex-wrap gap-2">
+              <span class="chip">v15_family_0424_cd64a8a6bd66</span>
+              <span class="chip">11 nodes &middot; 23 edges</span>
+              <span class="chip">browsecomp_plus/test/46</span>
+              <span class="chip">bounded_revision_loop</span>
+            </div>
+          </div>
+        </div>
+      </summary>
+      <div class="mt-7 grid lg:grid-cols-5 gap-7">
+        <div class="lg:col-span-3">
+          <div class="font-mono text-[11px] text-dim uppercase tracking-wider mb-2">Global goal (excerpt)</div>
+          <div class="goal-box">
+Answer this real information-seeking question from the released fixed candidate corpus. Use exact supporting passages with document identities, reconcile all clues to one candidate, and return the requested attribute with an auditable provenance receipt.<br><br>
+What is the full name of a person known for investing in technology businesses? This individual holds a Bachelor of Science degree in Computer Science from a university that was established in the late 19th century and began teaching two years after its founding. This person wrote a blog post titled "Muzungu" about their three-week trip to Rwanda&hellip;
+          </div>
+          <div class="mt-5 font-mono text-[11px] text-dim uppercase tracking-wider">Agent roles</div>
+          <div class="mt-2">
+            <span class="role-pill">evidence_agent &times;6</span>
+            <span class="role-pill">entity_resolution_agent</span>
+            <span class="role-pill">answer_agent</span>
+            <span class="role-pill">provenance_auditor</span>
+            <span class="role-pill">result_synthesizer</span>
+            <span class="role-pill">workflow_verifier</span>
+          </div>
+          <div class="mt-4 font-mono text-[11px] text-dim uppercase tracking-wider">Revision contract</div>
+          <div class="mt-2 text-sm text-dim">
+            Six evidence partitions <span class="font-mono text-orange">P01&ndash;P06</span> feed entity resolution and a provenance auditor.
+            Up to <span class="text-ink">6 candidate revision edges</span> let a failed receipt send the workflow back one step under a bounded loop.
+          </div>
+        </div>
+        <div class="lg:col-span-2">
+          <div class="font-mono text-[11px] text-dim uppercase tracking-wider mb-2">Workflow sketch</div>
+          <svg viewBox="0 0 320 230" class="w-full rounded-xl border border-warmborder" style="background:rgba(0,0,0,0.28)">
+            <defs>
+              <marker id="a3" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+                <path d="M0,0 L7,3 L0,6 Z" fill="#FB8147"/>
+              </marker>
+            </defs>
+            <rect x="8" y="10" width="48" height="26" rx="5" fill="rgba(251,129,71,0.12)" stroke="#FB8147" stroke-opacity=".5"/>
+            <text x="32" y="27" text-anchor="middle" font-size="9" fill="#C25A22">P01</text>
+            <rect x="62" y="10" width="48" height="26" rx="5" fill="rgba(251,129,71,0.12)" stroke="#FB8147" stroke-opacity=".5"/>
+            <text x="86" y="27" text-anchor="middle" font-size="9" fill="#C25A22">P02</text>
+            <rect x="116" y="10" width="48" height="26" rx="5" fill="rgba(251,129,71,0.12)" stroke="#FB8147" stroke-opacity=".5"/>
+            <text x="140" y="27" text-anchor="middle" font-size="9" fill="#C25A22">P03</text>
+            <rect x="170" y="10" width="48" height="26" rx="5" fill="rgba(251,129,71,0.12)" stroke="#FB8147" stroke-opacity=".5"/>
+            <text x="194" y="27" text-anchor="middle" font-size="9" fill="#C25A22">P04</text>
+            <rect x="224" y="10" width="48" height="26" rx="5" fill="rgba(251,129,71,0.12)" stroke="#FB8147" stroke-opacity=".5"/>
+            <text x="248" y="27" text-anchor="middle" font-size="9" fill="#C25A22">P05</text>
+            <rect x="278" y="10" width="34" height="26" rx="5" fill="rgba(251,129,71,0.12)" stroke="#FB8147" stroke-opacity=".5"/>
+            <text x="295" y="27" text-anchor="middle" font-size="9" fill="#C25A22">P06</text>
+            <rect x="70" y="80" width="180" height="32" rx="6" fill="rgba(253,168,58,0.14)" stroke="#FDA83A" stroke-opacity=".55"/>
+            <text x="160" y="100" text-anchor="middle" font-size="9" fill="#B45309">entity_resolution</text>
+            <rect x="40" y="140" width="110" height="28" rx="6" fill="rgba(251,129,71,0.12)" stroke="#FB8147" stroke-opacity=".5"/>
+            <text x="95" y="158" text-anchor="middle" font-size="9" fill="#C25A22">provenance_auditor</text>
+            <rect x="170" y="140" width="110" height="28" rx="6" fill="rgba(251,129,71,0.12)" stroke="#FB8147" stroke-opacity=".5"/>
+            <text x="225" y="158" text-anchor="middle" font-size="9" fill="#C25A22">answer_agent</text>
+            <rect x="90" y="192" width="140" height="26" rx="6" fill="rgba(253,168,58,0.14)" stroke="#FDA83A" stroke-opacity=".55"/>
+            <text x="160" y="209" text-anchor="middle" font-size="9" fill="#B45309">result_synthesizer</text>
+            <line x1="32" y1="36" x2="120" y2="80" stroke="#FB8147" stroke-width="1" stroke-opacity=".45" marker-end="url(#a3)"/>
+            <line x1="86" y1="36" x2="135" y2="80" stroke="#FB8147" stroke-width="1" stroke-opacity=".45" marker-end="url(#a3)"/>
+            <line x1="140" y1="36" x2="150" y2="80" stroke="#FB8147" stroke-width="1" stroke-opacity=".45" marker-end="url(#a3)"/>
+            <line x1="194" y1="36" x2="170" y2="80" stroke="#FB8147" stroke-width="1" stroke-opacity=".45" marker-end="url(#a3)"/>
+            <line x1="248" y1="36" x2="190" y2="80" stroke="#FB8147" stroke-width="1" stroke-opacity=".45" marker-end="url(#a3)"/>
+            <line x1="295" y1="36" x2="210" y2="80" stroke="#FB8147" stroke-width="1" stroke-opacity=".45" marker-end="url(#a3)"/>
+            <line x1="120" y1="112" x2="95" y2="140" stroke="#FDA83A" stroke-width="1.2" stroke-opacity=".5" marker-end="url(#a3)"/>
+            <line x1="200" y1="112" x2="225" y2="140" stroke="#FDA83A" stroke-width="1.2" stroke-opacity=".5" marker-end="url(#a3)"/>
+            <line x1="95" y1="168" x2="140" y2="192" stroke="#FB8147" stroke-width="1.2" stroke-opacity=".5" marker-end="url(#a3)"/>
+            <line x1="225" y1="168" x2="180" y2="192" stroke="#FB8147" stroke-width="1.2" stroke-opacity=".5" marker-end="url(#a3)"/>
+          </svg>
+          <div class="mt-3 text-xs text-dim leading-relaxed">
+            Isolation-relevant: evidence partitions are family-local; pollution inserts inapplicable content across boundaries.
+          </div>
+        </div>
+      </div>
+    </details>
+
+    <!-- Example 4 -->
+    <details class="expander glass reveal mt-5 p-7">
+      <summary>
+        <div class="flex items-start gap-4">
+          <div class="example-icon shrink-0">04</div>
+          <div>
+            <div class="font-mono text-orange text-xs mb-1.5 uppercase tracking-wider">Mathematical &amp; Structured Reasoning</div>
+            <h3 class="font-display text-2xl font-semibold">HepLean proof-dependency workflow</h3>
+            <div class="mt-3 flex flex-wrap gap-2">
+              <span class="chip">v15_family_0631_c64a79c49422</span>
+              <span class="chip">11 nodes &middot; 11 edges</span>
+              <span class="chip">math-hep-0031</span>
+              <span class="chip">Lean 4 &middot; HepLean-v4.7</span>
+            </div>
+          </div>
+        </div>
+      </summary>
+      <div class="mt-7 grid lg:grid-cols-5 gap-7">
+        <div class="lg:col-span-3">
+          <div class="font-mono text-[11px] text-dim uppercase tracking-wider mb-2">Global goal (excerpt)</div>
+          <div class="goal-box">
+Maintain the fixed Lean project HepLean-v4.7 at commit 7448822a&hellip; with toolchain leanprover/lean4:v4.7.0. Treat the declarations below as one real proof-dependency workflow. Independent declarations may be assigned to separate reasoning agents. A downstream agent may receive only a successfully compiled ProofReceipt whose theorem ID, statement hash, repository commit and toolchain match its declared incoming edge. Do not change signatures and do not use sorry, admit or new axioms. Return every ProofReceipt and one unified Lean release receipt.<br><br>
+Obligation 1 (stage 1): At HepLean\SpaceTime\LorentzGroup&hellip;
+          </div>
+          <div class="mt-5 font-mono text-[11px] text-dim uppercase tracking-wider">Gating rule</div>
+          <div class="mt-2 text-sm text-dim">
+            <span class="text-ink">ProofReceipt-gated edges.</span> Every handoff is checked against theorem ID, statement hash,
+            repository commit, and toolchain &mdash; version-aware memory in its strictest form.
+          </div>
+          <div class="mt-4 font-mono text-[11px] text-dim uppercase tracking-wider">Constraints</div>
+          <div class="mt-2">
+            <span class="role-pill">no signature change</span>
+            <span class="role-pill">no sorry / admit</span>
+            <span class="role-pill">no new axioms</span>
+            <span class="role-pill">unified release receipt</span>
+          </div>
+        </div>
+        <div class="lg:col-span-2">
+          <div class="font-mono text-[11px] text-dim uppercase tracking-wider mb-2">Workflow sketch</div>
+          <svg viewBox="0 0 320 210" class="w-full rounded-xl border border-warmborder" style="background:rgba(0,0,0,0.28)">
+            <defs>
+              <marker id="a4" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+                <path d="M0,0 L7,3 L0,6 Z" fill="#FDA83A"/>
+              </marker>
+            </defs>
+            <rect x="20" y="14" width="120" height="30" rx="6" fill="rgba(251,129,71,0.12)" stroke="#FB8147" stroke-opacity=".5"/>
+            <text x="80" y="33" text-anchor="middle" font-size="9" fill="#C25A22">theorem A (stage 1)</text>
+            <rect x="180" y="14" width="120" height="30" rx="6" fill="rgba(251,129,71,0.12)" stroke="#FB8147" stroke-opacity=".5"/>
+            <text x="240" y="33" text-anchor="middle" font-size="9" fill="#C25A22">theorem B (stage 1)</text>
+            <rect x="100" y="80" width="120" height="30" rx="6" fill="rgba(253,168,58,0.14)" stroke="#FDA83A" stroke-opacity=".55"/>
+            <text x="160" y="99" text-anchor="middle" font-size="9" fill="#B45309">theorem C (stage 2)</text>
+            <rect x="100" y="136" width="120" height="30" rx="6" fill="rgba(231,111,81,0.12)" stroke="#E76F51" stroke-opacity=".55"/>
+            <text x="160" y="155" text-anchor="middle" font-size="9" fill="#B45309">theorem D (stage 3)</text>
+            <rect x="90" y="180" width="140" height="24" rx="6" fill="rgba(253,168,58,0.14)" stroke="#FDA83A" stroke-opacity=".55"/>
+            <text x="160" y="196" text-anchor="middle" font-size="9" fill="#B45309">unified Lean release</text>
+            <line x1="80" y1="44" x2="130" y2="80" stroke="#FDA83A" stroke-width="1.3" stroke-opacity=".55" marker-end="url(#a4)"/>
+            <line x1="240" y1="44" x2="190" y2="80" stroke="#FDA83A" stroke-width="1.3" stroke-opacity=".55" marker-end="url(#a4)"/>
+            <line x1="160" y1="110" x2="160" y2="136" stroke="#FDA83A" stroke-width="1.3" stroke-opacity=".55" marker-end="url(#a4)"/>
+            <line x1="160" y1="166" x2="160" y2="180" stroke="#FDA83A" stroke-width="1.3" stroke-opacity=".55" marker-end="url(#a4)"/>
+          </svg>
+          <div class="mt-3 text-xs text-dim leading-relaxed">
+            Source: <span class="font-mono text-honey">HepLean-v4.7 @ 7448822a&hellip;</span><br/>
+            Toolchain: <span class="font-mono text-orange">leanprover/lean4:v4.7.0</span>
+          </div>
+        </div>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- ===== STRUCTURE ===== -->
+<section id="structure" class="relative py-24 border-t border-warmborder">
+  <div class="mx-auto max-w-7xl px-6">
+    <div class="reveal">
+      <div class="font-mono text-xs text-orange uppercase tracking-[.28em] mb-3">05 — Construction</div>
+      <h2 class="font-display text-4xl md:text-5xl font-bold">How a source workflow becomes a memory experiment</h2>
+      <p class="mt-5 text-dim max-w-3xl text-lg">
+        Three construction modes, one revision contract, and domain-native execution.
+        Topology is a reporting and stress dimension &mdash; not an asserted cause of failure without matched interventions.
+      </p>
+    </div>
+
+    <!-- pipeline -->
+    <div class="reveal mt-12 glass rounded-2xl p-8">
+      <div class="font-mono text-[11px] text-dim uppercase tracking-wider mb-5">Construction pipeline</div>
+      <div class="grid md:grid-cols-5 gap-3">
+        <div class="rounded-xl p-4" style="background:rgba(251,129,71,0.08);border:1px solid rgba(251,129,71,0.22)">
+          <div class="font-mono text-[10px] text-orange">STEP 01</div>
+          <div class="mt-1.5 text-sm font-medium">Source record</div>
+          <div class="mt-1 text-xs text-dim">Toolathlon / SWE-bench / BrowseComp+ / HepLean</div>
+        </div>
+        <div class="rounded-xl p-4" style="background:rgba(251,129,71,0.08);border:1px solid rgba(251,129,71,0.22)">
+          <div class="font-mono text-[10px] text-honey">STEP 02</div>
+          <div class="mt-1.5 text-sm font-medium">Induced or native workflow</div>
+          <div class="mt-1 text-xs text-dim">400 induced &middot; 200 native &middot; 200 dependency subgraph</div>
+        </div>
+        <div class="rounded-xl p-4" style="background:rgba(253,168,58,0.08);border:1px solid rgba(253,168,58,0.22)">
+          <div class="font-mono text-[10px] text-orange">STEP 03</div>
+          <div class="mt-1.5 text-sm font-medium">Typed handoff graph</div>
+          <div class="mt-1 text-xs text-dim">Artifact types + version pins on every edge</div>
+        </div>
+        <div class="rounded-xl p-4" style="background:rgba(240,171,252,0.08);border:1px solid rgba(240,171,252,0.22)">
+          <div class="font-mono text-[10px] text-honey">STEP 04</div>
+          <div class="mt-1.5 text-sm font-medium">Revision contract</div>
+          <div class="mt-1 text-xs text-dim">semantic_bounded_v19 &mdash; bounded revision loops</div>
+        </div>
+        <div class="rounded-xl p-4" style="background:rgba(253,168,58,0.08);border:1px solid rgba(253,168,58,0.22)">
+          <div class="font-mono text-[10px] text-honey">STEP 05</div>
+          <div class="mt-1.5 text-sm font-medium">Control + pollution pair</div>
+          <div class="mt-1 text-xs text-dim">800 control &middot; 240 matched isolation challenges</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- motifs -->
+    <div class="mt-10">
+      <div class="reveal font-mono text-[11px] text-dim uppercase tracking-wider mb-5">Topology motifs across the 800 families</div>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-5 gap-4">
+        <div class="reveal glass glass-hover rounded-2xl p-5 transition-all duration-300">
+          <svg viewBox="0 0 120 60" class="w-full mb-3">
+            <line x1="12" y1="30" x2="40" y2="30" stroke="#FB8147" stroke-width="2"/>
+            <line x1="48" y1="30" x2="76" y2="30" stroke="#FB8147" stroke-width="2"/>
+            <line x1="84" y1="30" x2="108" y2="30" stroke="#FB8147" stroke-width="2"/>
+            <circle cx="8" cy="30" r="5" fill="#FB8147"/><circle cx="44" cy="30" r="5" fill="#FB8147"/>
+            <circle cx="80" cy="30" r="5" fill="#FB8147"/><circle cx="112" cy="30" r="5" fill="#FB8147"/>
+          </svg>
+          <div class="text-sm font-medium">chain</div>
+          <div class="mt-1 text-xs text-dim font-mono">800 / 800</div>
+        </div>
+        <div class="reveal glass glass-hover rounded-2xl p-5 transition-all duration-300">
+          <svg viewBox="0 0 120 60" class="w-full mb-3">
+            <line x1="30" y1="30" x2="55" y2="14" stroke="#FDA83A" stroke-width="2"/>
+            <line x1="30" y1="30" x2="55" y2="46" stroke="#FDA83A" stroke-width="2"/>
+            <line x1="65" y1="14" x2="90" y2="30" stroke="#FDA83A" stroke-width="2"/>
+            <line x1="65" y1="46" x2="90" y2="30" stroke="#FDA83A" stroke-width="2"/>
+            <circle cx="24" cy="30" r="5" fill="#FDA83A"/><circle cx="60" cy="14" r="5" fill="#FDA83A"/>
+            <circle cx="60" cy="46" r="5" fill="#FDA83A"/><circle cx="96" cy="30" r="5" fill="#FDA83A"/>
+          </svg>
+          <div class="text-sm font-medium">split_join</div>
+          <div class="mt-1 text-xs text-dim font-mono">800 / 800</div>
+        </div>
+        <div class="reveal glass glass-hover rounded-2xl p-5 transition-all duration-300">
+          <svg viewBox="0 0 120 60" class="w-full mb-3">
+            <line x1="24" y1="18" x2="70" y2="18" stroke="#E76F51" stroke-width="2"/>
+            <line x1="24" y1="42" x2="70" y2="42" stroke="#E76F51" stroke-width="2"/>
+            <line x1="70" y1="18" x2="96" y2="30" stroke="#E76F51" stroke-width="2"/>
+            <line x1="70" y1="42" x2="96" y2="30" stroke="#E76F51" stroke-width="2"/>
+            <circle cx="18" cy="18" r="5" fill="#E76F51"/><circle cx="18" cy="42" r="5" fill="#E76F51"/>
+            <circle cx="76" cy="30" r="5" fill="#E76F51"/><circle cx="102" cy="30" r="5" fill="#E76F51"/>
+          </svg>
+          <div class="text-sm font-medium">reuse</div>
+          <div class="mt-1 text-xs text-dim font-mono">799 / 800</div>
+        </div>
+        <div class="reveal glass glass-hover rounded-2xl p-5 transition-all duration-300">
+          <svg viewBox="0 0 120 60" class="w-full mb-3">
+            <line x1="24" y1="20" x2="70" y2="20" stroke="#FDA83A" stroke-width="2"/>
+            <line x1="24" y1="40" x2="70" y2="40" stroke="#FDA83A" stroke-width="2"/>
+            <line x1="24" y1="20" x2="70" y2="40" stroke="#FDA83A" stroke-width="1.4" stroke-dasharray="3 3"/>
+            <circle cx="18" cy="20" r="5" fill="#FDA83A"/><circle cx="18" cy="40" r="5" fill="#FDA83A"/>
+            <circle cx="76" cy="20" r="5" fill="#FDA83A"/><circle cx="76" cy="40" r="5" fill="#FDA83A"/>
+          </svg>
+          <div class="text-sm font-medium">overlap</div>
+          <div class="mt-1 text-xs text-dim font-mono">787 / 800</div>
+        </div>
+        <div class="reveal glass glass-hover rounded-2xl p-5 transition-all duration-300">
+          <svg viewBox="0 0 120 60" class="w-full mb-3">
+            <line x1="24" y1="30" x2="55" y2="30" stroke="#1F2329" stroke-width="2"/>
+            <line x1="61" y1="30" x2="90" y2="30" stroke="#1F2329" stroke-width="2"/>
+            <path d="M90 30 Q 75 8 55 30" stroke="#1F2329" stroke-width="1.6" fill="none" stroke-dasharray="3 3"/>
+            <circle cx="18" cy="30" r="5" fill="#1F2329"/><circle cx="58" cy="30" r="5" fill="#1F2329"/><circle cx="96" cy="30" r="5" fill="#1F2329"/>
+          </svg>
+          <div class="text-sm font-medium">bounded_revision_loop</div>
+          <div class="mt-1 text-xs text-dim font-mono">418 / 800</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- split / stats -->
+    <div class="reveal mt-10 grid md:grid-cols-3 gap-5">
+      <div class="glass rounded-2xl p-6">
+        <div class="font-mono text-[11px] text-orange uppercase tracking-wider">Split</div>
+        <div class="mt-3 flex items-end gap-3">
+          <div><div class="stat-num text-3xl">623</div><div class="text-xs text-dim mt-1">test</div></div>
+          <div class="text-dim pb-1">/</div>
+          <div><div class="stat-num text-3xl">177</div><div class="text-xs text-dim mt-1">dev</div></div>
+        </div>
+      </div>
+      <div class="glass rounded-2xl p-6">
+        <div class="font-mono text-[11px] text-orange uppercase tracking-wider">Construction modes</div>
+        <div class="mt-3 text-sm text-dim leading-relaxed">
+          <div class="flex justify-between py-1.5 border-b border-warmborder"><span>source_grounded_induced_workflow</span><span class="text-ink font-mono">400</span></div>
+          <div class="flex justify-between py-1.5 border-b border-warmborder"><span>source_native_workflow</span><span class="text-ink font-mono">200</span></div>
+          <div class="flex justify-between py-1.5"><span>source_native_dependency_subgraph</span><span class="text-ink font-mono">200</span></div>
+        </div>
+      </div>
+      <div class="glass rounded-2xl p-6">
+        <div class="font-mono text-[11px] text-honey uppercase tracking-wider">Revision contract</div>
+        <div class="mt-3 text-sm text-dim leading-relaxed">
+          Mode <span class="font-mono text-ink">semantic_bounded_v19</span>.
+          Bounded revision loops let failed receipts send control back one step &mdash; matching how real workflows
+          recover without unbounded replanning.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== METRICS ===== -->
+<section id="metrics" class="relative py-24 border-t border-warmborder">
+  <div class="mx-auto max-w-7xl px-6">
+    <div class="reveal">
+      <div class="font-mono text-xs text-orange uppercase tracking-[.28em] mb-3">06 — Evaluation</div>
+      <h2 class="font-display text-4xl md:text-5xl font-bold">Headline metrics</h2>
+      <p class="mt-5 text-dim max-w-3xl text-lg">
+        Two standard measures and two memory-specific measures. Infrastructure failures are reported separately
+        and never counted as wrong answers.
+      </p>
+    </div>
+
+    <div class="mt-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div class="reveal metric-card glass rounded-2xl p-6">
+        <div class="font-mono text-xs text-orange">SR</div>
+        <h3 class="mt-2 font-display text-xl font-semibold">Task Success Rate</h3>
+        <p class="mt-2.5 text-dim text-sm leading-relaxed">
+          End-to-end workflow success over the full 50-family domain denominator.
+          Reported as completed / registered.
+        </p>
+      </div>
+      <div class="reveal metric-card glass rounded-2xl p-6">
+        <div class="font-mono text-xs text-orange">VNCR</div>
+        <h3 class="mt-2 font-display text-xl font-semibold">Verified Native Completion Rate</h3>
+        <p class="mt-2.5 text-dim text-sm leading-relaxed">
+          Macro-mean of native_passed over nodes. Captures whether each node completed its
+          <em>own</em> declared obligation under domain-native checks.
+        </p>
+      </div>
+      <div class="reveal metric-card glass rounded-2xl p-6">
+        <div class="font-mono text-xs text-honey">VHS</div>
+        <h3 class="mt-2 font-display text-xl font-semibold">Verified Handoff Success</h3>
+        <p class="mt-2.5 text-dim text-sm leading-relaxed">
+          Micro-ratio of verified eligible handoffs &mdash; downstream success conditioned on successful
+          mandatory predecessors. Proxy for required-memory availability.
+        </p>
+      </div>
+      <div class="reveal metric-card glass rounded-2xl p-6">
+        <div class="font-mono text-xs text-honey">ICS</div>
+        <h3 class="mt-2 font-display text-xl font-semibold">Isolation Challenge Success</h3>
+        <p class="mt-2.5 text-dim text-sm leading-relaxed">
+          Success on polluted instances conditioned on matched control success.
+          Blank when the denominator is below 10 &mdash; never reported as zero.
+        </p>
+      </div>
+    </div>
+
+    <div class="reveal mt-6 glass rounded-2xl p-6">
+      <div class="flex flex-wrap items-center gap-x-8 gap-y-3">
+        <div>
+          <div class="font-mono text-[11px] text-dim uppercase tracking-wider">Cost</div>
+          <div class="mt-1.5 text-sm text-ink">Tokens / Task &mdash; report input + output (median, P90)</div>
+        </div>
+        <div>
+          <div class="font-mono text-[11px] text-dim uppercase tracking-wider">Infra</div>
+          <div class="mt-1.5 text-sm text-ink">Infrastructure failures reported separately from task failures</div>
+        </div>
+        <div>
+          <div class="font-mono text-[11px] text-dim uppercase tracking-wider">Blanking rule</div>
+          <div class="mt-1.5 text-sm text-ink"><span class="font-mono text-dim">&mdash;</span> = not registered / denom &lt; 10, never an invented zero</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== LEADERBOARD ===== -->
+<section id="leaderboard" class="relative py-24 border-t border-warmborder">
+  <div class="mx-auto max-w-7xl px-6">
+    <div class="reveal flex flex-wrap items-end justify-between gap-6">
+      <div>
+        <div class="font-mono text-xs text-orange uppercase tracking-[.28em] mb-3">07 — Results</div>
+        <h2 class="font-display text-4xl md:text-5xl font-bold">Leaderboard</h2>
+        <p class="mt-5 text-dim max-w-2xl text-lg">
+          Three backbone snapshots. DeepSeek-V4-Flash is the primary M2 arm; Qwen3.8-27B is the paper-table
+          transcription; GPT-6-Luna is a partial M3 snapshot.
+        </p>
+      </div>
+      <div class="flex flex-wrap gap-2" id="backbone-tabs">
+        <button class="tab-btn on" data-bb="DeepSeek-V4-Flash">DeepSeek-V4-Flash</button>
+        <button class="tab-btn" data-bb="Qwen3.8-27B">Qwen3.8-27B</button>
+        <button class="tab-btn" data-bb="GPT-6-Luna">GPT-6-Luna</button>
+      </div>
+    </div>
+
+    <!-- snapshot cards -->
+    <div class="reveal mt-8 grid md:grid-cols-3 gap-4">
+      <div class="glass rounded-2xl p-5">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-orange"></span>
+          <div class="text-sm font-medium">DeepSeek-V4-Flash</div>
+        </div>
+        <div class="mt-2 text-xs text-dim leading-relaxed">
+          M2 frozen arm, primary. Excludes <span class="font-mono">codex_runtime</span> (harness artifact) and the R13 wave;
+          Deep Agents is main-wave only.
+        </div>
+      </div>
+      <div class="glass rounded-2xl p-5">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-orange"></span>
+          <div class="text-sm font-medium">Qwen3.8-27B</div>
+        </div>
+        <div class="mt-2 text-xs text-dim leading-relaxed">
+          Paper-table transcription. Used for cross-backbone comparison in the manuscript tables.
+        </div>
+      </div>
+      <div class="glass rounded-2xl p-5">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-honey"></span>
+          <div class="text-sm font-medium">GPT-6-Luna</div>
+        </div>
+        <div class="mt-2 text-xs text-dim leading-relaxed">
+          M3 snapshot 2026-09-25. Coverage <span class="text-ink">1,754 / 2,000</span> (87.7%) &mdash; incomplete; treat as provisional.
+        </div>
+      </div>
+    </div>
+
+    <!-- metric tabs -->
+    <div class="reveal mt-8 flex flex-wrap gap-2 items-center">
+      <span class="font-mono text-[11px] text-dim uppercase tracking-wider mr-2">Metric:</span>
+      <button class="tab-btn on" data-metric="sr">SR</button>
+      <button class="tab-btn" data-metric="vncr">VNCR</button>
+      <button class="tab-btn" data-metric="vhs">VHS</button>
+      <button class="tab-btn" data-metric="ics">ICS</button>
+    </div>
+
+    <!-- table -->
+    <div class="reveal mt-5 glass rounded-2xl overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="tbl w-full text-sm">
+          <thead>
+            <tr class="border-b border-warmborder">
+              <th class="text-left px-5 py-4">System</th>
+              <th class="text-left px-3 py-4">Org. category</th>
+              <th class="text-right px-3 py-4">Stateful Tool</th>
+              <th class="text-right px-3 py-4">Repository Code</th>
+              <th class="text-right px-3 py-4">Offline Retrieval</th>
+              <th class="text-right px-3 py-4">Formal Mathematics</th>
+              <th class="text-right px-5 py-4">Macro</th>
+            </tr>
+          </thead>
+          <tbody id="lb-body"></tbody>
+        </table>
+      </div>
+      <div class="px-5 py-4 border-t border-warmborder text-xs text-dim leading-relaxed" id="lb-note"></div>
+    </div>
+
+    <!-- domain key -->
+    <div class="reveal mt-4 flex flex-wrap gap-x-6 gap-y-2 text-xs text-dim">
+      <span>SR = task success rate over 50-family domain denom</span>
+      <span>VNCR = verified native completion rate (macro)</span>
+      <span>VHS = verified handoff success (micro)</span>
+      <span>ICS = isolation challenge success (provisional; blank if denom&lt;10)</span>
+    </div>
+  </div>
+</section>
+
+<!-- ===== ACCESS ===== -->
+<section id="access" class="relative py-24 border-t border-warmborder">
+  <div class="mx-auto max-w-7xl px-6">
+    <div class="reveal">
+      <div class="font-mono text-xs text-orange uppercase tracking-[.28em] mb-3">08 — Access</div>
+      <h2 class="font-display text-4xl md:text-5xl font-bold">Get the dataset &amp; harness</h2>
+      <p class="mt-5 text-dim max-w-3xl text-lg">
+        The v17 release is distributed as a gated dataset with a frozen evaluation harness.
+        Accept the terms to receive the manifest, family definitions, and scoring scripts.
+      </p>
+    </div>
+
+    <div class="mt-12 grid md:grid-cols-3 gap-5">
+      <div class="reveal glass glass-hover rounded-2xl p-7 transition-all duration-300">
+        <div class="example-icon">01</div>
+        <h3 class="mt-5 font-display text-xl font-semibold">Request access</h3>
+        <p class="mt-3 text-dim text-sm leading-relaxed">
+          Sign the data-use agreement for research use. Institutional emails are prioritized for verification.
+        </p>
+      </div>
+      <div class="reveal glass glass-hover rounded-2xl p-7 transition-all duration-300">
+        <div class="example-icon">02</div>
+        <h3 class="mt-5 font-display text-xl font-semibold">Download the release</h3>
+        <p class="mt-3 text-dim text-sm leading-relaxed">
+          Receive <span class="font-mono text-xs text-orange">workflow_families.jsonl</span>,
+          <span class="font-mono text-xs text-orange">control_instances.jsonl</span>,
+          <span class="font-mono text-xs text-orange">polluted_instances.jsonl</span>, and checksums.
+        </p>
+      </div>
+      <div class="reveal glass glass-hover rounded-2xl p-7 transition-all duration-300">
+        <div class="example-icon">03</div>
+        <h3 class="mt-5 font-display text-xl font-semibold">Run the harness</h3>
+        <p class="mt-3 text-dim text-sm leading-relaxed">
+          Submit model outputs to the frozen scorer. SR / VNCR / VHS / ICS are computed under the published
+          blanking and denominator rules.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CITATION ===== -->
+<section id="citation" class="relative py-24 border-t border-warmborder">
+  <div class="mx-auto max-w-7xl px-6">
+    <div class="reveal">
+      <div class="font-mono text-xs text-orange uppercase tracking-[.28em] mb-3">09 — Citation</div>
+      <h2 class="font-display text-4xl md:text-5xl font-bold">Cite CoMemBench</h2>
+      <p class="mt-5 text-dim max-w-2xl text-lg">If you use CoMemBench, please cite the following work.</p>
+    </div>
+    <div class="reveal mt-8 glass rounded-2xl p-6">
+      <pre class="font-mono text-xs text-dim leading-relaxed overflow-x-auto">@inproceedings{comembench2027,
+  title     = {CoMemBench: Benchmarking Collaborative Memory
+               Boundaries across Multi-Agent Workflow Topologies},
+  author    = {Anonymous},
+  booktitle = {Submitted to the International Conference
+               on Learning Representations},
+  year      = {2027},
+  note      = {Author list and venue to be finalized with the
+               camera-ready manuscript.}
+}</pre>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="relative border-t border-warmborder py-12">
+  <div class="mx-auto max-w-7xl px-6">
+    <div class="glow-line mb-10"></div>
+    <div class="flex flex-wrap items-start justify-between gap-8">
+      <div>
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg flex items-center justify-center font-display font-bold text-white"
+               style="background:linear-gradient(135deg,#FB8147,#FDA83A)">C</div>
+          <div>
+            <div class="font-display font-semibold text-sm">CoMemBench</div>
+            <div class="font-mono text-[10px] text-dim">v17 &middot; 800 families &middot; 4 domains</div>
+          </div>
+        </div>
+        <p class="mt-4 text-xs text-dim max-w-md leading-relaxed">
+          Benchmarking whether task-relevant memory reaches the agents that need it &mdash;
+          across multi-agent workflow topologies.
+        </p>
+      </div>
+      <div class="flex flex-wrap gap-x-10 gap-y-4 text-xs">
+        <div>
+          <div class="font-mono text-[10px] text-dim uppercase tracking-wider mb-2">Explore</div>
+          <div class="flex flex-col gap-1.5">
+            <a class="hover:text-orange transition" href="#overview">Overview</a>
+            <a class="hover:text-orange transition" href="#chrono">Related Work</a>
+            <a class="hover:text-orange transition" href="#examples">Examples</a>
+            <a class="hover:text-orange transition" href="#leaderboard">Leaderboard</a>
+          </div>
+        </div>
+        <div>
+          <div class="font-mono text-[10px] text-dim uppercase tracking-wider mb-2">Resources</div>
+          <div class="flex flex-col gap-1.5">
+            <a class="hover:text-orange transition" href="#access">Dataset access</a>
+            <a class="hover:text-orange transition" href="#metrics">Evaluation protocol</a>
+            <a class="hover:text-orange transition" href="#citation">Citation</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mt-10 pt-6 border-t border-warmborder flex flex-wrap items-center justify-between gap-4 text-[11px] text-dim">
+      <div>&copy; 2026 CoMemBench authors. For research use.</div>
+      <div class="font-mono">ICLR 2027 submission &middot; figures and author list pending final manuscript</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ---------- leaderboard data ----------
+const PAPER_DATA = [{"backbone":"Qwen3.8-27B","system":"Peer Review","domain":"Stateful Tool","n":50,"sr":0,"vncr":34.9,"vhs":61.8,"ics":72},{"backbone":"Qwen3.8-27B","system":"Peer Review","domain":"Repository Code","n":50,"sr":4,"vncr":49.7,"vhs":55.1,"ics":70},{"backbone":"Qwen3.8-27B","system":"Peer Review","domain":"Offline Retrieval","n":50,"sr":0,"vncr":24.3,"vhs":5,"ics":null},{"backbone":"Qwen3.8-27B","system":"Peer Review","domain":"Formal Mathematics","n":50,"sr":0,"vncr":14,"vhs":11.5,"ics":40},{"backbone":"Qwen3.8-27B","system":"SMoA","domain":"Stateful Tool","n":50,"sr":0,"vncr":43.8,"vhs":72.4,"ics":55},{"backbone":"Qwen3.8-27B","system":"SMoA","domain":"Repository Code","n":50,"sr":0,"vncr":44.5,"vhs":51,"ics":72.7},{"backbone":"Qwen3.8-27B","system":"SMoA","domain":"Offline Retrieval","n":50,"sr":0,"vncr":53.3,"vhs":45.3,"ics":50},{"backbone":"Qwen3.8-27B","system":"SMoA","domain":"Formal Mathematics","n":50,"sr":0,"vncr":13,"vhs":4.7,"ics":null},{"backbone":"Qwen3.8-27B","system":"ADAS","domain":"Stateful Tool","n":50,"sr":0,"vncr":18.3,"vhs":36.6,"ics":43.8},{"backbone":"Qwen3.8-27B","system":"ADAS","domain":"Repository Code","n":50,"sr":0,"vncr":17,"vhs":37.3,"ics":33.3},{"backbone":"Qwen3.8-27B","system":"ADAS","domain":"Offline Retrieval","n":50,"sr":0,"vncr":12.5,"vhs":0,"ics":null},{"backbone":"Qwen3.8-27B","system":"ADAS","domain":"Formal Mathematics","n":50,"sr":0,"vncr":6.5,"vhs":8.2,"ics":0},{"backbone":"Qwen3.8-27B","system":"OMAC","domain":"Stateful Tool","n":50,"sr":0,"vncr":31.8,"vhs":55.3,"ics":56},{"backbone":"Qwen3.8-27B","system":"OMAC","domain":"Repository Code","n":50,"sr":0,"vncr":52.9,"vhs":62.1,"ics":52},{"backbone":"Qwen3.8-27B","system":"OMAC","domain":"Offline Retrieval","n":50,"sr":8,"vncr":39.9,"vhs":38.9,"ics":50},{"backbone":"Qwen3.8-27B","system":"OMAC","domain":"Formal Mathematics","n":50,"sr":0,"vncr":7.4,"vhs":5.8,"ics":null},{"backbone":"Qwen3.8-27B","system":"EvoMAS","domain":"Stateful Tool","n":50,"sr":0,"vncr":21,"vhs":39,"ics":41.4},{"backbone":"Qwen3.8-27B","system":"EvoMAS","domain":"Repository Code","n":50,"sr":4,"vncr":67.6,"vhs":73.2,"ics":69.2},{"backbone":"Qwen3.8-27B","system":"EvoMAS","domain":"Offline Retrieval","n":50,"sr":0,"vncr":13.6,"vhs":0,"ics":null},{"backbone":"Qwen3.8-27B","system":"EvoMAS","domain":"Formal Mathematics","n":50,"sr":0,"vncr":19.4,"vhs":10.8,"ics":75},{"backbone":"Qwen3.8-27B","system":"AutoGen","domain":"Stateful Tool","n":50,"sr":0,"vncr":33.9,"vhs":56.8,"ics":25},{"backbone":"Qwen3.8-27B","system":"AutoGen","domain":"Repository Code","n":50,"sr":0,"vncr":48.8,"vhs":55.1,"ics":61.5},{"backbone":"Qwen3.8-27B","system":"AutoGen","domain":"Offline Retrieval","n":50,"sr":18,"vncr":50.7,"vhs":37.5,"ics":53.8},{"backbone":"Qwen3.8-27B","system":"AutoGen","domain":"Formal Mathematics","n":50,"sr":0,"vncr":10.3,"vhs":8.7,"ics":null},{"backbone":"Qwen3.8-27B","system":"Deep Agents","domain":"Stateful Tool","n":50,"sr":0,"vncr":5.5,"vhs":1.4,"ics":0},{"backbone":"Qwen3.8-27B","system":"Deep Agents","domain":"Repository Code","n":50,"sr":0,"vncr":57.7,"vhs":66.8,"ics":69.2},{"backbone":"Qwen3.8-27B","system":"Deep Agents","domain":"Offline Retrieval","n":50,"sr":0,"vncr":37.8,"vhs":9.5,"ics":0},{"backbone":"Qwen3.8-27B","system":"Deep Agents","domain":"Formal Mathematics","n":null,"sr":null,"vncr":null,"vhs":null,"ics":null},{"backbone":"Qwen3.8-27B","system":"CrewAI","domain":"Stateful Tool","n":50,"sr":0,"vncr":38.3,"vhs":67.1,"ics":42.9},{"backbone":"Qwen3.8-27B","system":"CrewAI","domain":"Repository Code","n":50,"sr":0,"vncr":44.1,"vhs":54.8,"ics":63.6},{"backbone":"Qwen3.8-27B","system":"CrewAI","domain":"Offline Retrieval","n":50,"sr":12,"vncr":53.1,"vhs":38.1,"ics":38.5},{"backbone":"Qwen3.8-27B","system":"CrewAI","domain":"Formal Mathematics","n":50,"sr":0,"vncr":10.8,"vhs":9.3,"ics":0},{"backbone":"Qwen3.8-27B","system":"Hermes","domain":"Stateful Tool","n":50,"sr":0,"vncr":3.2,"vhs":18.2,"ics":0},{"backbone":"Qwen3.8-27B","system":"Hermes","domain":"Repository Code","n":50,"sr":0,"vncr":25.2,"vhs":30.2,"ics":85.7},{"backbone":"Qwen3.8-27B","system":"Hermes","domain":"Offline Retrieval","n":50,"sr":4.1,"vncr":35.7,"vhs":14.4,"ics":45.5},{"backbone":"Qwen3.8-27B","system":"Hermes","domain":"Formal Mathematics","n":50,"sr":0,"vncr":6.2,"vhs":2,"ics":null},{"backbone":"Qwen3.8-27B","system":"Codex","domain":"Stateful Tool","n":50,"sr":0,"vncr":5.1,"vhs":32.7,"ics":0},{"backbone":"Qwen3.8-27B","system":"Codex","domain":"Repository Code","n":50,"sr":0,"vncr":33.2,"vhs":43,"ics":35.3},{"backbone":"Qwen3.8-27B","system":"Codex","domain":"Offline Retrieval","n":50,"sr":4.1,"vncr":23.3,"vhs":10.7,"ics":0},{"backbone":"Qwen3.8-27B","system":"Codex","domain":"Formal Mathematics","n":50,"sr":0,"vncr":9.1,"vhs":5.3,"ics":0},{"backbone":"DeepSeek-V4-Flash","system":"Peer Review","domain":"Stateful Tool","n":50,"sr":0,"vncr":15.7,"vhs":21.8,"ics":null},{"backbone":"DeepSeek-V4-Flash","system":"Peer Review","domain":"Repository Code","n":50,"sr":2,"vncr":60.4,"vhs":71.6,"ics":null},{"backbone":"DeepSeek-V4-Flash","system":"Peer Review","domain":"Offline Retrieval","n":50,"sr":2,"vncr":24.6,"vhs":23.3,"ics":null},{"backbone":"DeepSeek-V4-Flash","system":"Peer Review","domain":"Formal Mathematics","n":50,"sr":0,"vncr":10.2,"vhs":9.1,"ics":null},{"backbone":"DeepSeek-V4-Flash","system":"SMoA","domain":"Stateful Tool","n":50,"sr":0,"vncr":21.4,"vhs":51.4,"ics":null},{"backbone":"DeepSeek-V4-Flash","system":"SMoA","domain":"Repository Code","n":50,"sr":2,"vncr":74.6,"vhs":84.6,"ics":null},{"backbone":"DeepSeek-V4-Flash","system":"SMoA","domain":"Offline Retrieval","n":50,"sr":2,"vncr":42.6,"vhs":34.9,"ics":null},{"backbone":"DeepSeek-V4-Flash","system":"SMoA","domain":"Formal Mathematics","n":50,"sr":0,"vncr":9.3,"vhs":3.8,"ics":null},{"backbone":"DeepSeek-V4-Flash","system":"ADAS","domain":"Stateful Tool","n":50,"sr":0,"vncr":17.2,"vhs":37.8,"ics":null},{"backbone":"DeepSeek-V4-Flash","system":"ADAS","domain":"Repository Code","n":50,"sr":4,"vncr":65.6,"vhs":79.1,"ics":null},{"backbone":"DeepSeek-V4-Flash","system":"ADAS","domain":"Offline Retrieval","n":50,"sr":2,"vncr":27.8,"vhs":16.6,"ics":null},{"backbone":"DeepSeek-V4-Flash","system":"ADAS","domain":"Formal Mathematics","n":50,"sr":0,"vncr":11.2,"vhs":3,"ics":null},{"backbone":"DeepSeek-V4-Flash","system":"OMAC","domain":"Stateful Tool","n":50,"sr":0,"vncr":69.7,"vhs":85.7,"ics":null},{"backbone":"DeepSeek-V4-Flash","system":"OMAC","domain":"Repository Code","n":50,"sr":4,"vncr":85,"vhs":92.1,"ics":null},{"backbone":"DeepSeek-V4-Flash","system":"OMAC","domain":"Offline Retrieval","n":50,"sr":10,"vncr":67.1,"vhs":58.7,"ics":77.27},{"backbone":"DeepSeek-V4-Flash","system":"OMAC","domain":"Formal Mathematics","n":50,"sr":0,"vncr":12.4,"vhs":7.1,"ics":null},{"backbone":"DeepSeek-V4-Flash","system":"EvoMAS","domain":"Stateful Tool","n":50,"sr":0,"vncr":8.9,"vhs":9.1,"ics":null},{"backbone":"DeepSeek-V4-Flash","system":"EvoMAS","domain":"Repository Code","n":50,"sr":6,"vncr":57.8,"vhs":71.6,"ics":null},{"backbone":"DeepSeek-V4-Flash","system":"EvoMAS","domain":"Offline Retrieval","n":50,"sr":0,"vncr":11.4,"vhs":0,"ics":null},{"backbone":"DeepSeek-V4-Flash","system":"EvoMAS","domain":"Formal Mathematics","n":50,"sr":0,"vncr":17.2,"vhs":8.6,"ics":null},{"backbone":"DeepSeek-V4-Flash","system":"AutoGen","domain":"Stateful Tool","n":50,"sr":0,"vncr":17,"vhs":32.7,"ics":null},{"backbone":"DeepSeek-V4-Flash","system":"AutoGen","domain":"Repository Code","n":50,"sr":0,"vncr":64.3,"vhs":73.3,"ics":84},{"backbone":"DeepSeek-V4-Flash","system":"AutoGen","domain":"Offline Retrieval","n":50,"sr":4,"vncr":42,"vhs":25.4,"ics":null},{"backbone":"DeepSeek-V4-Flash","system":"AutoGen","domain":"Formal Mathematics","n":50,"sr":0,"vncr":10.3,"vhs":6.6,"ics":null},{"backbone":"DeepSeek-V4-Flash","system":"Deep Agents","domain":"Stateful Tool","n":null,"sr":null,"vncr":null,"vhs":null,"ics":null},{"backbone":"DeepSeek-V4-Flash","system":"Deep Agents","domain":"Repository Code","n":50,"sr":0,"vncr":15.3,"vhs":55.4,"ics":null},{"backbone":"DeepSeek-V4-Flash","system":"Deep Agents","domain":"Offline Retrieval","n":null,"sr":null,"vncr":null,"vhs":null,"ics":null},{"backbone":"DeepSeek-V4-Flash","system":"Deep Agents","domain":"Formal Mathematics","n":null,"sr":null,"vncr":null,"vhs":null,"ics":null},{"backbone":"DeepSeek-V4-Flash","system":"CrewAI","domain":"Stateful Tool","n":50,"sr":0,"vncr":12.2,"vhs":25.4,"ics":null},{"backbone":"DeepSeek-V4-Flash","system":"CrewAI","domain":"Repository Code","n":50,"sr":0,"vncr":40.1,"vhs":45,"ics":93.75},{"backbone":"DeepSeek-V4-Flash","system":"CrewAI","domain":"Offline Retrieval","n":50,"sr":2,"vncr":33.7,"vhs":9.7,"ics":null},{"backbone":"DeepSeek-V4-Flash","system":"CrewAI","domain":"Formal Mathematics","n":50,"sr":0,"vncr":9.2,"vhs":4.1,"ics":null},{"backbone":"DeepSeek-V4-Flash","system":"Hermes","domain":"Stateful Tool","n":50,"sr":0,"vncr":11.4,"vhs":10.7,"ics":null},{"backbone":"DeepSeek-V4-Flash","system":"Hermes","domain":"Repository Code","n":50,"sr":0,"vncr":32.4,"vhs":29.2,"ics":83.33},{"backbone":"DeepSeek-V4-Flash","system":"Hermes","domain":"Offline Retrieval","n":50,"sr":0,"vncr":44.2,"vhs":15.3,"ics":null},{"backbone":"DeepSeek-V4-Flash","system":"Hermes","domain":"Formal Mathematics","n":50,"sr":0,"vncr":5.4,"vhs":0,"ics":null},{"backbone":"DeepSeek-V4-Flash","system":"Codex","domain":"Stateful Tool","n":null,"sr":null,"vncr":null,"vhs":null,"ics":null},{"backbone":"DeepSeek-V4-Flash","system":"Codex","domain":"Repository Code","n":null,"sr":null,"vncr":null,"vhs":null,"ics":null},{"backbone":"DeepSeek-V4-Flash","system":"Codex","domain":"Offline Retrieval","n":null,"sr":null,"vncr":null,"vhs":null,"ics":null},{"backbone":"DeepSeek-V4-Flash","system":"Codex","domain":"Formal Mathematics","n":null,"sr":null,"vncr":null,"vhs":null,"ics":null},{"backbone":"GPT-6-Luna","system":"Peer Review","domain":"Stateful Tool","n":32,"sr":0,"vncr":13.7,"vhs":35.8,"ics":null},{"backbone":"GPT-6-Luna","system":"Peer Review","domain":"Repository Code","n":38,"sr":0,"vncr":3.1,"vhs":20,"ics":null},{"backbone":"GPT-6-Luna","system":"Peer Review","domain":"Offline Retrieval","n":46,"sr":0,"vncr":10.2,"vhs":0,"ics":null},{"backbone":"GPT-6-Luna","system":"Peer Review","domain":"Formal Mathematics","n":15,"sr":0,"vncr":4,"vhs":0,"ics":null},{"backbone":"GPT-6-Luna","system":"SMoA","domain":"Stateful Tool","n":46,"sr":0,"vncr":29.6,"vhs":68.5,"ics":null},{"backbone":"GPT-6-Luna","system":"SMoA","domain":"Repository Code","n":50,"sr":0,"vncr":49.2,"vhs":64.1,"ics":null},{"backbone":"GPT-6-Luna","system":"SMoA","domain":"Offline Retrieval","n":50,"sr":2,"vncr":43.5,"vhs":17,"ics":null},{"backbone":"GPT-6-Luna","system":"SMoA","domain":"Formal Mathematics","n":35,"sr":0,"vncr":11.2,"vhs":2.5,"ics":null},{"backbone":"GPT-6-Luna","system":"ADAS","domain":"Stateful Tool","n":46,"sr":0,"vncr":26.8,"vhs":69.8,"ics":null},{"backbone":"GPT-6-Luna","system":"ADAS","domain":"Repository Code","n":50,"sr":0,"vncr":26.7,"vhs":31.3,"ics":null},{"backbone":"GPT-6-Luna","system":"ADAS","domain":"Offline Retrieval","n":50,"sr":2,"vncr":36,"vhs":9.4,"ics":null},{"backbone":"GPT-6-Luna","system":"ADAS","domain":"Formal Mathematics","n":22,"sr":0,"vncr":6.5,"vhs":7.4,"ics":null},{"backbone":"GPT-6-Luna","system":"OMAC","domain":"Stateful Tool","n":30,"sr":0,"vncr":39.7,"vhs":66.9,"ics":null},{"backbone":"GPT-6-Luna","system":"OMAC","domain":"Repository Code","n":50,"sr":0,"vncr":35.3,"vhs":72.4,"ics":null},{"backbone":"GPT-6-Luna","system":"OMAC","domain":"Offline Retrieval","n":50,"sr":0,"vncr":28.5,"vhs":12.5,"ics":null},{"backbone":"GPT-6-Luna","system":"OMAC","domain":"Formal Mathematics","n":44,"sr":0,"vncr":7.8,"vhs":1.4,"ics":null},{"backbone":"GPT-6-Luna","system":"EvoMAS","domain":"Stateful Tool","n":49,"sr":0,"vncr":43.6,"vhs":63.7,"ics":null},{"backbone":"GPT-6-Luna","system":"EvoMAS","domain":"Repository Code","n":49,"sr":0,"vncr":55.5,"vhs":67.9,"ics":null},{"backbone":"GPT-6-Luna","system":"EvoMAS","domain":"Offline Retrieval","n":50,"sr":0,"vncr":17,"vhs":5.2,"ics":null},{"backbone":"GPT-6-Luna","system":"EvoMAS","domain":"Formal Mathematics","n":21,"sr":0,"vncr":18,"vhs":16.4,"ics":null},{"backbone":"GPT-6-Luna","system":"AutoGen","domain":"Stateful Tool","n":29,"sr":0,"vncr":19,"vhs":69.2,"ics":null},{"backbone":"GPT-6-Luna","system":"AutoGen","domain":"Repository Code","n":50,"sr":0,"vncr":37.6,"vhs":73.3,"ics":null},{"backbone":"GPT-6-Luna","system":"AutoGen","domain":"Offline Retrieval","n":50,"sr":4,"vncr":41.6,"vhs":31.1,"ics":null},{"backbone":"GPT-6-Luna","system":"AutoGen","domain":"Formal Mathematics","n":33,"sr":0,"vncr":12,"vhs":2.4,"ics":null},{"backbone":"GPT-6-Luna","system":"Deep Agents","domain":"Stateful Tool","n":50,"sr":0,"vncr":3,"vhs":0,"ics":null},{"backbone":"GPT-6-Luna","system":"Deep Agents","domain":"Repository Code","n":47,"sr":0,"vncr":12.5,"vhs":32.1,"ics":null},{"backbone":"GPT-6-Luna","system":"Deep Agents","domain":"Offline Retrieval","n":48,"sr":0,"vncr":8.9,"vhs":0,"ics":null},{"backbone":"GPT-6-Luna","system":"Deep Agents","domain":"Formal Mathematics","n":26,"sr":0,"vncr":0,"vhs":0,"ics":null},{"backbone":"GPT-6-Luna","system":"CrewAI","domain":"Stateful Tool","n":50,"sr":0,"vncr":35.7,"vhs":63.1,"ics":null},{"backbone":"GPT-6-Luna","system":"CrewAI","domain":"Repository Code","n":50,"sr":0,"vncr":52.5,"vhs":64.4,"ics":null},{"backbone":"GPT-6-Luna","system":"CrewAI","domain":"Offline Retrieval","n":49,"sr":0,"vncr":41.6,"vhs":8.2,"ics":null},{"backbone":"GPT-6-Luna","system":"CrewAI","domain":"Formal Mathematics","n":36,"sr":0,"vncr":8.4,"vhs":6,"ics":null},{"backbone":"GPT-6-Luna","system":"Hermes","domain":"Stateful Tool","n":47,"sr":0,"vncr":6,"vhs":43.8,"ics":null},{"backbone":"GPT-6-Luna","system":"Hermes","domain":"Repository Code","n":47,"sr":0,"vncr":25.9,"vhs":25.4,"ics":null},{"backbone":"GPT-6-Luna","system":"Hermes","domain":"Offline Retrieval","n":50,"sr":0,"vncr":31.4,"vhs":11.5,"ics":null},{"backbone":"GPT-6-Luna","system":"Hermes","domain":"Formal Mathematics","n":8,"sr":0,"vncr":14.7,"vhs":0,"ics":null},{"backbone":"GPT-6-Luna","system":"Codex","domain":"Stateful Tool","n":47,"sr":0,"vncr":6,"vhs":2,"ics":null},{"backbone":"GPT-6-Luna","system":"Codex","domain":"Repository Code","n":50,"sr":0,"vncr":13.3,"vhs":17.2,"ics":null},{"backbone":"GPT-6-Luna","system":"Codex","domain":"Offline Retrieval","n":50,"sr":0,"vncr":3.5,"vhs":0,"ics":null},{"backbone":"GPT-6-Luna","system":"Codex","domain":"Formal Mathematics","n":6,"sr":0,"vncr":4,"vhs":0,"ics":null}];
+const DS_TABLE = [{"system":"Peer Review","code":{"sr":2,"vncr":60.43,"vhs":71.55,"ics":76.92},"math":{"sr":0,"vncr":10.18,"vhs":9.09,"ics":null},"retrieval":{"sr":2,"vncr":24.58,"vhs":23.32,"ics":null},"stateful":{"sr":0,"vncr":15.74,"vhs":21.82,"ics":null}},{"system":"SMoA","code":{"sr":2,"vncr":74.64,"vhs":84.57,"ics":90.62},"math":{"sr":0,"vncr":9.26,"vhs":3.77,"ics":null},"retrieval":{"sr":2,"vncr":42.56,"vhs":34.92,"ics":null},"stateful":{"sr":0,"vncr":21.4,"vhs":51.43,"ics":null}},{"system":"ADAS","code":{"sr":4,"vncr":65.58,"vhs":79.06,"ics":75},"math":{"sr":0,"vncr":11.17,"vhs":3.03,"ics":null},"retrieval":{"sr":2,"vncr":27.84,"vhs":16.6,"ics":null},"stateful":{"sr":0,"vncr":17.18,"vhs":37.84,"ics":null}},{"system":"OMAC","code":{"sr":4,"vncr":85,"vhs":92.06,"ics":null},"math":{"sr":0,"vncr":12.43,"vhs":7.14,"ics":null},"retrieval":{"sr":10,"vncr":67.05,"vhs":58.73,"ics":77.27},"stateful":{"sr":0,"vncr":69.66,"vhs":85.71,"ics":null}},{"system":"EvoMAS","code":{"sr":6,"vncr":57.8,"vhs":71.59,"ics":null},"math":{"sr":0,"vncr":17.21,"vhs":8.59,"ics":null},"retrieval":{"sr":0,"vncr":11.4,"vhs":0,"ics":null},"stateful":{"sr":0,"vncr":8.88,"vhs":9.09,"ics":null}},{"system":"AutoGen","code":{"sr":0,"vncr":64.27,"vhs":73.32,"ics":84},"math":{"sr":0,"vncr":10.26,"vhs":6.59,"ics":null},"retrieval":{"sr":4,"vncr":41.98,"vhs":25.39,"ics":null},"stateful":{"sr":0,"vncr":16.95,"vhs":32.73,"ics":null}},{"system":"Deep Agents","code":{"sr":0,"vncr":15.3,"vhs":55.4,"ics":null},"math":{"sr":null,"vncr":null,"vhs":null,"ics":null},"retrieval":{"sr":null,"vncr":null,"vhs":null,"ics":null},"stateful":{"sr":null,"vncr":null,"vhs":null,"ics":null}},{"system":"CrewAI","code":{"sr":0,"vncr":40.1,"vhs":44.98,"ics":93.75},"math":{"sr":0,"vncr":9.18,"vhs":4.11,"ics":null},"retrieval":{"sr":2,"vncr":33.74,"vhs":9.72,"ics":null},"stateful":{"sr":0,"vncr":12.22,"vhs":25.35,"ics":null}},{"system":"Hermes","code":{"sr":0,"vncr":32.36,"vhs":29.2,"ics":83.33},"math":{"sr":0,"vncr":5.42,"vhs":0,"ics":null},"retrieval":{"sr":0,"vncr":44.18,"vhs":15.28,"ics":null},"stateful":{"sr":0,"vncr":11.41,"vhs":10.71,"ics":null}}];
+
+const ORG = {
+  "Peer Review": "Prespecified",
+  "SMoA": "Prespecified",
+  "ADAS": "Automatically designed",
+  "OMAC": "Automatically designed",
+  "EvoMAS": "Self-evolving",
+  "AutoGen": "Framework baseline",
+  "Deep Agents": "Framework baseline",
+  "CrewAI": "Framework baseline",
+  "Hermes": "Framework baseline",
+  "Codex": "Framework baseline"
+};
+const ORDER = ["Peer Review","SMoA","ADAS","OMAC","EvoMAS","AutoGen","Deep Agents","CrewAI","Hermes","Codex"];
+const DOMKEY = {"Stateful Tool":"stateful","Repository Code":"code","Offline Retrieval":"retrieval","Formal Mathematics":"math"};
+const COLS = [
+  ["Stateful Tool","stateful"],
+  ["Repository Code","code"],
+  ["Offline Retrieval","retrieval"],
+  ["Formal Mathematics","math"]
+];
+
+let BB = "DeepSeek-V4-Flash";
+let METRIC = "sr";
+
+function fmt(v) {
+  if (v === null || v === undefined) return '<span class="text-dim">&mdash;</span>';
+  if (typeof v === "number") return Number.isInteger(v) ? String(v) : v.toFixed(2).replace(/\.00$/,"");
+  return String(v);
+}
+function metricVal(cell) {
+  if (!cell) return null;
+  return cell[METRIC];
+}
+function bestOf(vals) {
+  const nums = vals.filter(v => typeof v === "number");
+  return nums.length ? Math.max(...nums) : null;
+}
+function coverageLabel() {
+  if (BB === "GPT-6-Luna") return "Coverage 1,754 / 2,000 (87.7%) — incomplete snapshot 2026-09-25.";
+  if (BB === "DeepSeek-V4-Flash") return "M2 frozen arm (primary). Deep Agents main-wave only; codex_runtime and R13 excluded.";
+  return "Paper-table transcription of the Qwen3.8-27B runs.";
+}
+
+function render() {
+  const body = document.getElementById("lb-body");
+  const note = document.getElementById("lb-note");
+  const rows = [];
+
+  // collect per-system domain values under current backbone+metric
+  const perSystem = {};
+  for (const sys of ORDER) {
+    perSystem[sys] = {};
+    for (const [label, key] of COLS) {
+      if (BB === "DeepSeek-V4-Flash") {
+        const row = DS_TABLE.find(r => r.system === sys);
+        perSystem[sys][key] = row ? metricVal(row[key]) : null;
+      } else {
+        const r = PAPER_DATA.find(x => x.backbone === BB && x.system === sys && x.domain === label);
+        perSystem[sys][key] = r ? (METRIC === "sr" ? r.sr : METRIC === "vncr" ? r.vncr : METRIC === "vhs" ? r.vhs : r.ics) : null;
+      }
+    }
+    const vals = COLS.map(([l,k]) => perSystem[sys][k]);
+    const nums = vals.filter(v => typeof v === "number");
+    perSystem[sys]._macro = nums.length ? nums.reduce((a,b)=>a+b,0)/nums.length : null;
+  }
+  const bestMacro = bestOf(ORDER.map(s => perSystem[s]._macro));
+  const bestDom = {};
+  for (const [l,k] of COLS) bestDom[k] = bestOf(ORDER.map(s => perSystem[s][k]));
+
+  for (const sys of ORDER) {
+    const cells = COLS.map(([label,key]) => {
+      const v = perSystem[sys][key];
+      const cls = (typeof v === "number" && v === bestDom[key] && bestDom[key] !== null) ? "best" : "";
+      return '<td class="text-right px-3 py-3.5 ' + cls + '">' + fmt(v) + '</td>';
+    }).join("");
+    const m = perSystem[sys]._macro;
+    const mcls = (typeof m === "number" && m === bestMacro && bestMacro !== null) ? "best" : "";
+    rows.push(
+      '<tr class="border-b border-warmborder hover:bg-hoverbg transition-colors">' +
+        '<td class="px-5 py-3.5"><div class="font-medium">' + sys + '</div></td>' +
+        '<td class="px-3 py-3.5 text-xs text-dim">' + (ORG[sys] || "") + '</td>' +
+        cells +
+        '<td class="text-right px-5 py-3.5 ' + mcls + '">' + fmt(m === null ? null : Math.round(m*100)/100) + '</td>' +
+      '</tr>'
+    );
+  }
+  body.innerHTML = rows.join("");
+  note.textContent = coverageLabel() + " Metric view: " + METRIC.toUpperCase() +
+    ". " + (METRIC === "ics" ? "ICS is provisional (ICS-node operator); blank when denominator < 10." : "Blank cells mean not registered or denominator < 10.");
+}
+
+// backbone tabs
+document.querySelectorAll("#backbone-tabs .tab-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll("#backbone-tabs .tab-btn").forEach(b => b.classList.remove("on"));
+    btn.classList.add("on");
+    BB = btn.dataset.bb;
+    render();
+  });
+});
+// metric tabs
+document.querySelectorAll("[data-metric]").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll("[data-metric]").forEach(b => b.classList.remove("on"));
+    btn.classList.add("on");
+    METRIC = btn.dataset.metric;
+    render();
+  });
+});
+
+// ---------- chronology ----------
+const CHRONO = [[2021,"static","KILT","static evidence","https://aclanthology.org/2021.naacl-main.200/","Knowledge-intensive language tasks over a fixed corpus"],[2021,"static","BEIR","static evidence","https://arxiv.org/abs/2104.08663","Heterogeneous zero-shot IR evaluation"],[2023,"static","LongBench","long context","https://aclanthology.org/2024.acl-long.172/","Bilingual multitask long-context understanding"],[2023,"persist","MemoryBank","persistent memory","https://ojs.aaai.org/index.php/AAAI/article/view/29946","Long-term memory for LLMs"],[2023,"mas","MindAgent","multi-agent","https://aclanthology.org/2024.findings-naacl.200/","Emergent gaming interaction"],[2023,"mas","TaskBench","task dependency","https://proceedings.neurips.cc/paper_files/paper/2024/hash/085185ea97db31ae6dcac7497616fd3e-Abstract-Datasets_and_Benchmarks_Track.html","Task automation with dependency graphs"],[2023,"exec","SWE-bench","execution","https://openreview.net/forum?id=VTF8yNQM66","Real GitHub issues resolved in repo environments"],[2023,"mas","AgentBench","multi-agent","https://openreview.net/forum?id=zAdUB0aCTQ","Evaluating LLMs as agents"],[2024,"static","RULER","long context","https://openreview.net/forum?id=kIoBbc76Sy","Real context-size measurement"],[2024,"persist","LoCoMo","persistent memory","https://aclanthology.org/2024.acl-long.747/","Very long-term conversational memory"],[2024,"exec","AppWorld","execution","https://aclanthology.org/2024.acl-long.850/","Controllable app world for interactive coding agents"],[2024,"exec","miniCTX","execution","https://arxiv.org/abs/2408.03350","Neural theorem proving with long contexts"],[2025,"persist","LongMemEval","persistent memory","https://openreview.net/forum?id=pZiyCaVuti","Long-term interactive memory for chat assistants"],[2025,"persist","RealTalk","persistent memory","https://arxiv.org/abs/2502.13270","21-day real-world long-term conversation"],[2025,"persist","StoryBench","persistent memory","https://arxiv.org/abs/2506.13356","Dynamic long-term memory with multi-turn stories"],[2025,"mas","MultiAgentBench","interaction topology","https://aclanthology.org/2025.acl-long.421/","Star / chain / tree / graph interaction protocols"],[2025,"mas","LLM-Coordination","multi-agent","https://aclanthology.org/2025.findings-naacl.448/","Multi-agent coordination abilities"],[2025,"exec","τ-bench","execution","https://openreview.net/forum?id=roNSXZpUDN","Tool-agent-user interaction in real domains"],[2025,"exec","Toolathlon","execution","https://openreview.net/forum?id=z53s5p0qhf","Long-horizon realistic tool-use workflows"],[2025,"exec","BrowseComp-Plus","execution","https://arxiv.org/abs/2508.06600","Fair, transparent deep-research evaluation"],[2025,"exec","PeopleJoin","distributed info","https://aclanthology.org/2025.findings-acl.916/","Multi-user information gathering"],[2026,"persist","MemoryAgentBench","selective forgetting","https://openreview.net/forum?id=ZgQ0t3zYTQ","Incremental ingestion, test-time learning, forgetting"],[2026,"gov","GroupMemBench","governed memory","https://arxiv.org/abs/2605.14498","Speaker-grounded multi-party memory"],[2026,"gov","GateMem","governed memory","https://arxiv.org/abs/2606.18829","Utility, access control, active forgetting"],[2026,"gov","PAC-Bench","governed memory","https://aclanthology.org/2026.findings-acl.1552/","Private memories under privacy constraints"],[2026,"mas","MAS-Orchestra","task dependency","https://openreview.net/forum?id=3fGXBm4c3S","Chains, DAGs, depth, breadth, parallelism"],[2026,"exec","Toolathlon-GYM","execution","https://github.com/eigent-ai/toolathlon_gym","Reproducible long-horizon tool environments"],[2026,"exec","SILO-BENCH","distributed info","https://aclanthology.org/2026.acl-long.1354/","Distributed coordination in multi-agent systems"]];
+const TRACKS = {"static":{"label":"Static evidence & long context","color":"#FB8147"},"persist":{"label":"Persistent & interactive memory","color":"#D97706"},"gov":{"label":"Governed & multi-party memory","color":"#E76F51"},"mas":{"label":"Multi-agent & workflow structure","color":"#2A9D8F"},"exec":{"label":"Executable outcomes","color":"#457B9D"}};
+const YEARS = [2021, 2023, 2024, 2025, 2026];
+const activeTracks = new Set(Object.keys(TRACKS));
+
+function buildFilter() {
+  const wrap = document.getElementById("chrono-filter");
+  for (const [key, meta] of Object.entries(TRACKS)) {
+    const s = document.createElement("span");
+    s.className = "fbtn chip";
+    s.style.borderColor = meta.color + "55";
+    s.style.color = meta.color;
+    s.style.background = meta.color + "18";
+    s.textContent = meta.label;
+    s.dataset.track = key;
+    s.addEventListener("click", () => {
+      if (activeTracks.has(key) && activeTracks.size > 1) {
+        activeTracks.delete(key); s.classList.add("off");
+      } else {
+        activeTracks.add(key); s.classList.remove("off");
+      }
+      buildChrono();
+    });
+    wrap.appendChild(s);
+  }
+}
+
+function buildChrono() {
+  const svg = document.getElementById("chrono-svg");
+  const cards = document.getElementById("chrono-cards");
+  svg.innerHTML = "";
+  cards.innerHTML = "";
+
+  const W = 2200, H = 880;
+  const pathX0 = 300, pathX1 = 1920, convX = 1980, convY = H / 2;
+  const yearX = {2021: 430, 2023: 730, 2024: 1030, 2025: 1330, 2026: 1630};
+  const laneKeys = Object.keys(TRACKS).filter(k => activeTracks.has(k));
+  const laneY0 = {};
+  const n = laneKeys.length;
+  laneKeys.forEach((k, i) => { laneY0[k] = 100 + (H - 220) * (n === 1 ? 0.5 : i / (n - 1)); });
+
+  // y along a lane at x: near-parallel early, converges on the right
+  function laneY(track, x) {
+    const y0 = laneY0[track], y1 = convY;
+    const xSplit = 1480;
+    if (x <= xSplit) {
+      const t = Math.max(0, (x - pathX0) / (xSplit - pathX0));
+      return y0 + (y1 - y0) * 0.14 * t;
+    }
+    const t = Math.min(1, (x - xSplit) / (pathX1 - xSplit));
+    const e = t * t * (3 - 2 * t);
+    const yAtSplit = y0 + (y1 - y0) * 0.14;
+    return yAtSplit + (y1 - yAtSplit) * e;
+  }
+
+  // ---- year gridlines + labels ----
+  Object.entries(yearX).forEach(([y, x]) => {
+    const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+    line.setAttribute("x1", x); line.setAttribute("x2", x);
+    line.setAttribute("y1", 40); line.setAttribute("y2", H - 30);
+    line.setAttribute("stroke", "#E5E0D8");
+    line.setAttribute("stroke-dasharray", "3 6");
+    line.setAttribute("stroke-width", "1");
+    svg.appendChild(line);
+    const t = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    t.setAttribute("x", x); t.setAttribute("y", 28);
+    t.setAttribute("text-anchor", "middle");
+    t.setAttribute("fill", "#646A73");
+    t.setAttribute("font-family", "JetBrains Mono, monospace");
+    t.setAttribute("font-size", "13");
+    t.setAttribute("letter-spacing", "2");
+    t.textContent = y;
+    svg.appendChild(t);
+  });
+
+  // ---- lane curves + left labels ----
+  laneKeys.forEach(track => {
+    const meta = TRACKS[track];
+    const pts = [];
+    for (let x = pathX0; x <= pathX1; x += 16) pts.push([x, laneY(track, x)]);
+    const d = pts.map((p, i) => (i ? "L" : "M") + p[0].toFixed(1) + " " + p[1].toFixed(1)).join(" ");
+
+    const glow = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    glow.setAttribute("d", d);
+    glow.setAttribute("stroke", meta.color);
+    glow.setAttribute("stroke-width", "10");
+    glow.setAttribute("stroke-opacity", "0.12");
+    glow.setAttribute("fill", "none");
+    glow.setAttribute("stroke-linecap", "round");
+    svg.appendChild(glow);
+
+    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    path.setAttribute("d", d);
+    path.setAttribute("stroke", meta.color);
+    path.setAttribute("stroke-width", "2.5");
+    path.setAttribute("stroke-opacity", "0.75");
+    path.setAttribute("fill", "none");
+    path.setAttribute("stroke-linecap", "round");
+    svg.appendChild(path);
+
+    // left label
+    const lbl = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    lbl.setAttribute("x", pathX0 - 18);
+    lbl.setAttribute("y", laneY(track, pathX0) + 4);
+    lbl.setAttribute("text-anchor", "end");
+    lbl.setAttribute("fill", meta.color);
+    lbl.setAttribute("font-family", "Inter, sans-serif");
+    lbl.setAttribute("font-size", "13");
+    lbl.setAttribute("font-weight", "600");
+    lbl.textContent = meta.label;
+    svg.appendChild(lbl);
+
+    const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    dot.setAttribute("cx", pathX0 - 10);
+    dot.setAttribute("cy", laneY(track, pathX0));
+    dot.setAttribute("r", "5");
+    dot.setAttribute("fill", meta.color);
+    svg.appendChild(dot);
+  });
+
+  // ---- convergence funnel into the ours node ----
+  const funnel = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  funnel.setAttribute("d", "M" + pathX1 + " " + convY + " L" + convX + " " + convY);
+  funnel.setAttribute("stroke", "#FB8147");
+  funnel.setAttribute("stroke-width", "3");
+  funnel.setAttribute("stroke-opacity", "0.55");
+  funnel.setAttribute("fill", "none");
+  svg.appendChild(funnel);
+
+  // ---- cards along lanes ----
+  let anim = 0;
+  laneKeys.forEach(track => {
+    const meta = TRACKS[track];
+    YEARS.forEach(y => {
+      const items = CHRONO.filter(c => c[0] === y && c[1] === track);
+      items.forEach((c, idx) => {
+        const [, , name, tag, url, note] = c;
+        const baseX = yearX[y];
+        // cascade same-slot cards along the path so they don't stack
+        const x = baseX + idx * 30;
+        const ycen = laneY(track, x);
+        const yOff = (idx % 2 === 0 ? -1 : 1) * Math.ceil(idx / 2) * 26 + (idx === 0 ? -34 : 0);
+        const card = document.createElement("a");
+        card.href = url;
+        card.target = "_blank";
+        card.rel = "noopener";
+        card.className = "chrono-card block no-underline absolute";
+        card.style.left = (x - 72) + "px";
+        card.style.top = (ycen + yOff - 28) + "px";
+        card.style.width = "150px";
+        card.style.borderColor = meta.color + "55";
+        card.style.opacity = "0";
+        card.style.transform = "translateY(12px)";
+        card.innerHTML =
+          '<div class="flex items-center gap-1.5 mb-1">' +
+            '<span class="chrono-dot" style="background:' + meta.color + ';color:' + meta.color + '"></span>' +
+            '<span class="font-display text-[12px] font-semibold text-ink leading-none">' + name + '</span>' +
+          '</div>' +
+          '<div class="font-mono text-[9px] uppercase tracking-wider" style="color:' + meta.color + '">' + tag + '</div>';
+        cards.appendChild(card);
+        setTimeout(() => {
+          card.style.transition = "opacity .5s ease, transform .5s ease";
+          card.style.opacity = "1";
+          card.style.transform = "none";
+        }, 45 * anim++);
+      });
+    });
+  });
+
+  // ---- ours node at the convergence point ----
+  const ours = document.createElement("div");
+  ours.className = "absolute";
+  ours.style.left = (convX - 30) + "px";
+  ours.style.top = (convY - 110) + "px";
+  ours.style.width = "250px";
+  ours.innerHTML =
+    '<div class="rounded-banner p-5" style="background:linear-gradient(135deg,#FFF6ED,#FAF7F3);border:2px solid #FB8147;box-shadow:0 16px 48px rgba(251,129,71,0.22);">' +
+      '<div class="flex items-center gap-2 mb-2">' +
+        '<span class="w-2.5 h-2.5 rounded-full" style="background:#FB8147"></span>' +
+        '<span class="chip">ours</span>' +
+      '</div>' +
+      '<div class="font-display text-[17px] font-bold text-ink mb-1.5 leading-snug">CoMemBench</div>' +
+      '<div class="text-[11px] text-dim leading-relaxed">Task-conditioned memory boundaries on source-grounded dependency workflows &mdash; typed, version-aware handoffs with matched clean&ndash;polluted pairs.</div>' +
+    '</div>';
+  cards.appendChild(ours);
+}
+
+// ---------- reveal on scroll ----------
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+  });
+}, { threshold: 0.08 });
+document.querySelectorAll(".reveal").forEach(el => {
+  const r = el.getBoundingClientRect();
+  // anything already in the first viewport shows immediately (no blank hero)
+  if (r.top < window.innerHeight * 0.98) {
+    el.classList.add("in");
+  } else {
+    io.observe(el);
+  }
+});
+
+// active nav
+const sections = ["overview","domains","chrono","examples","structure","metrics","leaderboard","access"];
+const navIo = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      document.querySelectorAll(".nav-link").forEach(a => a.classList.remove("active"));
+      const link = document.querySelector('.nav-link[href="#' + e.target.id + '"]');
+      if (link) link.classList.add("active");
+    }
+  });
+}, { rootMargin: "-40% 0px -55% 0px" });
+sections.forEach(id => { const el = document.getElementById(id); if (el) navIo.observe(el); });
+
+// init
+buildFilter();
+buildChrono();
+render();
+</script>
+</body>
 </html>
