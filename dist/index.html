@@ -441,7 +441,7 @@ tailwind.config = {
     <!-- timeline: converging lanes, fits in one view (no h-scroll) -->
     <div class="reveal mt-10">
       <div id="chrono-scroll" class="w-full">
-        <div id="chrono-inner" class="relative mx-auto" style="width:1230px;height:748px;">
+        <div id="chrono-inner" class="relative mx-auto" style="width:1400px;height:772px;">
           <svg id="chrono-svg" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;"></svg>
           <div id="chrono-cards"></div>
         </div>
@@ -1377,10 +1377,10 @@ function buildChrono() {
   svg.innerHTML = "";
   cardsBox.innerHTML = "";
 
-  // fixed canvas 1230x748 — no horizontal scroll on desktop
-  const W = 1230, H = 748;
-  const labelW = 118;
-  const yearW = 172;
+  // fixed canvas 1400x772 — wider than the text column, no h-scroll on desktop
+  const W = 1400, H = 772;
+  const labelW = 132;
+  const yearW = 208;
   const yearX0 = labelW + yearW / 2;
   const railX0 = labelW - 10;
   const railX1 = labelW + yearW * YEARS.length;
@@ -1393,7 +1393,7 @@ function buildChrono() {
   const nL = laneKeys.length;
 
   // lane geometry: rail near top of lane, cards hang below (2x2 packing)
-  const CW = 82, CH = 46, CG = 6;
+  const CW = 98, CH = 46, CG = 8;
   const blockH = CH * 2 + CG;          // 86px for a 2-row cell
   const laneH = 16 + blockH + 10;      // 112px
   const laneGap = 12;
@@ -1463,16 +1463,14 @@ function buildChrono() {
         card.href = url;
         card.target = "_blank";
         card.rel = "noopener";
-        card.title = name + " (" + y + ") — " + tag + "\n" + note;
         card.className = "chrono-card absolute no-underline";
         card.style.cssText =
           "left:" + left + "px;top:" + top + "px;width:" + CW + "px;height:" + CH + "px;" +
           "border-left:3px solid " + meta.color + ";" +
-          "display:flex;flex-direction:column;justify-content:center;" +
+          "display:flex;align-items:center;padding:0 8px;" +
           "opacity:0;transform:translateY(10px);";
         card.innerHTML =
-          '<div class="font-display font-semibold text-ink leading-tight" style="font-size:10.5px;overflow:hidden;">' + name + '</div>' +
-          '<div class="font-mono uppercase tracking-wider leading-none mt-1" style="font-size:8px;color:' + meta.color + ';overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">' + tag + '</div>';
+          '<div class="font-display font-semibold text-ink leading-snug" style="font-size:12px;overflow:hidden;">' + name + '</div>';
         cardsBox.appendChild(card);
         setTimeout(() => {
           card.style.transition = "opacity .45s ease, transform .45s ease";
