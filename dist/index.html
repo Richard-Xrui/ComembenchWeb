@@ -438,10 +438,10 @@ tailwind.config = {
       <!-- filled by JS -->
     </div>
 
-    <!-- timeline: converging lanes -->
+    <!-- timeline: converging lanes, fits in one view (no h-scroll) -->
     <div class="reveal mt-10">
-      <div id="chrono-scroll" class="overflow-x-auto pb-4">
-        <div id="chrono-inner" class="relative" style="min-width:2200px;height:880px;">
+      <div id="chrono-scroll" class="w-full">
+        <div id="chrono-inner" class="relative mx-auto" style="width:1230px;height:720px;">
           <svg id="chrono-svg" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;"></svg>
           <div id="chrono-cards"></div>
         </div>
@@ -1373,142 +1373,112 @@ function buildFilter() {
 
 function buildChrono() {
   const svg = document.getElementById("chrono-svg");
-  const cards = document.getElementById("chrono-cards");
+  const cardsBox = document.getElementById("chrono-cards");
   svg.innerHTML = "";
-  cards.innerHTML = "";
+  cardsBox.innerHTML = "";
 
-  const W = 2200, H = 880;
-  const pathX0 = 300, pathX1 = 1920, convX = 1980, convY = H / 2;
-  const yearX = {2021: 430, 2023: 730, 2024: 1030, 2025: 1330, 2026: 1630};
+  // fixed canvas 1230x720 — no horizontal scroll on desktop
+  const W = 1230, H = 720;
+  const labelW = 138;
+  const yearW = 168;
+  const yearX0 = labelW + yearW / 2;
+  const railX0 = labelW - 10;
+  const railX1 = labelW + yearW * YEARS.length;
+  const convX = railX1 + 52;
+
+  const yearX = {};
+  YEARS.forEach((y, i) => { yearX[y] = yearX0 + i * yearW; });
+
   const laneKeys = Object.keys(TRACKS).filter(k => activeTracks.has(k));
-  const laneY0 = {};
-  const n = laneKeys.length;
-  laneKeys.forEach((k, i) => { laneY0[k] = 100 + (H - 220) * (n === 1 ? 0.5 : i / (n - 1)); });
+  const nL = laneKeys.length;
 
-  // y along a lane at x: near-parallel early, converges on the right
-  function laneY(track, x) {
-    const y0 = laneY0[track], y1 = convY;
-    const xSplit = 1480;
-    if (x <= xSplit) {
-      const t = Math.max(0, (x - pathX0) / (xSplit - pathX0));
-      return y0 + (y1 - y0) * 0.14 * t;
-    }
-    const t = Math.min(1, (x - xSplit) / (pathX1 - xSplit));
-    const e = t * t * (3 - 2 * t);
-    const yAtSplit = y0 + (y1 - y0) * 0.14;
-    return yAtSplit + (y1 - yAtSplit) * e;
-  }
+  // lane geometry: rail near top of lane, cards hang below (2x2 packing)
+  const CW = 76, CH = 40, CG = 6;
+  const blockH = CH * 2 + CG;          // 86px for a 2-row cell
+  const laneH = 16 + blockH + 10;      // 112px
+  const laneGap = 12;
+  const laneTop = 44;
+  const laneY0 = {}, laneYc = {};
+  laneKeys.forEach((k, i) => {
+    laneY0[k] = laneTop + i * (laneH + laneGap);
+    laneYc[k] = laneY0[k] + 10;        // rail line
+  });
 
-  // ---- year gridlines + labels ----
-  Object.entries(yearX).forEach(([y, x]) => {
-    const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-    line.setAttribute("x1", x); line.setAttribute("x2", x);
-    line.setAttribute("y1", 40); line.setAttribute("y2", H - 30);
-    line.setAttribute("stroke", "#E5E0D8");
-    line.setAttribute("stroke-dasharray", "3 6");
-    line.setAttribute("stroke-width", "1");
-    svg.appendChild(line);
-    const t = document.createElementNS("http://www.w3.org/2000/svg", "text");
-    t.setAttribute("x", x); t.setAttribute("y", 28);
-    t.setAttribute("text-anchor", "middle");
-    t.setAttribute("fill", "#646A73");
-    t.setAttribute("font-family", "JetBrains Mono, monospace");
-    t.setAttribute("font-size", "13");
-    t.setAttribute("letter-spacing", "2");
+  const NS = "http://www.w3.org/2000/svg";
+  const el = (t, attrs) => {
+    const e = document.createElementNS(NS, t);
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    return e;
+  };
+
+  // year headers + faint column separators
+  YEARS.forEach(y => {
+    svg.appendChild(el("line", {x1: yearX[y], x2: yearX[y], y1: 28, y2: laneTop + nL * (laneH + laneGap) + 30,
+      stroke: "#E5E0D8", "stroke-dasharray": "3 6", "stroke-width": 1}));
+    const t = el("text", {x: yearX[y], y: 20, "text-anchor": "middle",
+      fill: "#646A73", "font-family": "JetBrains Mono, monospace", "font-size": 12, "letter-spacing": 2});
     t.textContent = y;
     svg.appendChild(t);
   });
 
-  // ---- lane curves + left labels ----
+  // convergence target (vertical middle of the active lanes)
+  const convYmid = (laneYc[laneKeys[0]] + laneYc[laneKeys[nL - 1]]) / 2;
+
+  // lane rails + left labels + converging tails
   laneKeys.forEach(track => {
     const meta = TRACKS[track];
-    const pts = [];
-    for (let x = pathX0; x <= pathX1; x += 16) pts.push([x, laneY(track, x)]);
-    const d = pts.map((p, i) => (i ? "L" : "M") + p[0].toFixed(1) + " " + p[1].toFixed(1)).join(" ");
+    const yc = laneYc[track];
 
-    const glow = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    glow.setAttribute("d", d);
-    glow.setAttribute("stroke", meta.color);
-    glow.setAttribute("stroke-width", "10");
-    glow.setAttribute("stroke-opacity", "0.12");
-    glow.setAttribute("fill", "none");
-    glow.setAttribute("stroke-linecap", "round");
-    svg.appendChild(glow);
+    svg.appendChild(el("line", {x1: railX0, x2: railX1, y1: yc, y2: yc,
+      stroke: meta.color, "stroke-width": 2, "stroke-opacity": 0.5, "stroke-linecap": "round"}));
 
-    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    path.setAttribute("d", d);
-    path.setAttribute("stroke", meta.color);
-    path.setAttribute("stroke-width", "2.5");
-    path.setAttribute("stroke-opacity", "0.75");
-    path.setAttribute("fill", "none");
-    path.setAttribute("stroke-linecap", "round");
-    svg.appendChild(path);
+    const d = "M" + railX1 + " " + yc +
+      " C" + (railX1 + 30) + " " + yc + ", " + (convX - 30) + " " + convYmid + ", " + convX + " " + convYmid;
+    svg.appendChild(el("path", {d: d, stroke: meta.color, "stroke-width": 2.5,
+      "stroke-opacity": 0.8, fill: "none", "stroke-linecap": "round"}));
 
-    // left label
-    const lbl = document.createElementNS("http://www.w3.org/2000/svg", "text");
-    lbl.setAttribute("x", pathX0 - 18);
-    lbl.setAttribute("y", laneY(track, pathX0) + 4);
-    lbl.setAttribute("text-anchor", "end");
-    lbl.setAttribute("fill", meta.color);
-    lbl.setAttribute("font-family", "Inter, sans-serif");
-    lbl.setAttribute("font-size", "13");
-    lbl.setAttribute("font-weight", "600");
-    lbl.textContent = meta.label;
-    svg.appendChild(lbl);
-
-    const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-    dot.setAttribute("cx", pathX0 - 10);
-    dot.setAttribute("cy", laneY(track, pathX0));
-    dot.setAttribute("r", "5");
-    dot.setAttribute("fill", meta.color);
-    svg.appendChild(dot);
+    svg.appendChild(el("circle", {cx: railX0, cy: yc, r: 5, fill: meta.color}));
+    const t = el("text", {x: railX0 - 14, y: yc + 4, "text-anchor": "end",
+      fill: meta.color, "font-family": "Inter, sans-serif", "font-size": 12.5, "font-weight": 600});
+    t.textContent = meta.label;
+    svg.appendChild(t);
   });
 
-  // ---- convergence funnel into the ours node ----
-  const funnel = document.createElementNS("http://www.w3.org/2000/svg", "path");
-  funnel.setAttribute("d", "M" + pathX1 + " " + convY + " L" + convX + " " + convY);
-  funnel.setAttribute("stroke", "#FB8147");
-  funnel.setAttribute("stroke-width", "3");
-  funnel.setAttribute("stroke-opacity", "0.55");
-  funnel.setAttribute("fill", "none");
-  svg.appendChild(funnel);
-
-  // ---- cards along lanes ----
+  // ---- cards: strict 2x2 grid per (track, year), hang below the rail, never overlap ----
+  // column offsets relative to year center; row offsets relative to block top
+  const colX = [-(CG / 2 + CW), CG / 2];
+  const blockTop = (track) => laneY0[track] + 16;
   let anim = 0;
+
   laneKeys.forEach(track => {
     const meta = TRACKS[track];
     YEARS.forEach(y => {
       const items = CHRONO.filter(c => c[0] === y && c[1] === track);
       items.forEach((c, idx) => {
         const [, , name, tag, url, note] = c;
-        const baseX = yearX[y];
-        // cascade same-slot cards along the path so they don't stack
-        const x = baseX + idx * 30;
-        const ycen = laneY(track, x);
-        const yOff = (idx % 2 === 0 ? -1 : 1) * Math.ceil(idx / 2) * 26 + (idx === 0 ? -34 : 0);
+        const col = idx % 2, row = Math.floor(idx / 2);
+        const left = yearX[y] + colX[col];
+        const top = blockTop(track) + row * (CH + CG);
         const card = document.createElement("a");
         card.href = url;
         card.target = "_blank";
         card.rel = "noopener";
-        card.className = "chrono-card block no-underline absolute";
-        card.style.left = (x - 72) + "px";
-        card.style.top = (ycen + yOff - 28) + "px";
-        card.style.width = "150px";
-        card.style.borderColor = meta.color + "55";
-        card.style.opacity = "0";
-        card.style.transform = "translateY(12px)";
+        card.title = name + " (" + y + ") — " + tag + "\n" + note;
+        card.className = "chrono-card absolute no-underline";
+        card.style.cssText =
+          "left:" + left + "px;top:" + top + "px;width:" + CW + "px;height:" + CH + "px;" +
+          "border-left:3px solid " + meta.color + ";" +
+          "display:flex;flex-direction:column;justify-content:center;" +
+          "opacity:0;transform:translateY(10px);";
         card.innerHTML =
-          '<div class="flex items-center gap-1.5 mb-1">' +
-            '<span class="chrono-dot" style="background:' + meta.color + ';color:' + meta.color + '"></span>' +
-            '<span class="font-display text-[12px] font-semibold text-ink leading-none">' + name + '</span>' +
-          '</div>' +
-          '<div class="font-mono text-[9px] uppercase tracking-wider" style="color:' + meta.color + '">' + tag + '</div>';
-        cards.appendChild(card);
+          '<div class="font-display font-semibold text-ink leading-tight" style="font-size:9.5px;overflow:hidden;">' + name + '</div>' +
+          '<div class="font-mono uppercase tracking-wider leading-none mt-0.5" style="font-size:7.5px;color:' + meta.color + ';overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">' + tag + '</div>';
+        cardsBox.appendChild(card);
         setTimeout(() => {
-          card.style.transition = "opacity .5s ease, transform .5s ease";
+          card.style.transition = "opacity .45s ease, transform .45s ease";
           card.style.opacity = "1";
           card.style.transform = "none";
-        }, 45 * anim++);
+        }, 40 * anim++);
       });
     });
   });
@@ -1516,19 +1486,19 @@ function buildChrono() {
   // ---- ours node at the convergence point ----
   const ours = document.createElement("div");
   ours.className = "absolute";
-  ours.style.left = (convX - 30) + "px";
-  ours.style.top = (convY - 110) + "px";
-  ours.style.width = "250px";
+  ours.style.left = (convX - 4) + "px";
+  ours.style.top = (convYmid - 82) + "px";
+  ours.style.width = "186px";
   ours.innerHTML =
-    '<div class="rounded-banner p-5" style="background:linear-gradient(135deg,#FFF6ED,#FAF7F3);border:2px solid #FB8147;box-shadow:0 16px 48px rgba(251,129,71,0.22);">' +
-      '<div class="flex items-center gap-2 mb-2">' +
-        '<span class="w-2.5 h-2.5 rounded-full" style="background:#FB8147"></span>' +
-        '<span class="chip">ours</span>' +
+    '<div class="rounded-banner p-4" style="background:linear-gradient(135deg,#FFF6ED,#FAF7F3);border:2px solid #FB8147;box-shadow:0 14px 40px rgba(251,129,71,0.22);">' +
+      '<div class="flex items-center gap-1.5 mb-1.5">' +
+        '<span class="w-2 h-2 rounded-full" style="background:#FB8147"></span>' +
+        '<span class="chip" style="font-size:9px;padding:1px 6px;">ours</span>' +
       '</div>' +
-      '<div class="font-display text-[17px] font-bold text-ink mb-1.5 leading-snug">CoMemBench</div>' +
-      '<div class="text-[11px] text-dim leading-relaxed">Task-conditioned memory boundaries on source-grounded dependency workflows &mdash; typed, version-aware handoffs with matched clean&ndash;polluted pairs.</div>' +
+      '<div class="font-display text-[15px] font-bold text-ink mb-1 leading-snug">CoMemBench</div>' +
+      '<div class="text-[10px] text-dim leading-relaxed">Task-conditioned memory boundaries on executable dependency workflows &mdash; typed, version-aware handoffs with matched clean&ndash;polluted pairs.</div>' +
     '</div>';
-  cards.appendChild(ours);
+  cardsBox.appendChild(ours);
 }
 
 // ---------- reveal on scroll ----------
