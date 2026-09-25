@@ -4,7 +4,7 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>CoMemBench: Collaborative Memory Boundaries across Multi-Agent Workflows</title>
-<meta name="description" content="CoMemBench benchmarks whether task-relevant memory reaches the agents that need it across multi-agent workflow topologies. 800 source-grounded families, 240 isolation challenges."/>
+<meta name="description" content="CoMemBench benchmarks whether task-relevant memory reaches the agents that need it across multi-agent workflow topologies. 800 source-grounded families, 800 matched polluted instances."/>
 <script src="https://cdn.tailwindcss.com"></script>
 <script>
 tailwind.config = {
@@ -220,7 +220,7 @@ tailwind.config = {
              style="background:linear-gradient(135deg,#FB8147,#FDA83A)">C</div>
         <div>
           <div class="font-display font-semibold text-sm leading-none">CoMemBench</div>
-          <div class="font-mono text-[10px] text-dim leading-none mt-1">v17 · 800 families</div>
+          <div class="font-mono text-[10px] text-dim leading-none mt-1">v1 · 800 families</div>
         </div>
       </a>
       <div class="hidden lg:flex items-center gap-7 text-[13px] text-dim whitespace-nowrap">
@@ -284,8 +284,8 @@ tailwind.config = {
         <div class="mt-1.5 text-xs text-dim font-mono uppercase tracking-wider">Source-grounded domains</div>
       </div>
       <div class="glass rounded-2xl p-5">
-        <div class="stat-num text-3xl md:text-4xl">240</div>
-        <div class="mt-1.5 text-xs text-dim font-mono uppercase tracking-wider">Isolation challenges</div>
+        <div class="stat-num text-3xl md:text-4xl">800</div>
+        <div class="mt-1.5 text-xs text-dim font-mono uppercase tracking-wider">Polluted instances</div>
       </div>
       <div class="glass rounded-2xl p-5">
         <div class="stat-num text-3xl md:text-4xl">6&ndash;19</div>
@@ -326,8 +326,8 @@ tailwind.config = {
              style="background:rgba(253,168,58,0.14);border:1px solid rgba(253,168,58,0.35)">②</div>
         <h3 class="mt-5 font-display text-xl font-semibold">Matched clean&ndash;polluted pairs</h3>
         <p class="mt-3 text-dim text-sm leading-relaxed">
-          240 pollution instances are paired with controls. If inapplicable content changes downstream behavior,
-          the isolation challenge exposes it &mdash; without equating benchmark-visible artifacts with internal memory.
+          800 pollution instances are paired with controls. If inapplicable content changes downstream behavior,
+          the matched pair exposes it &mdash; without equating benchmark-visible artifacts with internal memory.
         </p>
       </div>
       <div class="reveal glass glass-hover rounded-2xl p-7 transition-all duration-300">
@@ -494,7 +494,7 @@ tailwind.config = {
       <div class="font-mono text-xs text-orange uppercase tracking-[.28em] mb-3">04 — Task Examples</div>
       <h2 class="font-display text-4xl md:text-5xl font-bold">Four worked examples, one per domain</h2>
       <p class="mt-5 text-dim max-w-3xl text-lg">
-        Verbatim excerpts from the v17 release (<span class="font-mono text-orange text-base">workflow_families.jsonl</span>).
+        Verbatim excerpts from the v1 release (<span class="font-mono text-orange text-base">workflow_families.jsonl</span>).
         The goal is what every agent in the family is ultimately working toward.
       </p>
     </div>
@@ -759,7 +759,7 @@ Ten independent <span class="font-mono text-orange">isSolution_f*</span> obligat
         <div class="rounded-xl p-4" style="background:rgba(253,168,58,0.08);border:1px solid rgba(253,168,58,0.22)">
           <div class="font-mono text-[10px] text-honey">STEP 05</div>
           <div class="mt-1.5 text-sm font-medium">Control + pollution pair</div>
-          <div class="mt-1 text-xs text-dim">800 control &middot; 240 matched isolation challenges</div>
+          <div class="mt-1 text-xs text-dim">800 control &middot; 800 matched polluted instances</div>
         </div>
       </div>
     </div>
@@ -830,12 +830,11 @@ Ten independent <span class="font-mono text-orange">isSolution_f*</span> obligat
     <!-- split / stats -->
     <div class="reveal mt-10 grid md:grid-cols-3 gap-5">
       <div class="glass rounded-2xl p-6">
-        <div class="font-mono text-[11px] text-orange uppercase tracking-wider">Split</div>
+        <div class="font-mono text-[11px] text-orange uppercase tracking-wider">Problems</div>
         <div class="mt-3 flex items-end gap-3">
-          <div><div class="stat-num text-3xl">623</div><div class="text-xs text-dim mt-1">test</div></div>
-          <div class="text-dim pb-1">/</div>
-          <div><div class="stat-num text-3xl">177</div><div class="text-xs text-dim mt-1">dev</div></div>
+          <div><div class="stat-num text-3xl">800</div><div class="text-xs text-dim mt-1">complete</div></div>
         </div>
+        <div class="mt-2 text-xs text-dim leading-relaxed">One complete set &mdash; no held-out test/dev split.</div>
       </div>
       <div class="glass rounded-2xl p-6">
         <div class="font-mono text-[11px] text-orange uppercase tracking-wider">Construction modes</div>
@@ -895,8 +894,8 @@ Ten independent <span class="font-mono text-orange">isSolution_f*</span> obligat
         </p>
       </div>
       <div class="reveal metric-card glass rounded-2xl p-6">
-        <div class="font-mono text-xs text-honey">ICS</div>
-        <h3 class="mt-2 font-display text-xl font-semibold">Isolation Challenge Success</h3>
+        <div class="font-mono text-xs text-honey">MPS</div>
+        <h3 class="mt-2 font-display text-xl font-semibold">Matched Pollution Success</h3>
         <p class="mt-2.5 text-dim text-sm leading-relaxed">
           Success on polluted instances conditioned on matched control success.
           Blank when the denominator is below 10 &mdash; never reported as zero.
@@ -931,8 +930,7 @@ Ten independent <span class="font-mono text-orange">isSolution_f*</span> obligat
         <div class="font-mono text-xs text-orange uppercase tracking-[.28em] mb-3">07 — Results</div>
         <h2 class="font-display text-4xl md:text-5xl font-bold">Leaderboard</h2>
         <p class="mt-5 text-dim max-w-2xl text-lg">
-          Three backbone snapshots. DeepSeek-V4-Flash is the primary M2 arm; Qwen3.8-27B is the paper-table
-          transcription; GPT-6-Luna is a partial M3 snapshot.
+          Three backbone snapshots.
         </p>
       </div>
       <div class="flex flex-wrap gap-2" id="backbone-tabs">
@@ -949,27 +947,17 @@ Ten independent <span class="font-mono text-orange">isSolution_f*</span> obligat
           <span class="w-2 h-2 rounded-full bg-orange"></span>
           <div class="text-sm font-medium">DeepSeek-V4-Flash</div>
         </div>
-        <div class="mt-2 text-xs text-dim leading-relaxed">
-          M2 frozen arm, primary. Excludes <span class="font-mono">codex_runtime</span> (harness artifact) and the R13 wave;
-          Deep Agents is main-wave only.
-        </div>
       </div>
       <div class="glass rounded-2xl p-5">
         <div class="flex items-center gap-2">
           <span class="w-2 h-2 rounded-full bg-orange"></span>
           <div class="text-sm font-medium">Qwen3.8-27B</div>
         </div>
-        <div class="mt-2 text-xs text-dim leading-relaxed">
-          Paper-table transcription. Used for cross-backbone comparison in the manuscript tables.
-        </div>
       </div>
       <div class="glass rounded-2xl p-5">
         <div class="flex items-center gap-2">
           <span class="w-2 h-2 rounded-full bg-honey"></span>
           <div class="text-sm font-medium">GPT-6-Luna</div>
-        </div>
-        <div class="mt-2 text-xs text-dim leading-relaxed">
-          M3 snapshot 2026-09-25. Coverage <span class="text-ink">1,754 / 2,000</span> (87.7%) &mdash; incomplete; treat as provisional.
         </div>
       </div>
     </div>
@@ -980,7 +968,7 @@ Ten independent <span class="font-mono text-orange">isSolution_f*</span> obligat
       <button class="tab-btn on" data-metric="sr">SR</button>
       <button class="tab-btn" data-metric="vncr">VNCR</button>
       <button class="tab-btn" data-metric="vhs">VHS</button>
-      <button class="tab-btn" data-metric="ics">ICS</button>
+      <button class="tab-btn" data-metric="ics">MPS</button>
     </div>
 
     <!-- table -->
@@ -1009,7 +997,7 @@ Ten independent <span class="font-mono text-orange">isSolution_f*</span> obligat
       <span>SR = task success rate over 50-family domain denom</span>
       <span>VNCR = verified native completion rate (macro)</span>
       <span>VHS = verified handoff success (micro)</span>
-      <span>ICS = isolation challenge success (provisional; blank if denom&lt;10)</span>
+      <span>MPS = matched pollution success (provisional; blank if denom&lt;10)</span>
     </div>
   </div>
 </section>
@@ -1021,7 +1009,7 @@ Ten independent <span class="font-mono text-orange">isSolution_f*</span> obligat
       <div class="font-mono text-xs text-orange uppercase tracking-[.28em] mb-3">08 — Access</div>
       <h2 class="font-display text-4xl md:text-5xl font-bold">Get the dataset &amp; harness</h2>
       <p class="mt-5 text-dim max-w-3xl text-lg">
-        The v17 release is distributed as a gated dataset with a frozen evaluation harness.
+        The v1 release is distributed as a gated dataset with a frozen evaluation harness.
         Accept the terms to receive the manifest, family definitions, and scoring scripts.
       </p>
     </div>
@@ -1047,7 +1035,7 @@ Ten independent <span class="font-mono text-orange">isSolution_f*</span> obligat
         <div class="example-icon">03</div>
         <h3 class="mt-5 font-display text-xl font-semibold">Run the harness</h3>
         <p class="mt-3 text-dim text-sm leading-relaxed">
-          Submit model outputs to the frozen scorer. SR / VNCR / VHS / ICS are computed under the published
+          Submit model outputs to the frozen scorer. SR / VNCR / VHS / MPS are computed under the published
           blanking and denominator rules.
         </p>
       </div>
@@ -1089,7 +1077,7 @@ Ten independent <span class="font-mono text-orange">isSolution_f*</span> obligat
                style="background:linear-gradient(135deg,#FB8147,#FDA83A)">C</div>
           <div>
             <div class="font-display font-semibold text-sm">CoMemBench</div>
-            <div class="font-mono text-[10px] text-dim">v17 &middot; 800 families &middot; 4 domains</div>
+            <div class="font-mono text-[10px] text-dim">v1 &middot; 800 families &middot; 4 domains</div>
           </div>
         </div>
         <p class="mt-4 text-xs text-dim max-w-md leading-relaxed">
@@ -1166,12 +1154,6 @@ function bestOf(vals) {
   const nums = vals.filter(v => typeof v === "number");
   return nums.length ? Math.max(...nums) : null;
 }
-function coverageLabel() {
-  if (BB === "GPT-6-Luna") return "Coverage 1,754 / 2,000 (87.7%) — incomplete snapshot 2026-09-25.";
-  if (BB === "DeepSeek-V4-Flash") return "M2 frozen arm (primary). Deep Agents main-wave only; codex_runtime and R13 excluded.";
-  return "Paper-table transcription of the Qwen3.8-27B runs.";
-}
-
 function render() {
   const body = document.getElementById("lb-body");
   const note = document.getElementById("lb-note");
@@ -1216,8 +1198,8 @@ function render() {
     );
   }
   body.innerHTML = rows.join("");
-  note.textContent = coverageLabel() + " Metric view: " + METRIC.toUpperCase() +
-    ". " + (METRIC === "ics" ? "ICS is provisional (ICS-node operator); blank when denominator < 10." : "Blank cells mean not registered or denominator < 10.");
+  note.textContent = "Metric view: " + (METRIC === "ics" ? "MPS" : METRIC.toUpperCase()) +
+    ". " + (METRIC === "ics" ? "MPS is provisional (polluted-pair operator); blank when denominator < 10." : "Blank cells mean not registered or denominator < 10.");
 }
 
 // backbone tabs
@@ -1508,60 +1490,18 @@ function buildSketch(box) {
     style: "width:100%;height:auto;max-height:460px;display:block;"
   });
   const defs = el("defs", {});
-  const marker = el("marker", {
-    id: mid, markerWidth: 7, markerHeight: 7, refX: 6, refY: 2.4, orient: "auto"
+  [["f", "#E8590C"], ["r", "#C2410C"]].forEach(function (mc) {
+    const marker = el("marker", {
+      id: mid + mc[0], markerWidth: 10, markerHeight: 10, refX: 8, refY: 3.4, orient: "auto"
+    });
+    marker.appendChild(el("path", { d: "M0,0 L8,3.4 L0,6.8 Z", fill: mc[1] }));
+    defs.appendChild(marker);
   });
-  marker.appendChild(el("path", { d: "M0,0 L6,2.4 L0,4.8 Z", fill: "#C25A22" }));
-  defs.appendChild(marker);
   svg.appendChild(defs);
   svg.appendChild(el("rect", {
     x: 0, y: 0, width: W, height: H, rx: 14,
     fill: "#FAF7F3", stroke: "#E5E0D8", "stroke-width": 1
   }));
-
-  edges.forEach(e => {
-    const a = pos[e.f], b = pos[e.t];
-    if (!a || !b) return;
-    const rev = e.kind === "rev";
-    let d;
-    if (vertical) {
-      const sx = a.x + a.w / 2, sy = a.y + a.h;
-      const tx = b.x + b.w / 2, ty = b.y;
-      const dy = Math.max(8, (ty - sy) * 0.42);
-      if (rev) {
-        const loop = Math.max(20, Math.abs(sx - tx) * 0.35 + 16);
-        d = "M" + sx + " " + sy + " C" + (sx + loop) + " " + (sy + 10) + ", " +
-            (tx + loop) + " " + (ty - 10) + ", " + tx + " " + ty;
-      } else {
-        d = "M" + sx + " " + sy + " C" + sx + " " + (sy + dy) + ", " + tx + " " + (ty - dy) + ", " + tx + " " + ty;
-      }
-    } else {
-      const sx = a.x + a.w, sy = a.y + a.h / 2;
-      const tx = b.x, ty = b.y + b.h / 2;
-      const dx = Math.max(8, (tx - sx) * 0.42);
-      const dyv = ty - sy;
-      if (rev) {
-        const loop = Math.max(18, Math.abs(dyv) * 0.35 + 14);
-        d = "M" + sx + " " + sy + " C" + (sx + 14) + " " + (sy + loop) + ", " +
-            (tx - 14) + " " + (ty + loop) + ", " + tx + " " + ty;
-      } else if (Math.abs(dyv) < 2) {
-        d = "M" + sx + " " + sy + " C" + (sx + dx) + " " + sy + ", " + (tx - dx) + " " + ty + ", " + tx + " " + ty;
-      } else {
-        // serpentine / cross-row: route around
-        const bend = dyv > 0 ? 1 : -1;
-        d = "M" + sx + " " + sy + " C" + (sx + dx) + " " + sy + ", " +
-            (tx - dx) + " " + ty + ", " + tx + " " + ty;
-      }
-    }
-    svg.appendChild(el("path", {
-      d: d, fill: "none",
-      stroke: rev ? "#E76F51" : "#FB8147",
-      "stroke-width": rev ? 1.05 : 1.35,
-      "stroke-opacity": rev ? 0.40 : 0.55,
-      "stroke-dasharray": rev ? "4 3" : "",
-      "marker-end": "url(#" + mid + ")"
-    }));
-  });
 
   nodes.forEach(n => {
     const p = pos[n.id];
@@ -1593,6 +1533,55 @@ function buildSketch(box) {
       g.appendChild(s2);
     }
     svg.appendChild(g);
+  });
+
+  // edges drawn last: thick, high-contrast, white casing so they never sink under nodes
+  edges.forEach(e => {
+    const a = pos[e.f], b = pos[e.t];
+    if (!a || !b) return;
+    const rev = e.kind === "rev";
+    let d;
+    if (vertical) {
+      const sx = a.x + a.w / 2, sy = a.y + a.h;
+      const tx = b.x + b.w / 2, ty = b.y;
+      const dy = Math.max(8, (ty - sy) * 0.42);
+      if (rev) {
+        const loop = Math.max(20, Math.abs(sx - tx) * 0.35 + 16);
+        d = "M" + sx + " " + sy + " C" + (sx + loop) + " " + (sy + 10) + ", " +
+            (tx + loop) + " " + (ty - 10) + ", " + tx + " " + ty;
+      } else {
+        d = "M" + sx + " " + sy + " C" + sx + " " + (sy + dy) + ", " + tx + " " + (ty - dy) + ", " + tx + " " + ty;
+      }
+    } else {
+      const sx = a.x + a.w, sy = a.y + a.h / 2;
+      const tx = b.x, ty = b.y + b.h / 2;
+      const dx = Math.max(8, (tx - sx) * 0.42);
+      const dyv = ty - sy;
+      if (rev) {
+        const loop = Math.max(18, Math.abs(dyv) * 0.35 + 14);
+        d = "M" + sx + " " + sy + " C" + (sx + 14) + " " + (sy + loop) + ", " +
+            (tx - 14) + " " + (ty + loop) + ", " + tx + " " + ty;
+      } else if (Math.abs(dyv) < 2) {
+        d = "M" + sx + " " + sy + " C" + (sx + dx) + " " + sy + ", " + (tx - dx) + " " + ty + ", " + tx + " " + ty;
+      } else {
+        d = "M" + sx + " " + sy + " C" + (sx + dx) + " " + sy + ", " +
+            (tx - dx) + " " + ty + ", " + tx + " " + ty;
+      }
+    }
+    const w = rev ? 2.0 : 2.6;
+    const col = rev ? "#C2410C" : "#E8590C";
+    svg.appendChild(el("path", {
+      d: d, fill: "none", stroke: "#FFFFFF",
+      "stroke-width": w + 2.6, "stroke-linecap": "round", "stroke-linejoin": "round",
+      "stroke-opacity": 0.96
+    }));
+    svg.appendChild(el("path", {
+      d: d, fill: "none", stroke: col,
+      "stroke-width": w, "stroke-linecap": "round", "stroke-linejoin": "round",
+      "stroke-opacity": rev ? 0.88 : 0.96,
+      "stroke-dasharray": rev ? "5 3.5" : "",
+      "marker-end": "url(#" + mid + (rev ? "r" : "f") + ")"
+    }));
   });
 
   box.innerHTML = "";
