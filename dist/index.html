@@ -231,6 +231,7 @@ tailwind.config = {
         </div>
       </a>
       <div class="hidden lg:flex items-center gap-7 text-[13px] text-dim whitespace-nowrap">
+        <a class="nav-link hover:text-ink transition" href="paper/">Paper</a>
         <a class="nav-link hover:text-ink transition" href="#overview">Overview</a>
         <a class="nav-link hover:text-ink transition" href="#domains">Domains</a>
         <a class="nav-link hover:text-ink transition" href="#chrono">Related Work</a>
@@ -241,6 +242,7 @@ tailwind.config = {
         <a class="nav-link hover:text-ink transition" href="#access">Access</a>
       </div>
       <div class="flex items-center gap-2">
+        <a href="paper/" class="btn-ghost px-4 py-2 text-xs">Paper</a>
         <a href="#citation" class="btn-ghost px-4 py-2 text-xs">Cite</a>
         <a href="#access" class="btn-primary px-4 py-2 text-xs">Get Access</a>
       </div>
@@ -276,6 +278,7 @@ tailwind.config = {
     </p>
 
     <div class="reveal mt-9 flex flex-wrap gap-3">
+      <a href="paper/" class="btn-primary px-7 py-3.5 text-sm">Read the Paper</a>
       <a href="#leaderboard" class="btn-ghost px-7 py-3.5 text-sm">View Leaderboard</a>
       <a href="#examples" class="btn-ghost px-7 py-3.5 text-sm">Explore Examples</a>
       <a href="#chrono" class="btn-ghost px-7 py-3.5 text-sm">Related Work Timeline</a>
@@ -1472,14 +1475,17 @@ Ten independent <span class="font-mono text-orange">isSolution_f*</span> obligat
     <div class="reveal">
       <div class="font-mono text-xs text-orange uppercase tracking-[.28em] mb-3">09 — Citation</div>
       <h2 class="font-display text-4xl md:text-5xl font-bold">Cite CoMemBench</h2>
-      <p class="mt-5 text-dim max-w-2xl text-lg">If you use CoMemBench, please cite the following work. The manuscript is under review and not publicly posted.</p>
+      <p class="mt-5 text-dim max-w-2xl text-lg">If you use CoMemBench, please cite the following work. A PDF of the manuscript is at <a class="text-orange hover:underline" href="paper/">comembench.world/paper/</a>.</p>
     </div>
     <div class="reveal mt-8 glass rounded-2xl p-6">
-      <pre class="font-mono text-xs text-dim leading-relaxed overflow-x-auto">@misc{comembench2026,
+      <pre class="font-mono text-xs text-dim leading-relaxed overflow-x-auto">@misc{zhao2026comembench,
   title        = {{CoMemBench}: Benchmarking Collaborative Memory
                   Boundaries across Multi-Agent Workflow Topologies},
-  author       = {Anonymous},
+  author       = {Zhao, Sen and Kong, Ruiqi and Zhang, Zuyu and
+                  Shen, Lifeng and He, Xinyu and Zou, Ding and
+                  Zhang, Xu and Zhang, Qinghua},
   year         = {2026},
+  howpublished = {\url{https://comembench.world/paper/}},
   note         = {Manuscript under review}
 }</pre>
     </div>
@@ -1518,6 +1524,7 @@ Ten independent <span class="font-mono text-orange">isSolution_f*</span> obligat
         <div>
           <div class="font-mono text-[10px] text-dim uppercase tracking-wider mb-2">Resources</div>
           <div class="flex flex-col gap-1.5">
+            <a class="hover:text-orange transition" href="paper/">Paper</a>
             <a class="hover:text-orange transition" href="#access">Dataset access</a>
             <a class="hover:text-orange transition" href="#metrics">Evaluation protocol</a>
             <a class="hover:text-orange transition" href="#citation">Citation</a>
@@ -1527,7 +1534,7 @@ Ten independent <span class="font-mono text-orange">isSolution_f*</span> obligat
     </div>
     <div class="mt-10 pt-6 border-t border-warmborder flex flex-wrap items-center justify-between gap-4 text-[11px] text-dim">
       <div>&copy; 2026 CoMemBench authors. For research use.</div>
-      <div class="font-mono">Manuscript under review</div>
+      <div class="font-mono">Manuscript under review &middot; <a class="hover:text-orange transition" href="paper/">PDF</a></div>
     </div>
   </div>
 </footer>

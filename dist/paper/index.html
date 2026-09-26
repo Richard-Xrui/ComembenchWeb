@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>CoMemBench: Benchmarking Collaborative Memory Boundaries across Multi-Agent Workflow Topologies</title>
+<meta name="description" content="Manuscript for CoMemBench: an execution-grounded benchmark for collaborative memory sharing and isolation across multi-agent workflow topologies. 800 workflows, 4 domains."/>
+<link rel="canonical" href="https://comembench.world/paper/"/>
+<meta property="og:type" content="article"/>
+<meta property="og:url" content="https://comembench.world/paper/"/>
+<meta property="og:title" content="CoMemBench: Benchmarking Collaborative Memory Boundaries across Multi-Agent Workflow Topologies"/>
+<meta property="og:description" content="800 source-grounded workflows across four domains, with matched isolation challenges. Manuscript under review."/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:url" content="https://comembench.world/paper/"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        page: "#FCFAF8", card: "#FAF7F3", band: "#F0EBE5", hoverbg: "#F7F3EF",
+        warmborder: "#F0EBE5", ink: "#1F2329", ink2: "#383A42", dim: "#646A73",
+        orange: "#FB8147", orangebg: "#FFF6ED", honey: "#FDA83A",
+      },
+      fontFamily: {
+        display: ['"LXGW WenKai TC"', "Noto Serif SC", "Georgia", "serif"],
+        sans: ["Inter", '"PingFang SC"', "system-ui", "sans-serif"],
+        mono: ['"JetBrains Mono"', "ui-monospace", "monospace"],
+      },
+    },
+  },
+};
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-tc-webfont/style.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Serif+SC:wght@500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+  html { scroll-behavior: smooth; }
+  body {
+    background: #FCFAF8; color: #1F2329;
+    font-family: Inter, "PingFang SC", system-ui, sans-serif;
+    overflow-x: hidden; -webkit-font-smoothing: antialiased;
+  }
+  .glass {
+    background: #FAF7F3; border: 1px solid #F0EBE5;
+    box-shadow: 0 1px 2px rgba(31,35,41,0.04), 0 8px 24px rgba(31,35,41,0.04);
+  }
+  .glow-line { background: linear-gradient(90deg, transparent, #FB8147, transparent); height: 1px; opacity: .35; }
+  .orb {
+    position: absolute; border-radius: 9999px; filter: blur(70px); opacity: 0.30; pointer-events: none;
+    animation: drift 18s ease-in-out infinite alternate;
+  }
+  @keyframes drift {
+    0%   { transform: translate(0,0) scale(1); }
+    50%  { transform: translate(30px,-22px) scale(1.08); }
+    100% { transform: translate(-20px,18px) scale(0.95); }
+  }
+  .reveal { opacity: 0; transform: translateY(18px); transition: opacity .7s ease, transform .7s ease; }
+  .reveal.in { opacity: 1; transform: none; }
+  header .reveal { opacity: 1; transform: none; }
+  .stat-num {
+    background: linear-gradient(120deg, #FB8147, #FDA83A 60%, #E8894B);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    font-variant-numeric: tabular-nums;
+  }
+  .btn-primary {
+    display: inline-flex; align-items: center; justify-content: center;
+    border-radius: 12px; font-weight: 600;
+    background: #FB8147; color: #fff;
+    box-shadow: 0 8px 22px rgba(251,129,71,0.30);
+    transition: all .22s ease;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 14px 32px rgba(251,129,71,0.40); }
+  .btn-ghost {
+    display: inline-flex; align-items: center; justify-content: center;
+    border-radius: 12px; font-weight: 500;
+    border: 1px solid #E5E0D8; color: #383A42; background: transparent;
+    transition: all .22s ease;
+  }
+  .btn-ghost:hover { border-color: #FB8147; color: #C25A22; background: #FFF6ED; }
+  .affil-sup { font-size: 0.62em; vertical-align: super; color: #C25A22; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<nav class="fixed top-0 inset-x-0 z-50">
+  <div class="mx-auto max-w-6xl px-6">
+    <div class="mt-3 rounded-2xl glass flex items-center justify-between px-5 py-3">
+      <a href="../" class="flex items-center gap-2.5">
+        <div class="w-8 h-8 rounded-lg flex items-center justify-center font-display font-bold text-white"
+             style="background:linear-gradient(135deg,#FB8147,#FDA83A)">C</div>
+        <div>
+          <div class="font-display font-semibold text-sm leading-none">CoMemBench</div>
+          <div class="font-mono text-[10px] text-dim leading-none mt-1">v1 &middot; 800 families</div>
+        </div>
+      </a>
+      <div class="flex items-center gap-2">
+        <a href="../" class="btn-ghost px-4 py-2 text-xs">Project Home</a>
+        <a href="comembench.pdf" class="btn-primary px-4 py-2 text-xs">Download PDF</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<header class="relative overflow-hidden">
+  <div class="absolute inset-0" style="background:
+    radial-gradient(circle at 12% 8%, rgba(251,129,71,0.13), transparent 46%),
+    radial-gradient(circle at 88% 22%, rgba(253,168,58,0.11), transparent 42%);"></div>
+  <div class="orb" style="width:420px;height:420px;background:#FB8147;top:-90px;left:-70px;"></div>
+  <div class="orb" style="width:360px;height:360px;background:#FDA83A;top:10%;right:-70px;animation-delay:-7s;"></div>
+
+  <div class="relative z-10 mx-auto max-w-6xl px-6 pt-36 pb-16">
+    <div class="reveal inline-flex items-center gap-2 rounded-full glass px-4 py-1.5 text-xs">
+      <span class="w-1.5 h-1.5 rounded-full bg-orange animate-pulse"></span>
+      <span class="text-dim font-mono">MANUSCRIPT &middot; UNDER REVIEW</span>
+    </div>
+
+    <h1 class="reveal mt-7 font-display text-4xl md:text-6xl font-bold leading-[1.08] max-w-4xl">
+      CoMemBench: Benchmarking Collaborative Memory Boundaries across
+      <span class="stat-num">Multi-Agent Workflow Topologies</span>
+    </h1>
+
+    <div class="reveal mt-8 text-[15px] leading-relaxed max-w-4xl">
+      <div class="font-medium text-ink">
+        Sen Zhao<span class="affil-sup">1*</span>&nbsp;&nbsp;
+        Ruiqi Kong<span class="affil-sup">1*</span>&nbsp;&nbsp;
+        Zuyu Zhang<span class="affil-sup">1</span>&nbsp;&nbsp;
+        Lifeng Shen<span class="affil-sup">2</span>&nbsp;&nbsp;
+        Xinyu He<span class="affil-sup">4</span>&nbsp;&nbsp;
+        Ding Zou<span class="affil-sup">5</span>&nbsp;&nbsp;
+        Xu Zhang<span class="affil-sup">1&dagger;</span>&nbsp;&nbsp;
+        Qinghua Zhang<span class="affil-sup">3</span>
+      </div>
+      <div class="mt-3 text-xs text-dim space-y-0.5">
+        <div><span class="affil-sup">1</span> Academy of Advanced Interdisciplinary Studies, Chongqing University of Posts and Telecommunications, Chongqing, China</div>
+        <div><span class="affil-sup">2</span> School of Artificial Intelligence, Chongqing University of Posts and Telecommunications, Chongqing, China</div>
+        <div><span class="affil-sup">3</span> School of Computer Science and Technology, Chongqing University of Posts and Telecommunications, Chongqing, China</div>
+        <div><span class="affil-sup">4</span> Towngas, China</div>
+        <div><span class="affil-sup">5</span> Intelligent System Department, Zhongxing Telecom Equipment (ZTE), Changsha, Hunan, China</div>
+        <div class="pt-2 text-dim"><span class="affil-sup">*</span> Equal contribution.&nbsp;&nbsp;<span class="affil-sup">&dagger;</span> Corresponding author: zhangx@cqupt.edu.cn</div>
+      </div>
+    </div>
+
+    <div class="reveal mt-9 flex flex-wrap gap-3">
+      <a href="comembench.pdf" class="btn-primary px-7 py-3.5 text-sm">Download PDF</a>
+      <a href="#abstract" class="btn-ghost px-7 py-3.5 text-sm">Read Abstract</a>
+      <a href="#cite" class="btn-ghost px-7 py-3.5 text-sm">BibTeX</a>
+      <a href="../#access" class="btn-ghost px-7 py-3.5 text-sm">Get the Dataset</a>
+    </div>
+
+    <div class="reveal mt-12 grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div class="glass rounded-2xl p-5">
+        <div class="stat-num text-3xl md:text-4xl">800</div>
+        <div class="mt-1.5 text-xs text-dim font-mono uppercase tracking-wider">Workflow families</div>
+      </div>
+      <div class="glass rounded-2xl p-5">
+        <div class="stat-num text-3xl md:text-4xl">4</div>
+        <div class="mt-1.5 text-xs text-dim font-mono uppercase tracking-wider">Source-grounded domains</div>
+      </div>
+      <div class="glass rounded-2xl p-5">
+        <div class="stat-num text-3xl md:text-4xl">800</div>
+        <div class="mt-1.5 text-xs text-dim font-mono uppercase tracking-wider">Matched isolation challenges</div>
+      </div>
+      <div class="glass rounded-2xl p-5">
+        <div class="stat-num text-3xl md:text-4xl">18</div>
+        <div class="mt-1.5 text-xs text-dim font-mono uppercase tracking-wider">Pages</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="relative mx-auto max-w-6xl px-6 pb-24">
+
+  <!-- ABSTRACT -->
+  <section id="abstract" class="pt-16">
+    <div class="font-mono text-xs text-orange uppercase tracking-[.28em] mb-3">Abstract</div>
+    <h2 class="font-display text-3xl md:text-4xl font-bold">What the paper argues</h2>
+    <div class="reveal mt-6 glass rounded-2xl p-7 md:p-9">
+      <p class="text-[15px] leading-[1.85] text-ink2">Multi-agent workflows require task-relevant information to be shared across agents, while irrelevant, stale, unverified, or incompatible information must remain isolated. We call this task-conditioned scope of information a collaborative memory boundary. Workflow topology determines which intermediate artifacts are applicable to which downstream workers and when they cease to be valid, thereby providing a structural stress dimension for sharing and isolation. Existing memory benchmarks primarily evaluate retention and retrieval, whereas multi-agent benchmarks emphasize coordination and end-to-end completion, leaving topology-conditioned memory boundaries largely unmeasured. We introduce CoMemBench, an execution-grounded benchmark for collaborative memory sharing and isolation across multi-agent workflow topologies. It constructs 800 composite workflows across four domains from source-grounded dependency graphs, with node-local specifications, verifiable artifact handoffs, native evaluators, and matched isolation challenges. CoMemBench measures workflow completion, verified node progress, required-handoff reliability, isolation robustness, and token cost. Experiments reveal a sharing&ndash;isolation trade-off: broader context improves information availability but can weaken isolation, while system rankings shift across topologies and artifact violations.</p>
+    </div>
+  </section>
+
+  <!-- AT A GLANCE -->
+  <section class="pt-16">
+    <div class="font-mono text-xs text-orange uppercase tracking-[.28em] mb-3">Contribution</div>
+    <h2 class="font-display text-3xl md:text-4xl font-bold">What is new</h2>
+    <div class="reveal mt-7 grid md:grid-cols-3 gap-5">
+      <div class="glass rounded-2xl p-6">
+        <div class="font-mono text-[10px] text-orange uppercase tracking-widest mb-2">01 &mdash; Concept</div>
+        <div class="font-display text-lg font-semibold">Collaborative memory boundary</div>
+        <p class="mt-2 text-sm text-dim leading-relaxed">
+          A task-conditioned scope of information: which artifacts a consumer requires now,
+          and which plausible artifacts must stay outside its context.
+        </p>
+      </div>
+      <div class="glass rounded-2xl p-6">
+        <div class="font-mono text-[10px] text-orange uppercase tracking-widest mb-2">02 &mdash; Benchmark</div>
+        <div class="font-display text-lg font-semibold">800 execution-grounded workflows</div>
+        <p class="mt-2 text-sm text-dim leading-relaxed">
+          Four domains, node-local specifications, verifiable artifact handoffs, native
+          evaluators &mdash; each paired with a matched isolation challenge that differs in
+          exactly one architecture-visible way.
+        </p>
+      </div>
+      <div class="glass rounded-2xl p-6">
+        <div class="font-mono text-[10px] text-orange uppercase tracking-widest mb-2">03 &mdash; Finding</div>
+        <div class="font-display text-lg font-semibold">A sharing&ndash;isolation trade-off</div>
+        <p class="mt-2 text-sm text-dim leading-relaxed">
+          Broader context improves information availability but can weaken isolation.
+          System rankings shift across topologies and artifact violations &mdash; memory
+          boundaries are a distinct systems property.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PDF VIEWER -->
+  <section class="pt-16">
+    <div class="font-mono text-xs text-orange uppercase tracking-[.28em] mb-3">Manuscript</div>
+    <div class="flex flex-wrap items-end justify-between gap-4">
+      <h2 class="font-display text-3xl md:text-4xl font-bold">Read the PDF</h2>
+      <a href="comembench.pdf" class="btn-primary px-6 py-3 text-sm">Download &mdash; 828 KB</a>
+    </div>
+    <div class="reveal mt-7">
+      <div class="overflow-hidden rounded-2xl border border-warmborder" style="background:#fff;">
+        <iframe src="comembench.pdf#view=FitH"
+                title="CoMemBench manuscript (PDF)"
+                style="width:100%;height:86vh;min-height:640px;border:0;display:block;"></iframe>
+      </div>
+      <p class="mt-3 text-xs text-dim">
+        If the inline viewer does not load in your browser,
+        <a class="text-orange hover:underline" href="comembench.pdf">open the PDF directly</a>
+        or download the button above.
+      </p>
+    </div>
+  </section>
+
+  <!-- BIBTEX -->
+  <section id="cite" class="pt-16">
+    <div class="font-mono text-xs text-orange uppercase tracking-[.28em] mb-3">Citation</div>
+    <h2 class="font-display text-3xl md:text-4xl font-bold">Cite this work</h2>
+    <p class="mt-4 text-dim max-w-2xl leading-relaxed">
+      There is no arXiv number yet. Cite the fixed version of the manuscript hosted here &mdash;
+      it is a stable URL you can point at from a paper, README, or review.
+    </p>
+    <div class="reveal mt-6 glass rounded-2xl p-6">
+      <pre class="font-mono text-xs text-dim leading-relaxed overflow-x-auto">@misc{zhao2026comembench,
+  title        = {{CoMemBench}: Benchmarking Collaborative Memory
+                  Boundaries across Multi-Agent Workflow Topologies},
+  author       = {Zhao, Sen and Kong, Ruiqi and Zhang, Zuyu and
+                  Shen, Lifeng and He, Xinyu and Zou, Ding and
+                  Zhang, Xu and Zhang, Qinghua},
+  year         = {2026},
+  howpublished = {\url{https://comembench.world/paper/}},
+  note         = {Manuscript under review}
+}</pre>
+    </div>
+  </section>
+
+  <!-- LINKS -->
+  <section class="pt-16">
+    <div class="font-mono text-xs text-orange uppercase tracking-[.28em] mb-3">Related</div>
+    <h2 class="font-display text-3xl md:text-4xl font-bold">Where to go next</h2>
+    <div class="reveal mt-7 grid md:grid-cols-3 gap-5">
+      <a href="../" class="glass rounded-2xl p-6 transition hover:shadow-xl" style="transition:all .22s ease;">
+        <div class="font-mono text-[10px] text-orange uppercase tracking-widest mb-2">Project page</div>
+        <div class="font-display text-lg font-semibold">comembench.world</div>
+        <p class="mt-2 text-sm text-dim leading-relaxed">
+          Benchmark overview, domain breakdown, examples, and the leaderboard.
+        </p>
+      </a>
+      <a href="../#access" class="glass rounded-2xl p-6">
+        <div class="font-mono text-[10px] text-orange uppercase tracking-widest mb-2">Dataset</div>
+        <div class="font-display text-lg font-semibold">HuggingFace &middot; SenLab/Comembench</div>
+        <p class="mt-2 text-sm text-dim leading-relaxed">
+          800 problems, 800 matched polluted instances, node contexts, corpora, schemas.
+        </p>
+      </a>
+      <a href="../#metrics" class="glass rounded-2xl p-6">
+        <div class="font-mono text-[10px] text-orange uppercase tracking-widest mb-2">Protocol</div>
+        <div class="font-display text-lg font-semibold">SR &middot; VNCR &middot; VHS &middot; ICS</div>
+        <p class="mt-2 text-sm text-dim leading-relaxed">
+          End-to-end success, verified node progress, handoff reliability, and
+          matched-pollution success &mdash; plus token cost.
+        </p>
+      </a>
+    </div>
+  </section>
+
+</main>
+
+<footer class="relative border-t border-warmborder py-12">
+  <div class="mx-auto max-w-6xl px-6">
+    <div class="glow-line mb-10"></div>
+    <div class="flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-2.5">
+        <div class="w-8 h-8 rounded-lg flex items-center justify-center font-display font-bold text-white"
+             style="background:linear-gradient(135deg,#FB8147,#FDA83A)">C</div>
+        <div>
+          <div class="font-display font-semibold text-sm">CoMemBench</div>
+          <div class="font-mono text-[10px] text-dim">Manuscript &middot; under review</div>
+        </div>
+      </div>
+      <div class="flex flex-wrap gap-x-6 gap-y-2 text-xs">
+        <a class="hover:text-orange transition" href="../">Project home</a>
+        <a class="hover:text-orange transition" href="comembench.pdf">PDF</a>
+        <a class="hover:text-orange transition" href="../#access">Dataset</a>
+        <a class="hover:text-orange transition" href="../#citation">Citation</a>
+      </div>
+    </div>
+    <div class="mt-8 pt-5 border-t border-warmborder text-[11px] text-dim">
+      &copy; 2026 CoMemBench authors. For research use.
+    </div>
+  </div>
+</footer>
+
+<script>
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } });
+}, { threshold: 0.08, rootMargin: "0px 0px -40px 0px" });
+document.querySelectorAll(".reveal").forEach(el => io.observe(el));
+</script>
+</body>
+</html>
