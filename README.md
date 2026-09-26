@@ -22,8 +22,7 @@ Every problem ships with a matched **pollution** twin that differs in exactly on
 ## Links
 
 - **Website:** <https://comembench.world/>
-- **Paper (manuscript under review):** <https://comembench.world/paper/>
-- **Dataset (HuggingFace):** <https://huggingface.co/datasets/SenLab/Comembench>
+- **Dataset (HuggingFace):** <https://huggingface.co/datasets/anonymous-submission-333/anonymous-submission>
 
 ## Execution environments
 
@@ -35,7 +34,7 @@ The **50 certified code-domain images** (~6–7 GB each) are published as **one*
 docker pull ghcr.io/richard-xrui/comembench-sweb:django-1776-django-10097
 ```
 
-The tag is the certified image name with the namespace stripped and punctuation normalised (e.g. `logicstar/sweb.eval.x86_64.django_1776_django-10097:latest` → `django-1776-django-10097`). The full 50-row mapping — certified name, `sha256` id, execution fingerprint, size, and `ghcr_ref` — is pinned in [`schemas/swe_image_manifest.json`](https://huggingface.co/datasets/SenLab/Comembench) in the dataset repository. These are the certified builds themselves, not a rebuild and not the public `swebench/*` images.
+The tag is the certified image name with the namespace stripped and punctuation normalised (e.g. `logicstar/sweb.eval.x86_64.django_1776_django-10097:latest` → `django-1776-django-10097`). The full 50-row mapping — certified name, `sha256` id, execution fingerprint, and size — is pinned in [`schemas/swe_image_manifest.json`](https://huggingface.co/datasets/anonymous-submission-333/anonymous-submission) in the dataset repository. These are the certified builds themselves, not a rebuild and not the public `swebench/*` images.
 
 ## Metrics
 
@@ -44,7 +43,7 @@ The tag is the certified image name with the namespace stripped and punctuation 
 | **SR** | Task Success Rate — end-to-end workflow success, reported as completed / registered |
 | **VNCR** | Verified Native Completion Rate — macro-mean of per-node native-obligation completion |
 | **VHS** | Verified Handoff Success — downstream success conditioned on successful mandatory predecessors |
-| **MPS** | Matched Pollution Success — success on polluted instances conditioned on matched control success (blank when the denominator is below 10) |
+| **ICS** | Isolation Challenge Score — success on polluted instances conditioned on matched control success (blank when the denominator is below 10) |
 
 **Cost** is reported as Tokens / Task (input + output, median and P90).
 
@@ -59,18 +58,7 @@ The homepage shows only the certified v18 release coverage: 800 task families ac
 
 ## Citation
 
-```bibtex
-@misc{zhao2026comembench,
-  title        = {{CoMemBench}: Benchmarking Collaborative Memory
-                  Boundaries across Multi-Agent Workflow Topologies},
-  author       = {Zhao, Sen and Kong, Ruiqi and Zhang, Zuyu and
-                  Shen, Lifeng and He, Xinyu and Zou, Ding and
-                  Zhang, Xu and Zhang, Qinghua},
-  year         = {2026},
-  howpublished = {\url{https://comembench.world/paper/}},
-  note         = {Manuscript under review}
-}
-```
+The manuscript is under review. A citable arXiv entry will be listed here once the preprint is public.
 
 ## License
 
